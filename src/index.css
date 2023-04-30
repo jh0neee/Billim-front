@@ -1,13 +1,54 @@
+* {
+  box-sizing: border-box;
+  font-family: 'SCDream', 'TRoundWind', sans-serif;
+}
+
 body {
+  width: 100%;
+  height: 100%;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@font-face {
+  font-family: 'SCDream';
+  font-style: normal;
+  font-weight: 400;
+  src: url("asset/font/SCDream4.otf") format('truetype');
+}
+
+@font-face {
+  font-family: 'SCDream';
+  font-style: normal;
+  font-weight: 500;
+  src: url("asset/font/SCDream5.otf") format('truetype');
+}
+
+@font-face {
+  font-family: 'SCDream';
+  font-style: normal;
+  font-weight: 600;
+  src: url("asset/font/SCDream6.otf") format('truetype');
+}
+
+@font-face {
+  font-family: 'SCDream';
+  font-style: normal;
+  font-weight: 700;
+  src: url("asset/font/SCDream7.otf") format('truetype');
+}
+
+@font-face {
+  font-family: 'TRoundWind';
+  font-style: normal;
+  font-weight: normal;
+  src: url("asset/font/TmoneyRoundWindRegular.otf") format('truetype');
+}
+
+@font-face {
+  font-family: 'TRoundWind';
+  font-style: normal;
+  font-weight: 700;
+  src: url("asset/font/TmoneyRoundWindExtraBold.otf") format('truetype');
 }
