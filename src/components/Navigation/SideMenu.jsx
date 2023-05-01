@@ -60,7 +60,7 @@ const SideLink = styled(NavLink)`
     `}
 
   &:hover {
-    color: ${(props) => props.theme.subHover};
+    color: ${(props) => props.theme.fontHover};
   }
 `;
 
