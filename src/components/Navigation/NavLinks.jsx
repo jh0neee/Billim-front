@@ -24,7 +24,7 @@ const StyledNavLink = styled(NavLink)`
   border: 1px solid transparent;
   font-family: "SCDream";
   font-weight: 600;
-  color: #292929;
+  color: ${(props) => props.theme.fontColor};
   text-decoration: none;
 
   .icon {

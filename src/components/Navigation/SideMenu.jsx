@@ -47,7 +47,7 @@ const SideLink = styled(NavLink)`
   font-family: "SCDream";
   font-weight: 600;
   font-size: 1rem;
-  color: #292929;
+  color: ${(props) => props.theme.fontColor};
   text-decoration: none;
   transition: color 0.3s ease;
 
@@ -60,7 +60,7 @@ const SideLink = styled(NavLink)`
     `}
 
   &:hover {
-    color: #868e96;
+    color: ${(props) => props.theme.subHover};
   }
 `;
 
