@@ -1,25 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import { IoMenu } from "react-icons/io5";
+import { IoClose, IoMenu } from "react-icons/io5";
 import NavLinks from "./NavLinks";
+import SideDrawer from "./SideDrawer";
+import SideMenu from "./SideMenu";
+import BackDrop from "../UI/BackDrop";
 import logoImg from "../../asset/image/billim_logo_1.png";
 
 const HeaderBox = styled.div`
-  margin: auto;
+  margin: 0 auto;
   height: 85px;
   padding: 0px 10px;
   display: grid;
   grid-template-columns: 2fr 6fr 2fr;
   align-items: center;
   justify-items: center;
+`;
 
-  .menu_button {
-    font-size: 40px;
-    margin-right: 10rem;
-    cursor: pointer;
-  }
+const IconOpen = styled(IoMenu)`
+  cursor: pointer;
+  font-size: 40px;
+  margin-right: 10.6rem;
+`;
+
+const IconClose = styled(IoClose)`
+  cursor: pointer;
+  font-size: 40px;
+  margin: 1.5rem 0 0 1.8rem;
 `;
 
 const LogoImg = styled.img`
@@ -28,14 +37,31 @@ const LogoImg = styled.img`
 `;
 
 const Header = () => {
+  const [isOpenDrawer, setIsOpenDrawer] = useState(false);
+
+  const openDrawerHandler = () => {
+    setIsOpenDrawer(true);
+  };
+
+  const closeDrawerHandler = () => {
+    setIsOpenDrawer(false);
+  };
+
   return (
-    <HeaderBox>
-      <IoMenu className='menu_button' />
-      <Link>
-        <LogoImg src={logoImg} />
-      </Link>
-      <NavLinks />
-    </HeaderBox>
+    <React.Fragment>
+      {isOpenDrawer && <BackDrop />}
+      <SideDrawer show={isOpenDrawer} onClick={closeDrawerHandler}>
+        <IconClose onClick={closeDrawerHandler} />
+        <SideMenu />
+      </SideDrawer>
+      <HeaderBox>
+        <IconOpen onClick={openDrawerHandler} />
+        <Link>
+          <LogoImg src={logoImg} alt='logo' />
+        </Link>
+        <NavLinks />
+      </HeaderBox>
+    </React.Fragment>
   );
 };
 

@@ -1,6 +1,7 @@
 * {
   box-sizing: border-box;
   font-family: 'SCDream', 'TRoundWind', sans-serif;
+  user-select: none;
 }
 
 body {
@@ -9,6 +10,27 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* side Drawer animation */
+.slide-left-enter {
+  transform: translateX(-100%);
+}
+
+.slide-left-enter-active {
+  transform: translateX(0);
+  opacity: 1;
+  transition: all 200ms;
+}
+
+.slide-left-exit {
+  transform: translateX(0%);
+}
+
+.slide-left-exit-active {
+  transform: translateX(-100%);
+  opacity: 1;
+  transition: all 200ms;
 }
 
 @font-face {
