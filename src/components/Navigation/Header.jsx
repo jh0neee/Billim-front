@@ -10,13 +10,18 @@ import BackDrop from "../UI/BackDrop";
 import logoImg from "../../asset/image/billim_logo_1.png";
 
 const HeaderBox = styled.div`
+  position: fixed;
   margin: 0 auto;
-  height: 85px;
   padding: 0px 10px;
+  width: 100%;
+  height: 85px;
+  top: 0;
   display: grid;
   grid-template-columns: 2fr 6fr 2fr;
   align-items: center;
   justify-items: center;
+  z-index: 9;
+  background-color: rgba(255, 255, 255, 0.9);
 `;
 
 const IconOpen = styled(IoMenu)`
