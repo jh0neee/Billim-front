@@ -5,7 +5,7 @@ const defaultInput = css`
   width: ${(props) => props.width || "100%"};
   border: 1px solid ${(props) => props.theme.borderColor};
   outline: 0;
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 400;
   border-radius: 5px;
 `;
