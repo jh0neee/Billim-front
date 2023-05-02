@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Header from "./components/Navigation/Header.jsx";
 import SignIn from "./pages/Auth/SignIn.jsx";
+import FindUser from "./pages/Auth/FindUser.jsx";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<SignIn />} />
+          <Route path="/finduser" element={<FindUser />} />
           <Route path='*' element={<Navigate to='/' />} />
         </Routes>
       </BrowserRouter>
