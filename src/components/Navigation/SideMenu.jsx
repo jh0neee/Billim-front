@@ -82,20 +82,20 @@ const SideMenu = () => {
   return (
     <SideNavList>
       <SideNavItem>
-        <SideLink to='/total' main>
+        <SideLink to='/total' main='true'>
           전체상품
         </SideLink>
       </SideNavItem>
-      <SideNavItem in>
+      <SideNavItem in='true'>
         <SideLink to='/living'>생활용품</SideLink>
       </SideNavItem>
-      <SideNavItem in>
+      <SideNavItem in='true'>
         <SideLink to='/apparel'>의류잡화</SideLink>
       </SideNavItem>
-      <SideNavItem in>
+      <SideNavItem in='true'>
         <SideLink to='/sporting'>운동용품</SideLink>
       </SideNavItem>
-      <SideNavItem in>
+      <SideNavItem in='true'>
         <SideLink to='/electronic'>전자제품</SideLink>
       </SideNavItem>
       <hr className='line' />
