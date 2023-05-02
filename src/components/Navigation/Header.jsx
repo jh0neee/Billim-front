@@ -61,7 +61,7 @@ const Header = () => {
       </SideDrawer>
       <HeaderBox>
         <IconOpen onClick={openDrawerHandler} />
-        <Link>
+        <Link to="/">
           <LogoImg src={logoImg} alt='logo' />
         </Link>
         <NavLinks />
