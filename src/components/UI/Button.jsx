@@ -38,7 +38,11 @@ const StyledButton = styled.button`
 const Button = (props) => {
   if (props.to) {
     return (
-      <LinkButton to={props.to} width={props.width} sub={props.sub}>
+      <LinkButton
+        to={props.to}
+        width={props.width}
+        sub={props.sub}
+        small={props.small}>
         {props.children}
       </LinkButton>
     );
