@@ -39,7 +39,7 @@ const SignUp = () => {
     <SignUpLayout>
       <SignUpTitle>회원가입</SignUpTitle>
       <SignUpBox>
-        <SignUpItems label='아이디' id='id' placeholder='4~20자 사이 영소문자,숫자' />
+        <SignUpItems id="email">아이디</SignUpItems>
         <ContentLine />
         <SignUpItems
           label='비밀번호'
@@ -63,8 +63,6 @@ const SignUp = () => {
           id='nickname'
           placeholder='닉네임 입력해주세요'
         />
-        <ContentLine />
-        <SignUpItems label='이메일' id='email' />
         <ContentLine />
         <SignUpItems label='주소' id='address' />
         <ContentLine />

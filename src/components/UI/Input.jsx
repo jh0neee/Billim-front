@@ -54,6 +54,8 @@ const Input = (props) => {
         bar={props.bar}
         width={props.width}
         placeholder={props.placeholder}
+        onChange={props.onChange}
+        value={props.value}
         required
       />
     ) : (
@@ -63,6 +65,8 @@ const Input = (props) => {
         bar={props.bar}
         width={props.width}
         placeholder={props.placeholder}
+        onChange={props.onChange}
+        value={props.value}
         required
       />
     );

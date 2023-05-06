@@ -23,9 +23,14 @@ const SignInLayout = styled.div`
     &:nth-child(3) {
       margin-top: 1rem;
     }
+  }
+`;
 
-    &:nth-child(5) {
-      position: relative;
+const ButtonBox = styled.div`
+  position: relative;
+
+  > * {
+    &:nth-child(2) {
       color: black;
       background: #fee500;
     }
@@ -35,8 +40,8 @@ const SignInLayout = styled.div`
 const KakaoIcon = styled(ImBubble)`
   position: absolute;
   font-size: 17.5px;
-  left: 331px;
-  top: 406.5px;
+  top: 21px;
+  left: 15px;
 `;
 
 const FindButtonBox = styled.div`
@@ -90,14 +95,16 @@ const SignIn = () => {
           비밀번호 찾기
         </Link>
       </FindButtonBox>
-      <Button>카카오 로그인</Button>
-      <KakaoIcon />
+      <ButtonBox>
+        <KakaoIcon />
+        <Button>카카오 로그인</Button>
+      </ButtonBox>
       <SignUpBox>
         <p>
           빌림의 회원이 되시면 <br />
           만원 할인쿠폰을 드립니다.
         </p>
-        <Button sub small to='/signup' width='80px'>
+        <Button sub small to='/emailverify' width='80px'>
           회원가입
         </Button>
       </SignUpBox>

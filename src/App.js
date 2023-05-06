@@ -7,6 +7,7 @@ import Header from "./components/Navigation/Header.jsx";
 import SignIn from "./pages/Auth/SignIn.jsx";
 import FindUser from "./pages/Auth/FindUser.jsx";
 import SignUp from "./pages/Auth/SignUp.jsx";
+import EmailVerification from "./pages/Auth/EmailVerification.jsx";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<SignIn />} />
           <Route path='/finduser' element={<FindUser />} />
+          <Route path='/emailverify' element={<EmailVerification />} />
           <Route path='/signup' element={<SignUp />} />
           <Route path='*' element={<Navigate to='/' />} />
         </Routes>
