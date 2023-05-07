@@ -8,6 +8,7 @@ import SignIn from "./pages/Auth/SignIn.jsx";
 import FindUser from "./pages/Auth/FindUser.jsx";
 import SignUp from "./pages/Auth/SignUp.jsx";
 import EmailVerification from "./pages/Auth/EmailVerification.jsx";
+import ProductList from "./pages/Product/ProductList.jsx";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path='/finduser' element={<FindUser />} />
           <Route path='/emailverify' element={<EmailVerification />} />
           <Route path='/signup' element={<SignUp />} />
+          <Route path='/product/list' element={<ProductList/>} />
           <Route path='*' element={<Navigate to='/' />} />
         </Routes>
       </BrowserRouter>

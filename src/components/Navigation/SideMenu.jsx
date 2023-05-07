@@ -82,7 +82,7 @@ const SideMenu = () => {
   return (
     <SideNavList>
       <SideNavItem>
-        <SideLink to='/total' main='true'>
+        <SideLink to='/product/list' main='true'>
           전체상품
         </SideLink>
       </SideNavItem>
