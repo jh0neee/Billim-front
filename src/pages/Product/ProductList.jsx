@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useLocation } from "react-router-dom";
 
 import ProductListItem from "../../components/Product/ProductListItem";
 import ProductCategory from "../../components/Product/ProductCategory";
@@ -25,13 +26,18 @@ const ProductItemLayout = styled.div`
 `;
 
 const ProductList = () => {
+  const category = useLocation().pathname.slice(9);
+  const items = productItems.filter((item) => {
+    return category === '' ? item : item.category === category;
+  });
+
   return (
     <>
       <CategoryLayout>
         <ProductCategory />
       </CategoryLayout>
       <ProductItemLayout>
-        <ProductListItem items={productItems} />
+        <ProductListItem items={items} />
       </ProductItemLayout>
     </>
   );

@@ -22,7 +22,12 @@ function App() {
           <Route path='/finduser' element={<FindUser />} />
           <Route path='/emailverify' element={<EmailVerification />} />
           <Route path='/signup' element={<SignUp />} />
-          <Route path='/product/list' element={<ProductList/>} />
+          <Route path='/product' element={<ProductList />}>
+            <Route path='living' element={<ProductList />} />
+            <Route path='apparel' element={<ProductList />} />
+            <Route path='sporting' element={<ProductList />} />
+            <Route path='electronic' element={<ProductList />} />
+          </Route>
           <Route path='*' element={<Navigate to='/' />} />
         </Routes>
       </BrowserRouter>

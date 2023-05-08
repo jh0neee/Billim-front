@@ -2,7 +2,7 @@ export const productItems = [
   {
     id: 1,
     name: "상품 A",
-    category: "생활용품",
+    category: "living",
     scope: "5.0",
     amount: "15,000",
     likeCount: 0,
@@ -10,7 +10,7 @@ export const productItems = [
   {
     id: 2,
     name: "상품 B",
-    category: "운동용품",
+    category: "sporting",
     scope: "4.5",
     amount: "10,000",
     likeCount: 0,
@@ -18,7 +18,7 @@ export const productItems = [
   {
     id: 3,
     name: "상품 C",
-    category: "전자기기",
+    category: "living",
     scope: "4.5",
     amount: "56,000",
     likeCount: 0,
@@ -26,7 +26,7 @@ export const productItems = [
   {
     id: 4,
     name: "상품 D",
-    category: "의류잡화",
+    category: "apparel",
     scope: "5.0",
     amount: "43,000",
     likeCount: 0,
@@ -34,7 +34,7 @@ export const productItems = [
   {
     id: 5,
     name: "상품 E",
-    category: "운동용품",
+    category: "sporting",
     scope: "4.3",
     amount: "11,000",
     likeCount: 0,
@@ -42,7 +42,7 @@ export const productItems = [
   {
     id: 6,
     name: "상품 F",
-    category: "생활용품",
+    category: "living",
     scope: "5.0",
     amount: "5,000",
     likeCount: 0,
@@ -50,7 +50,7 @@ export const productItems = [
   {
     id: 7,
     name: "상품 G",
-    category: "의류잡화",
+    category: "apparel",
     scope: "4.3",
     amount: "10,000",
     likeCount: 0,
@@ -58,7 +58,7 @@ export const productItems = [
   {
     id: 8,
     name: "상품 H",
-    category: "운동용품",
+    category: "sporting",
     scope: "3.8",
     amount: "32,000",
     likeCount: 0,
@@ -66,7 +66,7 @@ export const productItems = [
   {
     id: 9,
     name: "상품 I",
-    category: "전자기기",
+    category: "electronic",
     scope: "4.5",
     amount: "78,000",
     likeCount: 0,
@@ -74,7 +74,7 @@ export const productItems = [
   {
     id: 10,
     name: "상품 J",
-    category: "생활용품",
+    category: "living",
     scope: "5.0",
     amount: "15,000",
     likeCount: 0,
@@ -82,7 +82,7 @@ export const productItems = [
   {
     id: 11,
     name: "상품 K",
-    category: "전자기기",
+    category: "electronic",
     scope: "3.5",
     amount: "112,000",
     likeCount: 0,
