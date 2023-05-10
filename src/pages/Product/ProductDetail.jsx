@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import DetailContent from "../../components/Product/DetailContent";
+import DetailComfirm from "../../components/Product/DetailComfirm";
 import { RiStarSFill } from "react-icons/ri";
 import { MdKeyboardDoubleArrowDown } from "react-icons/md";
 
@@ -65,7 +66,12 @@ const DetailImageBox = styled.div`
   }
 `;
 
-const DetailBox = styled.div``;
+const DetailBox = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  column-gap: 1.5rem;
+  padding: 2.5rem 0px;
+`;
 
 const DetailReview = styled.div`
   display: flex;
@@ -107,6 +113,7 @@ const ProductDetail = () => {
       </DetailImage>
       <DetailBox>
         <DetailContent />
+        <DetailComfirm />
       </DetailBox>
       <hr />
       <DetailReview>
