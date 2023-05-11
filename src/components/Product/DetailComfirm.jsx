@@ -7,21 +7,45 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../../styles/calendar.css";
 
 import Button from "../../components/UI/Button";
+import differenceInDays from "date-fns/differenceInDays";
 
 const ConfirmBox = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
   align-items: center;
-  background: #ccc;
+  background: #ededed;
 
   > * {
-    margin: 1rem 0;
+    margin: 0.7rem 0px;
+
+    &:nth-child(-n + 3),
+    &:last-child {
+      margin: 1rem auto;
+    }
+
+    &:nth-child(6) {
+      font-weight: 600;
+      font-size: 18px;
+    }
   }
 `;
 
-const DetailComfirm = () => {
+const PaymentBox = styled.div`
+  padding: 0 2.5rem;
+  font-size: 15px;
+
+  .left {
+    float: left;
+  }
+
+  .right {
+    float: right;
+  }
+`;
+
+const DetailComfirm = (props) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
+  const days = differenceInDays(endDate, startDate);
 
   const onChangeCalendar = (dates) => {
     const [start, end] = dates;
@@ -40,9 +64,9 @@ const DetailComfirm = () => {
       date.getDate().toString().padStart(2, "0")
     );
   };
+
   return (
     <ConfirmBox>
-      <p>\금액 / 일</p>
       <DetePicker
         showIcon
         selected={startDate}
@@ -56,11 +80,23 @@ const DetailComfirm = () => {
         inline
       />
       <p>
-        {dateToString(startDate)} ~ {dateToString(endDate)}
+        {dateToString(startDate)} &ensp; ~ &ensp; {dateToString(endDate)}
       </p>
       <hr width='75%' />
-      <p>대여일</p>
-      <p>총 합계</p>
+      <PaymentBox>
+        <p className='left'>\ {props.amount.toLocaleString("ko-KR")} / 일</p>
+        <p className='right'>\ {props.amount.toLocaleString("ko-KR")}</p>
+      </PaymentBox>
+      <PaymentBox>
+        <p className='left'>대여일</p>
+        <p className='right'>{isNaN(days) ? "0일" : days + "일"}</p>
+      </PaymentBox>
+      <PaymentBox>
+        <p className='left'>총 합계</p>
+        <p className='right'>
+          {isNaN(days) ? "0원" : "￦ " + props.amount * days}
+        </p>
+      </PaymentBox>
       <Button>결제하기</Button>
     </ConfirmBox>
   );
