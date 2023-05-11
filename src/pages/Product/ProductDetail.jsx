@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import DetailContent from "../../components/Product/DetailContent";
 import DetailComfirm from "../../components/Product/DetailComfirm";
+import DetailReview from "../../components/Product/DetailReview";
 import { RiStarSFill } from "react-icons/ri";
-import { MdKeyboardDoubleArrowDown } from "react-icons/md";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import { review } from "../../data";
 
 const DetailLayout = styled.div`
   width: 70%;
@@ -73,18 +75,31 @@ const DetailBox = styled.div`
   padding: 2.5rem 0px;
 `;
 
-const DetailReview = styled.div`
+const DetailReviewBox = styled.div`
+  margin: 2rem 1rem;
   display: flex;
   flex-direction: column;
 
   > * {
     &:last-child {
-      margin: 0 auto;
+      margin: 2rem auto 0;
     }
   }
 `;
 
+const ReviewTitle = styled.p`
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+`;
+
 const ProductDetail = () => {
+  const [isViewMore, setIsViewMore] = useState(false);
+
+  const handleViewMore = () => {
+    setIsViewMore(!isViewMore);
+  };
+  
   return (
     <DetailLayout>
       <TitleBox>
@@ -116,10 +131,15 @@ const ProductDetail = () => {
         <DetailComfirm />
       </DetailBox>
       <hr />
-      <DetailReview>
-        후기
-        <MdKeyboardDoubleArrowDown size='27px' />
-      </DetailReview>
+      <DetailReviewBox>
+        <ReviewTitle>후기</ReviewTitle>
+        <DetailReview data={review} isViewMore={isViewMore} />
+        {isViewMore ? (
+          <MdKeyboardArrowUp size='35px' onClick={handleViewMore} />
+        ) : (
+          <MdKeyboardArrowDown size='35px' onClick={handleViewMore} />
+        )}
+      </DetailReviewBox>
     </DetailLayout>
   );
 };

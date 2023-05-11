@@ -1,3 +1,5 @@
+import format from "date-fns/format";
+
 export const productItems = [
   {
     id: 1,
@@ -86,5 +88,51 @@ export const productItems = [
     scope: "3.5",
     amount: "112,000",
     likeCount: 0,
+  },
+];
+
+export const review = [
+  {
+    id: 1,
+    username: "A",
+    date: format(new Date(), "yyyy-MM-dd"),
+    review: "아주 만족합니다.",
+  },
+  {
+    id: 2,
+    username: "B",
+    date: format(new Date(), "yyyy-MM-dd"),
+    review: "별로였어요.",
+  },
+  {
+    id: 3,
+    username: "말랭이",
+    date: format(new Date(), "yyyy-MM-dd"),
+    review:
+      "좋아요~",
+  },
+  {
+    id: 4,
+    username: "감자씨",
+    date: format(new Date(), "yyyy-MM-dd"),
+    review: "나쁘지 않습니다.",
+  },
+  {
+    id: 5,
+    username: "DDAbc",
+    date: format(new Date(), "yyyy-MM-dd"),
+    review: "만족입니다!!",
+  },
+  {
+    id: 6,
+    username: "apple",
+    date: format(new Date(), "yyyy-MM-dd"),
+    review: "최고!",
+  },
+  {
+    id: 7,
+    username: "사과는 맛있어",
+    date: format(new Date(), "yyyy-MM-dd"),
+    review: "다음에 또 이용하고 싶어요~",
   },
 ];

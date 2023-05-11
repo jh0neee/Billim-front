@@ -63,7 +63,7 @@ const ContentDescription = styled.div`
 
 const DetailContent = () => {
   return (
-    <>
+    <div>
       <ContentTitle>
         <p>UESR님이 대여하는 상품</p>
         <TbUserCircle size='45px' />
@@ -96,7 +96,7 @@ const DetailContent = () => {
         <p>상품 설명</p>
         <p>아주아주아주 매우매우 좋은 특별한 상품</p>
       </ContentDescription>
-    </>
+    </div>
   );
 };
 
