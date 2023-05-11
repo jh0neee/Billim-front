@@ -6,7 +6,7 @@ export const productItems = [
     name: "상품 A",
     category: "living",
     scope: "5.0",
-    amount: "15,000",
+    amount: 15000,
     likeCount: 0,
   },
   {
@@ -14,7 +14,7 @@ export const productItems = [
     name: "상품 B",
     category: "sporting",
     scope: "4.5",
-    amount: "10,000",
+    amount: 10000,
     likeCount: 0,
   },
   {
@@ -22,7 +22,7 @@ export const productItems = [
     name: "상품 C",
     category: "living",
     scope: "4.5",
-    amount: "56,000",
+    amount: 56000,
     likeCount: 0,
   },
   {
@@ -30,7 +30,7 @@ export const productItems = [
     name: "상품 D",
     category: "apparel",
     scope: "5.0",
-    amount: "43,000",
+    amount: 43000,
     likeCount: 0,
   },
   {
@@ -38,7 +38,7 @@ export const productItems = [
     name: "상품 E",
     category: "sporting",
     scope: "4.3",
-    amount: "11,000",
+    amount: 11000,
     likeCount: 0,
   },
   {
@@ -46,7 +46,7 @@ export const productItems = [
     name: "상품 F",
     category: "living",
     scope: "5.0",
-    amount: "5,000",
+    amount: 5000,
     likeCount: 0,
   },
   {
@@ -54,7 +54,7 @@ export const productItems = [
     name: "상품 G",
     category: "apparel",
     scope: "4.3",
-    amount: "10,000",
+    amount: 10000,
     likeCount: 0,
   },
   {
@@ -62,7 +62,7 @@ export const productItems = [
     name: "상품 H",
     category: "sporting",
     scope: "3.8",
-    amount: "32,000",
+    amount: 32000,
     likeCount: 0,
   },
   {
@@ -70,7 +70,7 @@ export const productItems = [
     name: "상품 I",
     category: "electronic",
     scope: "4.5",
-    amount: "78,000",
+    amount: 78000,
     likeCount: 0,
   },
   {
@@ -78,7 +78,7 @@ export const productItems = [
     name: "상품 J",
     category: "living",
     scope: "5.0",
-    amount: "15,000",
+    amount: 15000,
     likeCount: 0,
   },
   {
@@ -86,7 +86,7 @@ export const productItems = [
     name: "상품 K",
     category: "electronic",
     scope: "3.5",
-    amount: "112,000",
+    amount: 112000,
     likeCount: 0,
   },
 ];

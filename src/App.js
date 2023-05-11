@@ -29,7 +29,7 @@ function App() {
             <Route path='sporting' element={<ProductList />} />
             <Route path='electronic' element={<ProductList />} />
           </Route>
-          <Route path='/detail' element={<ProductDetail />} />
+          <Route path='/:itemName/detail' element={<ProductDetail />} />
           <Route path='*' element={<Navigate to='/' />} />
         </Routes>
       </BrowserRouter>
