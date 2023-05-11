@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import DetailHeader from "./DetailHeader";
 import DetailContent from "./DetailContent";
-import DetailComfirm from "./DetailComfirm";
+import DetailComfirm from "./DetailConfirm";
 import DetailReview from "./DetailReview";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import { review } from "../../data";

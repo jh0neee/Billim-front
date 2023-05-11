@@ -6,7 +6,7 @@ import { ko } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../styles/calendar.css";
 
-import Button from "../../components/UI/Button";
+import Button from "../UI/Button";
 import differenceInDays from "date-fns/differenceInDays";
 
 const ConfirmBox = styled.div`
@@ -46,6 +46,7 @@ const DetailComfirm = (props) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
   const days = differenceInDays(endDate, startDate);
+  const total = (props.amount * days).toLocaleString("ko-KR");
 
   const onChangeCalendar = (dates) => {
     const [start, end] = dates;
@@ -94,7 +95,7 @@ const DetailComfirm = (props) => {
       <PaymentBox>
         <p className='left'>총 합계</p>
         <p className='right'>
-          {isNaN(days) ? "0원" : "￦ " + props.amount * days}
+          {isNaN(days) ? "￦ 0" : "￦ " + total}
         </p>
       </PaymentBox>
       <Button>결제하기</Button>
