@@ -42,7 +42,7 @@ const PaymentBox = styled.div`
   }
 `;
 
-const DetailComfirm = (props) => {
+const DetailConfirm = (props) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
   const days = differenceInDays(endDate, startDate);
@@ -103,4 +103,4 @@ const DetailComfirm = (props) => {
   );
 };
 
-export default DetailComfirm;
+export default DetailConfirm;
