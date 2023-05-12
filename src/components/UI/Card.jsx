@@ -13,7 +13,7 @@ const CardLayout = styled.div`
 
 const Card = (props) => {
   return (
-    <CardLayout width={props.width} height={props.height}>
+    <CardLayout className={props.className} width={props.width} height={props.height}>
       {props.children}
     </CardLayout>
   );

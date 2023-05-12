@@ -46,7 +46,7 @@ const DropDownOption = styled.div`
   }
 `;
 
-const Dropdown = ({options, selectedOpt, setSelectedOpt}) => {
+const Dropdown = ({ className, options, selectedOpt, setSelectedOpt}) => {
   const [isActive, setIsActive] = useState(false);
 
   const handleDropDown = () => {
@@ -54,7 +54,7 @@ const Dropdown = ({options, selectedOpt, setSelectedOpt}) => {
   };
 
   return (
-    <DropDownBox>
+    <DropDownBox className={className}>
       <SelectButtonBox onClick={handleDropDown}>
         {selectedOpt === "" ? "선택하세요" : selectedOpt}
         <FaCaretDown/>

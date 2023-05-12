@@ -22,7 +22,7 @@ const InputLabel = styled.label`
 
 const StyledInput = styled.input`
   ${defaultInput}
-  height: 43px;
+  height: ${(props) => props.height || "43px"};
   padding: 1.6px 12.8px;
 
   ${(props) =>
@@ -53,6 +53,7 @@ const Input = (props) => {
         type={props.type}
         bar={props.bar}
         width={props.width}
+        height={props.height}
         placeholder={props.placeholder}
         onChange={props.onChange}
         value={props.value}
@@ -72,7 +73,7 @@ const Input = (props) => {
     );
 
   return (
-    <InputBox>
+    <InputBox className={props.className}>
       <InputLabel htmlFor={props.id}>{props.label}</InputLabel>
       {element}
       <p>{props.errorText}</p>

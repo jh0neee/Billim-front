@@ -50,6 +50,7 @@ const Button = (props) => {
 
   return (
     <StyledButton
+      className={props.className}
       sub={props.sub}
       small={props.small}
       width={props.width}
