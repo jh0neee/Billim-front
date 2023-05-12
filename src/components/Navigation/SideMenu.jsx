@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import styled, { css } from "styled-components";
+
+import { searchAction } from "../../store/search";
 
 const SideNavList = styled.ul`
   list-style: none;
@@ -74,29 +77,43 @@ const MyPageSpan = styled.span`
 const SideMenu = () => {
   //NOTE - 마이페이지는 로그인 시에만 보이도록
   const [isSlideMenu, setIsSlideMenu] = useState(false);
+  const dispatch = useDispatch();
 
   const slideHandler = (e) => {
     e.stopPropagation();
     setIsSlideMenu(!isSlideMenu);
   };
+
+  const handleClearSearch = () => {
+    dispatch(searchAction.CLEAR_SEARCH(false));
+  };
+
   return (
     <SideNavList>
       <SideNavItem>
-        <SideLink to='/product' main='true'>
+        <SideLink to='/product' main='true' onClick={handleClearSearch}>
           전체상품
         </SideLink>
       </SideNavItem>
       <SideNavItem in='true'>
-        <SideLink to='/product/living'>생활용품</SideLink>
+        <SideLink to='/product/living' onClick={handleClearSearch}>
+          생활용품
+        </SideLink>
       </SideNavItem>
       <SideNavItem in='true'>
-        <SideLink to='/product/apparel'>의류잡화</SideLink>
+        <SideLink to='/product/apparel' onClick={handleClearSearch}>
+          의류잡화
+        </SideLink>
       </SideNavItem>
       <SideNavItem in='true'>
-        <SideLink to='/product/sporting'>운동용품</SideLink>
+        <SideLink to='/product/sporting' onClick={handleClearSearch}>
+          운동용품
+        </SideLink>
       </SideNavItem>
       <SideNavItem in='true'>
-        <SideLink to='/product/electronic'>전자제품</SideLink>
+        <SideLink to='/product/electronic' onClick={handleClearSearch}>
+          전자제품
+        </SideLink>
       </SideNavItem>
       <hr className='line' />
       <SideNavItem>

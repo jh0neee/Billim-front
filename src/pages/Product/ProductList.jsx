@@ -27,14 +27,15 @@ const ProductItemLayout = styled.div`
 
 const ProductList = () => {
   const category = useLocation().pathname.slice(9);
+
   const items = productItems.filter((item) => {
-    return category === '' ? item : item.category === category;
+    return category === "" ? item : item.category === category;
   });
 
   return (
     <>
       <CategoryLayout>
-        <ProductCategory />
+        <ProductCategory items={items} />
       </CategoryLayout>
       <ProductItemLayout>
         <ProductListItem items={items} />
