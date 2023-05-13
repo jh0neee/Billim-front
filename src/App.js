@@ -11,12 +11,14 @@ import EmailVerification from "./pages/Auth/EmailVerification.jsx";
 import ProductList from "./pages/Product/ProductList.jsx";
 import ProductDetail from "./pages/Product/ProductDetail.jsx";
 import ProductPayment from "./pages/Product/ProductPayment.jsx";
+import ScrollToTop from "./util/ScrollToTop.js";
 
 function App() {
   return (
     <React.Fragment>
       <Reset />
       <BrowserRouter>
+        <ScrollToTop />
         <Header />
         <Routes>
           <Route path='/' element={<Home />} />
