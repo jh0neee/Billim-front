@@ -10,6 +10,7 @@ import SignUp from "./pages/Auth/SignUp.jsx";
 import EmailVerification from "./pages/Auth/EmailVerification.jsx";
 import ProductList from "./pages/Product/ProductList.jsx";
 import ProductDetail from "./pages/Product/ProductDetail.jsx";
+import ProductPayment from "./pages/Product/ProductPayment.jsx";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path='electronic' element={<ProductList />} />
           </Route>
           <Route path='/:itemName/detail' element={<ProductDetail />} />
+          <Route path='/:itemName/payment' element={<ProductPayment />} />
           <Route path='*' element={<Navigate to='/' />} />
         </Routes>
       </BrowserRouter>

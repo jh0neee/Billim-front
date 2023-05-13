@@ -98,7 +98,7 @@ const DetailConfirm = (props) => {
           {isNaN(days) ? "￦ 0" : "￦ " + total}
         </p>
       </PaymentBox>
-      <Button>결제하기</Button>
+      <Button to={`/${props.name}/payment`}>결제하기</Button>
     </ConfirmBox>
   );
 };

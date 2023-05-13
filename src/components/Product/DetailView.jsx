@@ -109,7 +109,7 @@ const DetailView = (props) => {
           </DetailImage>
           <DetailBox>
             <DetailContent />
-            <DetailConfirm amount={item.amount} />
+            <DetailConfirm amount={item.amount} name={item.name} />
           </DetailBox>
           <hr />
           <DetailReviewBox>
