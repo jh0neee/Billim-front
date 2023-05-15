@@ -12,6 +12,8 @@ import ProductList from "./pages/Product/ProductList.jsx";
 import ProductDetail from "./pages/Product/ProductDetail.jsx";
 import ProductPayment from "./pages/Product/ProductPayment.jsx";
 import ScrollToTop from "./util/ScrollToTop.js";
+import MyPage from "./pages/MyPage.jsx";
+import PurchaseManagement from "./components/MyPage/PurchaseManagement.jsx";
 
 function App() {
   return (
@@ -34,6 +36,9 @@ function App() {
           </Route>
           <Route path='/:itemName/detail' element={<ProductDetail />} />
           <Route path='/:itemName/payment' element={<ProductPayment />} />
+          <Route path='/mypage' element={<MyPage />}>
+            <Route path='/mypage/purchase' element={<PurchaseManagement />} />
+          </Route>
           <Route path='*' element={<Navigate to='/' />} />
         </Routes>
       </BrowserRouter>

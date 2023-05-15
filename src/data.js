@@ -136,3 +136,39 @@ export const review = [
     review: "다음에 또 이용하고 싶어요~",
   },
 ];
+
+
+export const purchasedProduct = [
+  {
+    id: 1,
+    status: '사용중',
+    name: '상품A',
+    amount: 10000,
+    date: format(new Date(), "yyyy-MM-dd HH:ss"),
+    seller: '감자',
+  },
+  {
+    id: 2,
+    status: '예약완료',
+    name: '상품B',
+    amount: 5000,
+    date: format(new Date(), "yyyy-MM-dd HH:ss"),
+    seller: '고구마',
+  },
+  {
+    id: 3,
+    status: '취소',
+    name: '상품C',
+    amount: 18000,
+    date: format(new Date(), "yyyy-MM-dd HH:ss"),
+    seller: '케일',
+  },
+  {
+    id: 4,
+    status: '사용완료',
+    name: '상품D',
+    amount: 30000,
+    date: format(new Date(), "yyyy-MM-dd HH:ss"),
+    seller: '사과',
+  },
+];
