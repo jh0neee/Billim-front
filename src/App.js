@@ -14,6 +14,7 @@ import ProductPayment from "./pages/Product/ProductPayment.jsx";
 import ScrollToTop from "./util/ScrollToTop.js";
 import MyPage from "./pages/MyPage.jsx";
 import PurchaseManagement from "./components/MyPage/PurchaseManagement.jsx";
+import SalesManagement from "./components/MyPage/SalesManagement.jsx";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path='/:itemName/payment' element={<ProductPayment />} />
           <Route path='/mypage' element={<MyPage />}>
             <Route path='/mypage/purchase' element={<PurchaseManagement />} />
+            <Route path='/mypage/sales' element={<SalesManagement />} />
           </Route>
           <Route path='*' element={<Navigate to='/' />} />
         </Routes>
