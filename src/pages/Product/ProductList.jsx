@@ -22,7 +22,10 @@ const ProductItemLayout = styled.div`
   row-gap: 3.5rem;
   justify-items: center;
   font-family: SCDream;
-  cursor: pointer;
+
+  >*{
+    cursor: pointer;
+  }
 `;
 
 const ProductList = () => {
