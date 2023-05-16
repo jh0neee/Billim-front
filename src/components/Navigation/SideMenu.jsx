@@ -36,7 +36,7 @@ const SideNavList = styled.ul`
 `;
 
 const SideNavItem = styled.li`
-  margin: 0.625rem 0.1rem;
+  margin: 0.5rem 0.1rem;
 
   ${(props) =>
     props.in &&
@@ -67,7 +67,7 @@ const SideLink = styled(NavLink)`
   }
 `;
 
-const MyPageSpan = styled.span`
+const MyPageTitle = styled.p`
   cursor: pointer;
   font-family: "TRoundWind";
   font-weight: 700;
@@ -91,49 +91,52 @@ const SideMenu = () => {
   return (
     <SideNavList>
       <SideNavItem>
-        <SideLink to='/product' main='true' onClick={handleClearSearch}>
+        <SideLink to='/product' $main onClick={handleClearSearch}>
           전체상품
         </SideLink>
       </SideNavItem>
-      <SideNavItem in='true'>
+      <SideNavItem $in>
         <SideLink to='/product/living' onClick={handleClearSearch}>
           생활용품
         </SideLink>
       </SideNavItem>
-      <SideNavItem in='true'>
+      <SideNavItem $in>
         <SideLink to='/product/apparel' onClick={handleClearSearch}>
           의류잡화
         </SideLink>
       </SideNavItem>
-      <SideNavItem in='true'>
+      <SideNavItem $in>
         <SideLink to='/product/sporting' onClick={handleClearSearch}>
           운동용품
         </SideLink>
       </SideNavItem>
-      <SideNavItem in='true'>
+      <SideNavItem $in>
         <SideLink to='/product/electronic' onClick={handleClearSearch}>
           전자제품
         </SideLink>
       </SideNavItem>
       <hr className='line' />
       <SideNavItem>
-        <MyPageSpan onClick={slideHandler}>마이페이지</MyPageSpan>
+        <MyPageTitle onClick={slideHandler}>마이페이지</MyPageTitle>
         {isSlideMenu && (
           <SideNavList sub>
             <SideNavItem>
-              <SideLink to='/purchase'>구매관리</SideLink>
+              <SideLink to='mypage/purchase'>구매관리</SideLink>
             </SideNavItem>
             <SideNavItem>
-              <SideLink to='/sales'>판매관리</SideLink>
+              <SideLink to='mypage/sales'>판매관리</SideLink>
             </SideNavItem>
             <SideNavItem>
-              <SideLink to='/favorite'>관심상품</SideLink>
+              <SideLink to='mypage/favorite'>관심상품</SideLink>
             </SideNavItem>
             <SideNavItem>
-              <SideLink to='/review'>후기</SideLink>
+              <SideLink to='mypage/review'>후기</SideLink>
             </SideNavItem>
             <SideNavItem>
-              <SideLink to='/block'>차단관리</SideLink>
+              <SideLink to='mypage/block'>차단관리</SideLink>
+            </SideNavItem>
+            <SideNavItem>
+              <SideLink to='mypage/member'>회원정보수정</SideLink>
             </SideNavItem>
           </SideNavList>
         )}

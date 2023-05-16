@@ -104,7 +104,7 @@ const SignIn = () => {
           빌림의 회원이 되시면 <br />
           만원 할인쿠폰을 드립니다.
         </p>
-        <Button sub small to='/emailverify' width='80px'>
+        <Button $sub $small to='/emailverify' width='80px'>
           회원가입
         </Button>
       </SignUpBox>
