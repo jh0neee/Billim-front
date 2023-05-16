@@ -16,6 +16,7 @@ import MyPage from "./pages/MyPage.jsx";
 import PurchaseManagement from "./components/MyPage/PurchaseManagement.jsx";
 import SalesManagement from "./components/MyPage/SalesManagement.jsx";
 import WishList from "./components/MyPage/WishList.jsx";
+import SalesDetailManagement from "./components/MyPage/SalesDetailManagement.jsx";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path='/mypage' element={<MyPage />}>
             <Route path='/mypage/purchase' element={<PurchaseManagement />} />
             <Route path='/mypage/sales' element={<SalesManagement />} />
+            <Route path='/mypage/sales/detail' element={<SalesDetailManagement />} />
             <Route path='/mypage/favorite' element={<WishList />} />
           </Route>
           <Route path='*' element={<Navigate to='/' />} />

@@ -172,3 +172,48 @@ export const purchasedProduct = [
     seller: '사과',
   },
 ];
+
+export const salesProduct = [
+  {
+    id: 1,
+    status: '대여중',
+    trade: '택배',
+    date: format(new Date(), "yyyy-MM-dd") + ' ~ ' + format(new Date(), "yyyy-MM-dd"),
+    customer: '감자',
+  },
+  {
+    id: 2,
+    status: '대기중',
+    trade: '직거래',
+    date: format(new Date(), "yyyy-MM-dd") + ' ~ ' + format(new Date(), "yyyy-MM-dd"),
+    customer: '고구마',
+  },
+  {
+    id: 3,
+    status: '취소',
+    trade: '직거래',
+    date: format(new Date(), "yyyy-MM-dd") + ' ~ ' + format(new Date(), "yyyy-MM-dd"),
+    customer: '케일',
+  },
+  {
+    id: 4,
+    status: '완료',
+    trade: '택배',
+    date: format(new Date(), "yyyy-MM-dd") + ' ~ ' + format(new Date(), "yyyy-MM-dd"),
+    customer: '사과',
+  },
+  {
+    id: 5,
+    status: '대기중',
+    trade: '택배',
+    date: format(new Date(), "yyyy-MM-dd") + ' ~ ' + format(new Date(), "yyyy-MM-dd"),
+    customer: '미나리',
+  },
+  {
+    id: 6,
+    status: '대기중',
+    trade: '직거래',
+    date: format(new Date(), "yyyy-MM-dd") + ' ~ ' + format(new Date(), "yyyy-MM-dd"),
+    customer: '시금치',
+  },
+];

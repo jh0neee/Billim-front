@@ -32,7 +32,7 @@ const SalesManagement = () => {
       <SaleLayout>
         {productItems.map((item) => (
           <SaleBox>
-            <Link>
+            <Link to={'/mypage/sales/detail'}>
               <img
                 src='https://via.placeholder.com/169x140'
                 alt='상품예시이미지'
