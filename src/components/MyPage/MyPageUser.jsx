@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import { TbUserCircle } from "react-icons/tb";
+import { Link } from "react-router-dom";
 
 const UserBox = styled.div`
   display: flex;
@@ -78,7 +79,7 @@ const MyPageUser = () => {
         </UserItemBox>
         <UserItemBox>
           <p>후기작성</p>
-          <p>1</p>
+          <Link to='/mypage/review'>1</Link>
         </UserItemBox>
       </div>
     </UserBox>

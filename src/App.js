@@ -17,6 +17,7 @@ import PurchaseManagement from "./components/MyPage/PurchaseManagement.jsx";
 import SalesManagement from "./components/MyPage/SalesManagement.jsx";
 import WishList from "./components/MyPage/WishList.jsx";
 import SalesDetailManagement from "./components/MyPage/SalesDetailManagement.jsx";
+import Review from "./components/MyPage/Review.jsx";
 import BlockManagement from "./components/MyPage/BlockManagement.jsx";
 import EditMember from "./components/MyPage/EditMember.jsx";
 
@@ -46,6 +47,7 @@ function App() {
             <Route path='/mypage/sales' element={<SalesManagement />} />
             <Route path='/mypage/sales/detail' element={<SalesDetailManagement />} />
             <Route path='/mypage/favorite' element={<WishList />} />
+            <Route path='/mypage/review' element={<Review />} />
             <Route path='/mypage/block' element={<BlockManagement />} />
             <Route path='/mypage/member' element={<EditMember />} />
           </Route>
