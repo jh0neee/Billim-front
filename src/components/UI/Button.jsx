@@ -39,6 +39,7 @@ const Button = (props) => {
   if (props.to) {
     return (
       <LinkButton
+        className={props.className}
         to={props.to}
         width={props.width}
         sub={props.sub}

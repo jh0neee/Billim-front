@@ -1,7 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+
+import Button from "../UI/Button";
 import { productItems } from "../../data";
+
+const SaleHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
 
 const SaleLayout = styled.div`
   margin: 1rem;
@@ -25,14 +32,25 @@ const SaleBox = styled.div`
   }
 `;
 
+const EnrollButton = styled(Button)`
+  margin: 0px 2rem 0 0;
+  width: 60px;
+  height: 27px;
+  font-size: 10px;
+  font-weight: 400;
+`;
+
 const SalesManagement = () => {
   return (
     <>
-      <p>판매중인 상품</p>
+      <SaleHeader>
+        <p>판매중인 상품</p>
+        <EnrollButton to='/new'>상품 등록</EnrollButton>
+      </SaleHeader>
       <SaleLayout>
         {productItems.map((item) => (
-          <SaleBox>
-            <Link to={'/mypage/sales/detail'}>
+          <SaleBox key={item.id}>
+            <Link to='/mypage/sales/detail'>
               <img
                 src='https://via.placeholder.com/169x140'
                 alt='상품예시이미지'

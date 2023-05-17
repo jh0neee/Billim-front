@@ -20,6 +20,7 @@ import SalesDetailManagement from "./components/MyPage/SalesDetailManagement.jsx
 import Review from "./components/MyPage/Review.jsx";
 import BlockManagement from "./components/MyPage/BlockManagement.jsx";
 import EditMember from "./components/MyPage/EditMember.jsx";
+import NewProduct from "./pages/NewProduct.jsx";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
             <Route path='sporting' element={<ProductList />} />
             <Route path='electronic' element={<ProductList />} />
           </Route>
+          <Route path='/new' element={<NewProduct />} />
           <Route path='/:itemName/detail' element={<ProductDetail />} />
           <Route path='/:itemName/payment' element={<ProductPayment />} />
           <Route path='/mypage' element={<MyPage />}>
