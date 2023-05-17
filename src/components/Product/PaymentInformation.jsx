@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import styled, { css } from "styled-components";
 import Dropdown from "../../components/UI/DropDown";
 import Input from "../../components/UI/Input";
 import Button from "../../components/UI/Button";
+import { coupons } from "../../data";
 
 const PayInformation = styled.div`
   padding: 0.5rem;
@@ -74,16 +75,12 @@ const options = [
   { id: 2, item: "택배" },
 ];
 
-const coupon = [
-  { id: 1, item: "5% coupon" },
-  { id: 2, item: "10% coupon" },
-  { id: 3, item: "15% coupon" },
-  { id: 4, item: "20% coupon" },
-];
-
-const ProductInformation = () => {
-  const [selectedOpt, setSelectedOpt] = useState("");
-  const [couponselectedOpt, setCouponSelectedOpt] = useState("");
+const ProductInformation = ({
+  selectedOpt,
+  setSelectedOpt,
+  couponselectedOpt,
+  setCouponSelectedOpt,
+}) => {
 
   return (
     <PayInformation>
@@ -120,7 +117,7 @@ const ProductInformation = () => {
       <InformationBox>
         <PayTitle>쿠폰</PayTitle>
         <TradeDropDown
-          options={coupon}
+          options={coupons}
           selectedOpt={couponselectedOpt}
           setSelectedOpt={setCouponSelectedOpt}
         />

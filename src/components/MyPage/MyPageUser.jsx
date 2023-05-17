@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import { TbUserCircle } from "react-icons/tb";
 import { Link } from "react-router-dom";
+import { coupons, review } from "../../data";
 
 const UserBox = styled.div`
   display: flex;
@@ -75,11 +76,11 @@ const MyPageUser = () => {
         </UserItemBox>
         <UserItemBox>
           <p>쿠폰</p>
-          <p>3</p>
+          <Link to='/mypage/coupon'>{coupons.length}</Link>
         </UserItemBox>
         <UserItemBox>
           <p>후기작성</p>
-          <Link to='/mypage/review'>1</Link>
+          <Link to='/mypage/review'>{review.length}</Link>
         </UserItemBox>
       </div>
     </UserBox>

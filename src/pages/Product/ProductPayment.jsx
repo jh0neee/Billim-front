@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -34,7 +34,11 @@ const PaymentBox = styled.div`
 const ProductPayment = () => {
   const itemName = useParams().itemName;
   const loadedContents = productItems.find((item) => item.name === itemName);
+  
   const navigate = useNavigate();
+
+  const [selectedOpt, setSelectedOpt] = useState("");
+  const [couponselectedOpt, setCouponSelectedOpt] = useState("");
 
   return (
     <PaymentLayout>
@@ -43,9 +47,18 @@ const ProductPayment = () => {
         확인 및 결제
       </PaymentTitle>
       <PaymentBox>
-        <PaymentInformation />
+        <PaymentInformation
+          selectedOpt={selectedOpt}
+          setSelectedOpt={setSelectedOpt}
+          couponselectedOpt={couponselectedOpt}
+          setCouponSelectedOpt={setCouponSelectedOpt}
+        />
         <div>
-          <PaymentConfirm items={loadedContents} />
+          <PaymentConfirm
+            items={loadedContents}
+            selectedOpt={selectedOpt}
+            couponselectedOpt={couponselectedOpt}
+          />
         </div>
       </PaymentBox>
     </PaymentLayout>

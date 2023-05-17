@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import Button from "../../components/UI/Button";
+import { coupons } from "../../data";
 
 const ConfirmBox = styled.div`
   position: sticky;
@@ -78,17 +79,20 @@ const ParagraphBox = styled.div`
   }
 `;
 
-const PaymentConfirm = ({ items }) => {
+const PaymentConfirm = ({ items, selectedOpt, couponselectedOpt }) => {
+  const discountItem = coupons.find((item) => item.item === couponselectedOpt);
+  
   const courierFee = 3000;
   const reserves = 4000;
-  const coupon = 0;
+  const discounted = Math.round(items.amount * (discountItem?.discount / 100));
   const days = 4;
   const total = (
     items.amount * days +
     courierFee -
-    coupon -
+    discounted -
     reserves
   ).toLocaleString("ko-KR");
+
 
   return (
     <ConfirmBox>
@@ -117,7 +121,7 @@ const PaymentConfirm = ({ items }) => {
         </ParagraphBox>
         <ParagraphBox>
           <p className='left'>쿠폰적용</p>
-          <p className='right'>- \ {coupon}</p>
+          <p className='right'>- \ {isNaN(discounted) ? 0 : discounted}</p>
         </ParagraphBox>
         <ParagraphBox>
           <p className='left'>적립금적용</p>
@@ -127,7 +131,7 @@ const PaymentConfirm = ({ items }) => {
       <hr />
       <ParagraphBox>
         <p className='left'>총 합계</p>
-        <p className='right'>\ {total}</p>
+        <p className='right'>\ {isNaN(total) ? 0 : total}</p>
       </ParagraphBox>
       <Button width='90%'>확인 및 결제</Button>
     </ConfirmBox>

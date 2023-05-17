@@ -238,3 +238,24 @@ export const salesProduct = [
     customer: '시금치',
   },
 ];
+
+export const coupons = [
+  {
+    id: 1,
+    item: '9% 할인 쿠폰',
+    discount: 9,
+    date: format(new Date(new Date().setDate(new Date().getDate() + 1)), "yyyy-MM-dd"),
+  },
+  {
+    id: 2,
+    item: '19% 할인 쿠폰',
+    discount: 19,
+    date: format(new Date(), "yyyy-MM-dd"),
+  },
+  {
+    id: 3,
+    item: '5% 할인 쿠폰',
+    discount: 5,
+    date: format(new Date(new Date().setDate(new Date().getDate() - 1)), "yyyy-MM-dd"),
+  },
+];

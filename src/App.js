@@ -21,6 +21,7 @@ import Review from "./components/MyPage/Review.jsx";
 import BlockManagement from "./components/MyPage/BlockManagement.jsx";
 import EditMember from "./components/MyPage/EditMember.jsx";
 import NewProduct from "./pages/NewProduct.jsx";
+import MyPageCoupon from "./components/MyPage/MyPageCoupon.jsx";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
             <Route path='/mypage/review' element={<Review />} />
             <Route path='/mypage/block' element={<BlockManagement />} />
             <Route path='/mypage/member' element={<EditMember />} />
+            <Route path='/mypage/coupon' element={<MyPageCoupon />} />
           </Route>
           <Route path='*' element={<Navigate to='/' />} />
         </Routes>
