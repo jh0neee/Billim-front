@@ -57,6 +57,8 @@ const UserItemBox = styled.div`
 `;
 
 const MyPageUser = () => {
+  const reviewCount = review.filter((item) => item.isReview === false).length;
+
   return (
     <UserBox>
       <div>
@@ -80,7 +82,7 @@ const MyPageUser = () => {
         </UserItemBox>
         <UserItemBox>
           <p>후기작성</p>
-          <Link to='/mypage/review'>{review.length}</Link>
+          <Link to='/mypage/review'>{reviewCount}</Link>
         </UserItemBox>
       </div>
     </UserBox>
