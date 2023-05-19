@@ -1,8 +1,6 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import React from "react";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
-
-import FindUserTab from "../../components/Auth/FindUserTab";
 
 const TabLayout = styled.div`
   width: 400px;
@@ -21,7 +19,7 @@ const TabMenu = styled.ul`
   font-family: "TRoundWind";
 `;
 
-const TabItem = styled.li`
+const TabItem = styled(Link)`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,7 +28,7 @@ const TabItem = styled.li`
   padding: 10px;
   font-size: 18px;
   font-weight: 700;
-  border-bottom: 3px solid ${(props) => (props.currentTab ? "black" : "white")};
+  border-bottom: 3px solid ${(props) => (props.current ? "black" : "white")};
 `;
 
 const FindUserLayout = styled.div`
@@ -45,38 +43,24 @@ const FindUserLayout = styled.div`
 `;
 
 const FindUser = () => {
-  const location = useLocation();
-  const { findId } = location.state;
-
-  const [activeTab, setActiveTab] = useState(findId === true);
-
-  const IdTabHandler = () => {
-    setActiveTab(true);
-  };
-  const PwTabHandler = () => {
-    setActiveTab(false);
-  };
+  const currentTab = useLocation().pathname.slice(10);
 
   return (
     <TabLayout>
       <TabMenu>
         <TabItem
-          currentTab={activeTab === true && "currentTab"}
-          onClick={IdTabHandler}>
+          to='/finduser/id'
+          current={currentTab === "id" ? "current" : null}>
           아이디 찾기
         </TabItem>
         <TabItem
-          currentTab={activeTab === false && "currentTab"}
-          onClick={PwTabHandler}>
+          to='/finduser/password'
+          current={currentTab === "password" ? "current" : null}>
           비밀번호 찾기
         </TabItem>
       </TabMenu>
       <FindUserLayout>
-        {activeTab === true ? (
-          <FindUserTab label='이름' />
-        ) : (
-          <FindUserTab label='아이디' />
-        )}
+        <Outlet />
       </FindUserLayout>
     </TabLayout>
   );

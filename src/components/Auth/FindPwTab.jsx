@@ -14,17 +14,17 @@ const TimeOut = styled.p`
   padding: 20px 20px 15px 15px;
 `;
 
-const FindUserTab = (props) => {
+const FindPwTab = () => {
   //NOTE - 인증 확인되는 즉시 비밀번호 재설정 페이지로 이동
   return (
     <>
       <Input
         bar
         element='input'
-        id='name'
+        id='id'
         type='text'
-        label={props.label}
-        placeholder={`${props.label} 입력해주세요`}
+        label='아이디'
+        placeholder='아이디 입력해주세요'
       />
       <FindUserBox>
         <Input
@@ -58,4 +58,4 @@ const FindUserTab = (props) => {
   );
 };
 
-export default FindUserTab;
+export default FindPwTab;

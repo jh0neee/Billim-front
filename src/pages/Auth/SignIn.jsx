@@ -87,11 +87,11 @@ const SignIn = () => {
       />
       <Button type='submit'>로그인</Button>
       <FindButtonBox>
-        <Link to='/finduser' state={{ findId: true }}>
+        <Link to='/finduser/id'>
           아이디 찾기
         </Link>
         <span>|</span>
-        <Link to='/finduser' state={{ findId: false }}>
+        <Link to='/finduser/password'>
           비밀번호 찾기
         </Link>
       </FindButtonBox>
