@@ -6,8 +6,10 @@ import { ImBubble } from "react-icons/im";
 
 import Input from "../../components/UI/Input";
 import Button from "../../components/UI/Button";
+import { VALIDATOR_REQUIRE } from "../../util/validators";
+import { useForm } from "../../hooks/useForm";
 
-const SignInLayout = styled.div`
+const SignInLayout = styled.form`
   margin-top: 8.5rem;
   display: flex;
   flex-direction: column;
@@ -69,14 +71,24 @@ const SignUpBox = styled.div`
 `;
 
 const SignIn = () => {
+  const [formState, inputHandler] = useForm({}, false);
+
+  const SubmitHandler = (e) => {
+    e.preventDefault();
+    console.log(formState.inputs);
+  };
+
   return (
-    <SignInLayout>
+    <SignInLayout onSubmit={SubmitHandler}>
       <Input
         element='input'
         id='id'
         type='text'
         width='300px'
         placeholder='ID'
+        validators={[VALIDATOR_REQUIRE()]}
+        errorText='아이디를 입력해주세요'
+        onInput={inputHandler}
       />
       <Input
         element='input'
@@ -84,16 +96,17 @@ const SignIn = () => {
         type='text'
         width='300px'
         placeholder='Password'
+        validators={[VALIDATOR_REQUIRE()]}
+        errorText='비밀번호를 입력해주세요'
+        onInput={inputHandler}
       />
-      <Button type='submit'>로그인</Button>
+      <Button type='submit' disabled={!formState.isValid}>
+        로그인
+      </Button>
       <FindButtonBox>
-        <Link to='/finduser/id'>
-          아이디 찾기
-        </Link>
+        <Link to='/finduser/id'>아이디 찾기</Link>
         <span>|</span>
-        <Link to='/finduser/password'>
-          비밀번호 찾기
-        </Link>
+        <Link to='/finduser/password'>비밀번호 찾기</Link>
       </FindButtonBox>
       <ButtonBox>
         <KakaoIcon />

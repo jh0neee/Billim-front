@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
 
 import Dropdown from "../../components/UI/DropDown";
 import Input from "../../components/UI/Input";
 import Button from "../../components/UI/Button";
-import { useDispatch, useSelector } from "react-redux";
 import { emailAction } from "../../store/signup";
+import { useForm } from "../../hooks/useForm";
+import { VALIDATOR_REQUIRE } from "../../util/validators";
 
-const VerificationLayout = styled.div`
+const VerificationLayout = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,30 +61,27 @@ const options = [
 ];
 
 const EmailVerification = () => {
-  const [text, setText] = useState("");
-  const [selectedOpt, setSelectedOpt] = useState("");
   const dispatch = useDispatch();
   const email = useSelector((state) => state.email);
-
-  const onChange = (e) => {
-    setText(e.target.value);
-  };
+  const [selectedOpt, setSelectedOpt] = useState("");
+  const [formState, inputHandler] = useForm({}, false);
 
   useEffect(() => {
     dispatch(
       emailAction.EMAIL_INPUT_CHANGE({
-        inputValue: text,
+        inputValue: formState.inputs.email?.value,
         selectedOpt,
       })
     );
-  }, [dispatch, text, selectedOpt]);
+  }, [dispatch, formState, selectedOpt]);
 
-  const onSubmit = () => {
+  const emailSubmitHandler = (e) => {
+    e.preventDefault();
     console.log(email.email + "@" + email.domain);
   };
 
   return (
-    <VerificationLayout>
+    <VerificationLayout onSubmit={emailSubmitHandler}>
       <VerificationTitle>이메일 인증</VerificationTitle>
       <EmailBox>
         <Input
@@ -91,8 +90,9 @@ const EmailVerification = () => {
           type='text'
           width='150px'
           placeholder='email'
-          onChange={onChange}
-          value={text}
+          validators={[VALIDATOR_REQUIRE()]}
+          errorText={null}
+          onInput={inputHandler}
         />
         <AtSignParagraph>@</AtSignParagraph>
         <Dropdown
@@ -101,7 +101,7 @@ const EmailVerification = () => {
           setSelectedOpt={setSelectedOpt}
         />
       </EmailBox>
-      <Button small width='100px' onClick={onSubmit}>
+      <Button small width='100px' type='submit'>
         인증 받기
       </Button>
     </VerificationLayout>

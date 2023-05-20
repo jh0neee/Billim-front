@@ -1,9 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+
 import SignUpItems from "../../components/Auth/SignUpItem";
 import Button from "../../components/UI/Button";
+import { useForm } from "../../hooks/useForm";
 
-const SignUpLayout = styled.div`
+const SignUpLayout = styled.form`
   width: 60%;
   margin: 85px auto 0;
   padding: 1.5rem 0;
@@ -20,7 +22,6 @@ const SignUpBox = styled.div`
   margin: 3rem 0 0;
 `;
 
-// height 38px
 const ContentLine = styled.hr`
   width: 100%;
   margin-top: 25px;
@@ -35,40 +36,51 @@ const EnterBox = styled.div`
 `;
 
 const SignUp = () => {
+  const [formState, inputHandler] = useForm({}, false);
+
+  const signUpSubmitHandler = (e) => {
+    e.preventDefault();
+    console.log(formState.inputs);
+  };
+
   return (
-    <SignUpLayout>
+    <SignUpLayout onSubmit={signUpSubmitHandler}>
       <SignUpTitle>회원가입</SignUpTitle>
       <SignUpBox>
-        <SignUpItems id="email">아이디</SignUpItems>
+        <SignUpItems id='email'>아이디</SignUpItems>
         <ContentLine />
         <SignUpItems
           label='비밀번호'
-          id='pw'
+          id='password'
           placeholder='8~16자 사이 영문 대,소문자'
+          onInput={inputHandler}
         />
         <SignUpItems
           label='비밀번호 확인'
-          id='repw'
+          id='repassword'
           placeholder='비밀번호 재입력해주세요'
+          onInput={inputHandler}
         />
         <ContentLine />
         <SignUpItems
           label='이름(실명)'
           id='name'
           placeholder='이름 입력해주세요'
+          onInput={inputHandler}
         />
         <ContentLine />
         <SignUpItems
           label='닉네임'
           id='nickname'
           placeholder='닉네임 입력해주세요'
+          onInput={inputHandler}
         />
         <ContentLine />
-        <SignUpItems label='주소' id='address' />
+        <SignUpItems label='주소' id='address' onInput={inputHandler} />
         <ContentLine />
       </SignUpBox>
       <EnterBox>
-        <Button width='15rem'>
+        <Button type='submit' width='15rem'>
           회원가입하기
         </Button>
       </EnterBox>
