@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect, useReducer } from "react";
 import styled, { css } from "styled-components";
+
+import { inputReducer, initialState } from "../../store/reducer/inputReducer";
 
 const defaultInput = css`
   width: ${(props) => props.width || "100%"};
@@ -45,7 +47,41 @@ const StyledTextArea = styled.textarea`
   resize: none;
 `;
 
+const ErrorText = styled.p`
+  padding-top: 8px;
+  padding-left: 6px;
+  font-size: 0.5rem;
+  color: red;
+
+  ${props => props.null && css`
+    display: none;
+  `}
+`;
+
 const Input = (props) => {
+  const [inputState, dispatch] = useReducer(inputReducer, initialState);
+
+  const { id, onInput } = props;
+  const { value, isValid } = inputState;
+
+  useEffect(() => {
+    onInput(id, value, isValid);
+  }, [id, value, isValid, onInput]);
+
+  const changeHandler = (e) => {
+    dispatch({
+      type: "CHANGE",
+      val: e.target.value,
+      validators: props.validators,
+    });
+  };
+
+  const touchHandler = () => {
+    dispatch({
+      type: "TOUCH",
+    });
+  };
+
   const element =
     props.element === "input" ? (
       <StyledInput
@@ -54,9 +90,10 @@ const Input = (props) => {
         bar={props.bar}
         width={props.width}
         height={props.height}
+        value={inputState.value}
         placeholder={props.placeholder}
-        onChange={props.onChange}
-        value={props.value}
+        onChange={changeHandler}
+        onBlur={touchHandler}
         required
       />
     ) : (
@@ -65,9 +102,10 @@ const Input = (props) => {
         rows={props.rows || 3}
         bar={props.bar}
         width={props.width}
+        value={inputState.value}
         placeholder={props.placeholder}
-        onChange={props.onChange}
-        value={props.value}
+        onChange={changeHandler}
+        onBlur={touchHandler}
         required
       />
     );
@@ -76,7 +114,9 @@ const Input = (props) => {
     <InputBox className={props.className}>
       <InputLabel htmlFor={props.id}>{props.label}</InputLabel>
       {element}
-      <p>{props.errorText}</p>
+      {!inputState.isValid && inputState.isTouched && (
+        <ErrorText null={props.errorText === null}>{props.errorText}</ErrorText>
+      )}
     </InputBox>
   );
 };
