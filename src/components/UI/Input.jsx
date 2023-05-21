@@ -77,7 +77,9 @@ const Input = (props) => {
       validators: props.validators,
     });
 
-    setReset(false);
+    if (typeof setReset === "function") {
+      setReset(false);
+    }
   };
 
   const touchHandler = () => {
