@@ -3,6 +3,8 @@ import styled from "styled-components";
 
 import Button from "../UI/Button";
 import Input from "../UI/Input";
+import { VALIDATOR_REQUIRE } from "../../util/validators";
+import { useForm } from "../../hooks/useForm";
 import { review } from "../../data";
 
 const ReviewLayout = styled.div`
@@ -71,7 +73,7 @@ const WritedReview = styled.div`
   }
 `;
 
-const ReviewInputBox = styled.div`
+const ReviewInputBox = styled.form`
   display: flex;
   flex-direction: column;
 
@@ -90,12 +92,15 @@ const ExtraButton = styled(Button)`
 
 const Review = () => {
   const [isOpenReview, setIsOpenReview] = useState("");
+  const [formState, inputHandler] = useForm({}, false);
 
-  const onClickReview = (id) => {
-    setIsOpenReview((item) => item.isOpenReview !== id ? id : "");
-    if(isOpenReview === id) {
-      setIsOpenReview(false);
-    }
+  const toggleReview = (id) => {
+    setIsOpenReview((prev) => (prev !== id ? id : false));
+  };
+
+  const reviewSubmitHandler = (e) => {
+    e.preventDefault();
+    console.log(formState.inputs);
   };
 
   return (
@@ -118,21 +123,28 @@ const Review = () => {
             <BottomList>
               <p>주문일시 : {item.date}</p>
               {!item.isReview && (
-                <ExtraButton onClick={() => onClickReview(item.id)}>후기작성</ExtraButton>
+                <ExtraButton onClick={() => toggleReview(item.id)}>
+                  후기작성
+                </ExtraButton>
               )}
             </BottomList>
           </ReviewItemList>
           {!item.isReview && isOpenReview === item.id && (
             <WritedReview review>
               <p> ➤ 후기 작성하기</p>
-              <ReviewInputBox>
+              <ReviewInputBox onSubmit={reviewSubmitHandler}>
                 <Input
                   element='textarea'
                   id='review'
                   width='100%'
                   rows='5'
+                  validators={[VALIDATOR_REQUIRE()]}
+                  errorText={null}
+                  onInput={inputHandler}
                 />
-                <ExtraButton>확인</ExtraButton>
+                <ExtraButton type='submit' disabled={!formState.isValid}>
+                  확인
+                </ExtraButton>
               </ReviewInputBox>
             </WritedReview>
           )}
