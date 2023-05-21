@@ -1,0 +1,62 @@
+.pagination {
+  font-family: 'TRoundWind';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 3rem;
+}
+
+.pagination li {
+  margin: 7px;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.pagination li a {
+  text-decoration: none;
+  font-size: 0.75rem;
+  line-height: 25px;
+  text-align: center;
+  width: 25px;
+  height: 25px;
+  background: transparent;
+  border: 0;
+  border-radius: 20px;
+}
+
+.pagination :nth-child(2) a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination :nth-last-child(2) a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination :first-child a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination :last-child a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination li.active a {
+  background-color: #fcd34d;
+  color: #f9fafc;
+}
+
+.pagination li.active {
+  font-weight: 700;
+}
