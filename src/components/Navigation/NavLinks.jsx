@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 
 import { TbMessageChatbot } from "react-icons/tb";
-import { TbUserCircle } from "react-icons/tb";
+import { Profile } from "../UI/Profile";
 
 const NavList = styled.ul`
   list-style: none;
@@ -18,6 +18,11 @@ const NavList = styled.ul`
 
 const NavItem = styled.li`
   margin: 0.1rem;
+
+  &:last-child {
+    margin-bottom: 0.3rem;
+    font-size: 1.1rem;
+  }
 `;
 
 const StyledNavLink = styled(NavLink)`
@@ -26,11 +31,6 @@ const StyledNavLink = styled(NavLink)`
   font-weight: 600;
   color: ${(props) => props.theme.fontColor};
   text-decoration: none;
-
-  .icon {
-    font-size: 35px;
-    padding-top: 0.2rem;
-  }
 `;
 
 const NavLinks = () => {
@@ -39,12 +39,14 @@ const NavLinks = () => {
     <NavList>
       <NavItem>
         <StyledNavLink to='/chat'>
-          <TbMessageChatbot className='icon' />
+          <TbMessageChatbot size='38px' />
         </StyledNavLink>
       </NavItem>
-      <StyledNavLink>
-        <TbUserCircle className='icon' />
-      </StyledNavLink>
+      <NavItem>
+        <StyledNavLink>
+          <Profile size='35px' />
+        </StyledNavLink>
+      </NavItem>
       <NavItem>
         <StyledNavLink to='/login'>로그인</StyledNavLink>
       </NavItem>

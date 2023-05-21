@@ -2,7 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 import Button from "../UI/Button";
-import { TbUserCircle } from "react-icons/tb";
+import { Profile } from "../UI/Profile";
 
 const EditMemberLayout = styled.div`
   margin: 0 0 3rem;
@@ -66,7 +66,7 @@ const EditMember = () => {
         <EditMemberBox first>
           <p>사진</p>
           <div>
-            <TbUserCircle size='50px' />
+            <Profile size='50px' />
             <p>
               회원님을 알릴 수 있는 사진을 등록해주세요. <br />
               등록된 사진은 회원님의 게시물이나 댓글에 사용됩니다.

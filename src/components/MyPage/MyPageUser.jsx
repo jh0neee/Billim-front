@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-
-import { TbUserCircle } from "react-icons/tb";
 import { Link } from "react-router-dom";
+
+import { Profile } from "../UI/Profile";
 import { coupons, review } from "../../data";
 
 const UserBox = styled.div`
@@ -62,7 +62,7 @@ const MyPageUser = () => {
   return (
     <UserBox>
       <div>
-        <TbUserCircle size='130px' />
+        <Profile size='130px' />
         <UserParagraphBox>
           <p>닉네임</p>
           <div>

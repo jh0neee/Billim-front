@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 
-import { TbUserCircle } from "react-icons/tb";
 import Button from "../UI/Button";
 import Card from "../UI/Card";
+import { Profile } from "../UI/Profile";
 
 const SaleInfoLayout = styled.div`
   margin: 3rem 0 0;
@@ -78,7 +78,7 @@ const SalesDetailInfo = ({ label, items }) => {
           <>
             <SaleBottomBox>
               <BuyerInfo>
-                <TbUserCircle size='70px' />
+                <Profile size='70px' />
                 <BottomTextBox status={item.status}>
                   <p>구매자: {item.customer}</p>
                   <p>거래방법: {item.trade}</p>

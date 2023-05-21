@@ -5,8 +5,8 @@ import {
   TbTruckDelivery,
   TbHomeMove,
   TbAward,
-  TbUserCircle,
 } from "react-icons/tb";
+import { Profile } from "../UI/Profile";
 
 const ContentTitle = styled.div`
   display: flex;
@@ -66,7 +66,7 @@ const DetailContent = () => {
     <div>
       <ContentTitle>
         <p>UESR님이 대여하는 상품</p>
-        <TbUserCircle size='45px' />
+        <Profile size='45px' />
       </ContentTitle>
       <hr />
       <CategoryBox>

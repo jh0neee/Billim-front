@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import { TbUserCircle } from "react-icons/tb";
+import { Profile } from "../UI/Profile";
 
 const ReviewLayout = styled.div`
   display: grid;
@@ -49,7 +49,7 @@ const DetailReview = ({ data, isViewMore }) => {
       {exampleReview.map((rv) => (
         <ReviewContent key={rv.id}>
           <div>
-            <TbUserCircle size='45px' />
+            <Profile size='45px' />
             <ReviewUserBox>
               <p>{rv.username}</p>
               <p>{rv.date}</p>
@@ -63,7 +63,7 @@ const DetailReview = ({ data, isViewMore }) => {
         moreReview.map((rv) => (
           <ReviewContent key={rv.id}>
             <div>
-              <TbUserCircle size='45px' />
+              <Profile size='45px' />
               <ReviewUserBox>
                 <p>{rv.username}</p>
                 <p>{rv.date}</p>
