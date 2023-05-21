@@ -6,6 +6,8 @@ import { useDispatch } from "react-redux";
 import { TbBarbell, TbHanger, TbMicrowave, TbHome } from "react-icons/tb";
 import Button from "../../components/UI/Button";
 import Input from "../../components/UI/Input";
+import { useForm } from "../../hooks/useForm";
+import { VALIDATOR_REQUIRE } from "../../util/validators";
 import { searchAction } from "../../store/search";
 import { productItems } from "../../data";
 
@@ -25,34 +27,33 @@ const CategoryBox = styled.div`
   }
 `;
 
-const SearchBox = styled.div`
+const SearchBox = styled.form`
   margin-right: 6.5rem;
   display: flex;
   align-items: center;
 `;
 
 const ProductCategory = () => {
-  const [search, setSearch] = useState("");
   const dispatch = useDispatch();
-
-  const handleSearchData = (e) => {
-    setSearch(e.target.value);
-  };
-
-  const onClickSearch = (e) => {
-    e.preventDefault();
-
-    dispatch(searchAction.CLICK_SEARCH({
-      inputValue: search,
-      search: true,
-      item: productItems,
-    }));
-
-    setSearch("");
-  };
+  const [resetInput, setResetInput] = useState(false);
+  const [formState, inputHandler] = useForm({}, false);
 
   const handleClearSearch = () => {
     dispatch(searchAction.CLEAR_SEARCH(false));
+  };
+
+  const searchSubmitHandler = (e) => {
+    e.preventDefault();
+
+    dispatch(
+      searchAction.CLICK_SEARCH({
+        inputValue: formState.inputs.search?.value,
+        search: true,
+        item: productItems,
+      })
+    );
+
+    setResetInput(true);
   };
 
   return (
@@ -75,23 +76,22 @@ const ProductCategory = () => {
           <p>전자기기</p>
         </NavLink>
       </CategoryBox>
-      <SearchBox>
+      <SearchBox onSubmit={searchSubmitHandler}>
         <Input
           bar
+          id='search'
           element='input'
           type='text'
           placeholder='검색어를 입력하세요'
           width='14rem'
-          onChange={handleSearchData}
-          value={search}
+          reset={resetInput}
+          setReset={setResetInput}
+          validators={[VALIDATOR_REQUIRE()]}
+          errorText={null}
+          onInput={inputHandler}
         />
-        <Button
-          sub
-          small
-          width='45px'
-          onClick={onClickSearch}
-          disabled={search.length === 0}>
-          찾기
+        <Button sub small type='submit' width='45px'>
+          검색
         </Button>
       </SearchBox>
     </>

@@ -14,13 +14,17 @@ export const inputReducer = (state = initialState, action) => {
         value: action.val,
         isValid: validate(action.val, action.validators),
       };
+
     case "TOUCH":
       return {
         ...state,
         isTouched: true,
       };
+
+    case "RESET":
+      return initialState;
+
     default:
       return state;
   }
 };
- 

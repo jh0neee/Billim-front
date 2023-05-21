@@ -53,15 +53,17 @@ const ErrorText = styled.p`
   font-size: 0.5rem;
   color: red;
 
-  ${props => props.null && css`
-    display: none;
-  `}
+  ${(props) =>
+    props.null &&
+    css`
+      display: none;
+    `}
 `;
 
 const Input = (props) => {
   const [inputState, dispatch] = useReducer(inputReducer, initialState);
 
-  const { id, onInput } = props;
+  const { id, onInput, setReset, reset } = props;
   const { value, isValid } = inputState;
 
   useEffect(() => {
@@ -74,6 +76,8 @@ const Input = (props) => {
       val: e.target.value,
       validators: props.validators,
     });
+
+    setReset(false);
   };
 
   const touchHandler = () => {
@@ -81,6 +85,14 @@ const Input = (props) => {
       type: "TOUCH",
     });
   };
+
+  useEffect(() => {
+    if (reset) {
+      dispatch({
+        type: "RESET",
+      });
+    }
+  }, [reset]);
 
   const element =
     props.element === "input" ? (
