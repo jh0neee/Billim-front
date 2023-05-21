@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import Input from "../../components/UI/Input";
 import Button from "../UI/Button";
 
-import { VALIDATOR_REQUIRE } from "../../util/validators";
+import { VALIDATOR_REQUIRE, VALIDATOR_PASSWORD } from "../../util/validators";
 
 const SignUpItem = styled.li`
   display: grid;
@@ -32,12 +32,29 @@ const SignUpLabel = styled.p`
 `;
 
 const SignUpItems = (props) => {
-  const { id, label, placeholder, onInput } = props;
+  const { id, label, placeholder, onInput, password } = props;
 
   if (id === "email") {
     return (
       <SignUpItem>
         <SignUpLabel>아이디</SignUpLabel>
+      </SignUpItem>
+    );
+  }
+  if (id === "repassword") {
+    return (
+      <SignUpItem>
+        <SignUpLabel>{label}</SignUpLabel>
+        <Input
+          element='input'
+          type='password'
+          id={id}
+          width='17.5rem'
+          placeholder='비밀번호 재입력해주세요'
+          validators={[VALIDATOR_PASSWORD(password)]}
+          errorText='비밀번호가 일치하지 않습니다'
+          onInput={onInput}
+        />
       </SignUpItem>
     );
   }
@@ -104,7 +121,7 @@ const SignUpItems = (props) => {
       <SignUpLabel>{label}</SignUpLabel>
       <Input
         element='input'
-        type='text'
+        type={props.type || "text"}
         id={id}
         width='17.5rem'
         placeholder={placeholder}

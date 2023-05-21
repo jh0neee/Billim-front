@@ -52,13 +52,14 @@ const SignUp = () => {
         <SignUpItems
           label='비밀번호'
           id='password'
+          type='password'
           placeholder='8~16자 사이 영문 대,소문자'
           onInput={inputHandler}
         />
         <SignUpItems
           label='비밀번호 확인'
           id='repassword'
-          placeholder='비밀번호 재입력해주세요'
+          password={formState.inputs.password}
           onInput={inputHandler}
         />
         <ContentLine />
