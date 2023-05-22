@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import styled, { css } from "styled-components";
 
@@ -70,6 +70,7 @@ const SideMenu = () => {
   //NOTE - 마이페이지는 로그인 시에만 보이도록
   const [isSlideMenu, setIsSlideMenu] = useState(false);
   const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const slideHandler = (e) => {
     e.stopPropagation();
@@ -108,31 +109,33 @@ const SideMenu = () => {
         </SideLink>
       </SideNavItem>
       <hr className='line' />
-      <SideNavItem>
-        <MyPageTitle onClick={slideHandler}>마이페이지</MyPageTitle>
-        {isSlideMenu && (
-          <SideNavList sub>
-            <SideNavItem>
-              <SideLink to='mypage/purchase'>구매관리</SideLink>
-            </SideNavItem>
-            <SideNavItem>
-              <SideLink to='mypage/sales'>판매관리</SideLink>
-            </SideNavItem>
-            <SideNavItem>
-              <SideLink to='mypage/favorite'>관심상품</SideLink>
-            </SideNavItem>
-            <SideNavItem>
-              <SideLink to='mypage/review'>후기</SideLink>
-            </SideNavItem>
-            <SideNavItem>
-              <SideLink to='mypage/block'>차단관리</SideLink>
-            </SideNavItem>
-            <SideNavItem>
-              <SideLink to='mypage/member'>회원정보수정</SideLink>
-            </SideNavItem>
-          </SideNavList>
-        )}
-      </SideNavItem>
+      {isLoggedIn && (
+        <SideNavItem>
+          <MyPageTitle onClick={slideHandler}>마이페이지</MyPageTitle>
+          {isSlideMenu && (
+            <SideNavList sub>
+              <SideNavItem>
+                <SideLink to='mypage/purchase'>구매관리</SideLink>
+              </SideNavItem>
+              <SideNavItem>
+                <SideLink to='mypage/sales'>판매관리</SideLink>
+              </SideNavItem>
+              <SideNavItem>
+                <SideLink to='mypage/favorite'>관심상품</SideLink>
+              </SideNavItem>
+              <SideNavItem>
+                <SideLink to='mypage/review'>후기</SideLink>
+              </SideNavItem>
+              <SideNavItem>
+                <SideLink to='mypage/block'>차단관리</SideLink>
+              </SideNavItem>
+              <SideNavItem>
+                <SideLink to='mypage/member'>회원정보수정</SideLink>
+              </SideNavItem>
+            </SideNavList>
+          )}
+        </SideNavItem>
+      )}
     </SideNavList>
   );
 };

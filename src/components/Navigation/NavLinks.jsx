@@ -1,28 +1,25 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import styled from "styled-components";
+import { useSelector } from "react-redux";
+import styled, { css } from "styled-components";
 
 import { TbMessageChatbot } from "react-icons/tb";
 import { Profile } from "../UI/Profile";
 
 const NavList = styled.ul`
-  list-style: none;
   margin-left: 3rem;
-  padding: 0px;
-  display: grid;
-  grid-template-columns: 0.5fr 0.5fr 1fr;
-  column-gap: 15px;
-  justify-items: center;
+  margin-top: 0.5rem;
+  display: flex;
   align-items: center;
 `;
 
 const NavItem = styled.li`
-  margin: 0.1rem;
+  margin: 0.1rem 0.5rem;
 
-  &:last-child {
+  ${props => props.login && css`
     margin-bottom: 0.3rem;
     font-size: 1.1rem;
-  }
+  `}
 `;
 
 const StyledNavLink = styled(NavLink)`
@@ -34,22 +31,29 @@ const StyledNavLink = styled(NavLink)`
 `;
 
 const NavLinks = () => {
-  //NOTE - icon은 로그인 시에만 보이게, 로그아웃은 profile modal 안에
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
   return (
     <NavList>
-      <NavItem>
-        <StyledNavLink to='/chat'>
-          <TbMessageChatbot size='38px' />
-        </StyledNavLink>
-      </NavItem>
-      <NavItem>
-        <StyledNavLink>
-          <Profile size='35px' />
-        </StyledNavLink>
-      </NavItem>
-      <NavItem>
-        <StyledNavLink to='/login'>로그인</StyledNavLink>
-      </NavItem>
+      {isLoggedIn && (
+        <NavItem>
+          <StyledNavLink to='/chat'>
+            <TbMessageChatbot size='38px' />
+          </StyledNavLink>
+        </NavItem>
+      )}
+      {isLoggedIn && (
+        <NavItem>
+          <StyledNavLink>
+            <Profile size='35px' />
+          </StyledNavLink>
+        </NavItem>
+      )}
+      {!isLoggedIn && (
+        <NavItem login>
+          <StyledNavLink to='/login'>로그인</StyledNavLink>
+        </NavItem>
+      )}
     </NavList>
   );
 };
