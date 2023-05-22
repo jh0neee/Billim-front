@@ -1,11 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
-
-import { ImBubble } from "react-icons/im";
 
 import Input from "../../components/UI/Input";
 import Button from "../../components/UI/Button";
+import { ImBubble } from "react-icons/im";
+import { authAction } from "../../store/auth";
 import { VALIDATOR_REQUIRE } from "../../util/validators";
 import { useForm } from "../../hooks/useForm";
 
@@ -71,11 +72,14 @@ const SignUpBox = styled.div`
 `;
 
 const SignIn = () => {
+  const dispatch = useDispatch();
   const [formState, inputHandler] = useForm({}, false);
 
   const SubmitHandler = (e) => {
     e.preventDefault();
     console.log(formState.inputs);
+
+    dispatch(authAction.LOGIN());
   };
 
   return (
@@ -93,7 +97,7 @@ const SignIn = () => {
       <Input
         element='input'
         id='password'
-        type='text'
+        type='password'
         width='300px'
         placeholder='Password'
         validators={[VALIDATOR_REQUIRE()]}

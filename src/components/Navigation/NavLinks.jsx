@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
-import styled, { css, keyframes} from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import styled, { css, keyframes } from "styled-components";
 
 import { TbMessageChatbot } from "react-icons/tb";
+import { authAction } from "../../store/auth";
 import { Profile } from "../UI/Profile";
 
 const NavList = styled.ul`
@@ -32,7 +33,6 @@ const StyledNavLink = styled(NavLink)`
   color: ${(props) => props.theme.fontColor};
   text-decoration: none;
 `;
-
 
 const slideIn = keyframes`
   from {
@@ -71,11 +71,16 @@ const DropMenu = styled.ul`
 `;
 
 const NavLinks = () => {
+  const dispatch = useDispatch();
   const [isSlideMenu, setIsSlideMenu] = useState(false);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const slideHandler = () => {
     setIsSlideMenu(!isSlideMenu);
+  };
+
+  const logoutHandler = () => {
+    dispatch(authAction.LOGOUT());
   };
 
   return (
@@ -92,8 +97,14 @@ const NavLinks = () => {
           <Profile size='35px' />
           {isSlideMenu && (
             <DropMenu show={isSlideMenu}>
-              <Link>마이페이지</Link>
-              <Link>로그아웃</Link>
+              <li>
+                <Link to='/mypage/purchase'>마이페이지</Link>
+              </li>
+              <li>
+                <Link to='/' onClick={logoutHandler}>
+                  로그아웃
+                </Link>
+              </li>
             </DropMenu>
           )}
         </NavItem>
