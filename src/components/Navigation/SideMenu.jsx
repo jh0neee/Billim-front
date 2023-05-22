@@ -39,7 +39,7 @@ const SideNavItem = styled.li`
   margin: 0.5rem 0.1rem;
 
   ${(props) =>
-    props.in &&
+    props.leftIn &&
     css`
       padding-left: 0.4rem;
     `}
@@ -47,20 +47,12 @@ const SideNavItem = styled.li`
 
 const SideLink = styled(NavLink)`
   border: 1px solid transparent;
-  font-family: "SCDream";
-  font-weight: 600;
-  font-size: 1rem;
+  font-family: ${(props) => (props.mainlink ? "TRoundWind" : "SCDream")};
+  font-weight: ${(props) => (props.mainlink ? "700" : "600")};
+  font-size: ${(props) => (props.mainlink ? "1.5rem" : "1rem")};
   color: ${(props) => props.theme.fontColor};
   text-decoration: none;
   transition: color 0.3s ease;
-
-  ${(props) =>
-    props.main &&
-    css`
-      font-family: "TRoundWind";
-      font-weight: 700;
-      font-size: 1.5rem;
-    `}
 
   &:hover {
     color: ${(props) => props.theme.fontHover};
@@ -91,26 +83,26 @@ const SideMenu = () => {
   return (
     <SideNavList>
       <SideNavItem>
-        <SideLink to='/product' $main onClick={handleClearSearch}>
+        <SideLink to='/product' mainlink='true' onClick={handleClearSearch}>
           전체상품
         </SideLink>
       </SideNavItem>
-      <SideNavItem $in>
+      <SideNavItem leftIn>
         <SideLink to='/product/living' onClick={handleClearSearch}>
           생활용품
         </SideLink>
       </SideNavItem>
-      <SideNavItem $in>
+      <SideNavItem leftIn>
         <SideLink to='/product/apparel' onClick={handleClearSearch}>
           의류잡화
         </SideLink>
       </SideNavItem>
-      <SideNavItem $in>
+      <SideNavItem leftIn>
         <SideLink to='/product/sporting' onClick={handleClearSearch}>
           운동용품
         </SideLink>
       </SideNavItem>
-      <SideNavItem $in>
+      <SideNavItem leftIn>
         <SideLink to='/product/electronic' onClick={handleClearSearch}>
           전자제품
         </SideLink>
