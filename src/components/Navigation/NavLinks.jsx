@@ -1,7 +1,7 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
-import styled, { css } from "styled-components";
+import styled, { css, keyframes} from "styled-components";
 
 import { TbMessageChatbot } from "react-icons/tb";
 import { Profile } from "../UI/Profile";
@@ -15,11 +15,14 @@ const NavList = styled.ul`
 
 const NavItem = styled.li`
   margin: 0.1rem 0.5rem;
+  position: ${(props) => (props.toggle ? "relative" : "none")};
 
-  ${props => props.login && css`
-    margin-bottom: 0.3rem;
-    font-size: 1.1rem;
-  `}
+  ${(props) =>
+    props.login &&
+    css`
+      margin-bottom: 0.3rem;
+      font-size: 1.1rem;
+    `}
 `;
 
 const StyledNavLink = styled(NavLink)`
@@ -30,8 +33,50 @@ const StyledNavLink = styled(NavLink)`
   text-decoration: none;
 `;
 
+
+const slideIn = keyframes`
+  from {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+`;
+
+const DropMenu = styled.ul`
+  position: absolute;
+  background-color: white;
+  width: 130px;
+  font-family: "TRoundWind";
+  font-size: 0.8rem;
+  padding: 1rem 0;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+  top: 46px;
+  right: -43px;
+  opacity: ${(props) => (props.show ? 1 : 0)};
+  visibility: ${(props) => (props.show ? "visible" : "hidden")};
+  transform: translateY(${(props) => (props.show ? "0" : "-20px")});
+  transition: opacity 0.4s ease, visibility 0.4s;
+  animation: ${slideIn} 0.4s ease-in-out;
+
+  > :first-child {
+    margin-bottom: 1rem;
+  }
+`;
+
 const NavLinks = () => {
+  const [isSlideMenu, setIsSlideMenu] = useState(false);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  const slideHandler = () => {
+    setIsSlideMenu(!isSlideMenu);
+  };
 
   return (
     <NavList>
@@ -43,10 +88,14 @@ const NavLinks = () => {
         </NavItem>
       )}
       {isLoggedIn && (
-        <NavItem>
-          <StyledNavLink>
-            <Profile size='35px' />
-          </StyledNavLink>
+        <NavItem toggle onClick={slideHandler}>
+          <Profile size='35px' />
+          {isSlideMenu && (
+            <DropMenu show={isSlideMenu}>
+              <Link>마이페이지</Link>
+              <Link>로그아웃</Link>
+            </DropMenu>
+          )}
         </NavItem>
       )}
       {!isLoggedIn && (
