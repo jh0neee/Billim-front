@@ -3,7 +3,8 @@ const VALIDATOR_TYPE_MINLENGTH = "MINLENGTH"; // 최소길이
 const VALIDATOR_TYPE_MAXLENGTH = "MAXLENGTH"; // 최대길이
 const VALIDATOR_TYPE_MIN = "MIN"; // 최솟값
 const VALIDATOR_TYPE_MAX = "MAX"; // 최댓값
-const VALIDATOR_TYPE_MATCH_PASSWORD = "PASSWORD";
+const VALIDATOR_TYPE_MATCH_PASSWORD = "MATCH_PASSWORD";
+const VALIDATOR_TYPE_PASSWORD = "PASSWORD";
 
 export const VALIDATOR_REQUIRE = () => ({ type: VALIDATOR_TYPE_REQUIRE });
 export const VALIDATOR_MINLENGTH = (val) => ({
@@ -16,8 +17,12 @@ export const VALIDATOR_MAXLENGTH = (val) => ({
 });
 export const VALIDATOR_MIN = (val) => ({ type: VALIDATOR_TYPE_MIN, val: val });
 export const VALIDATOR_MAX = (val) => ({ type: VALIDATOR_TYPE_MAX, val: val });
-export const VALIDATOR_PASSWORD = (val) => ({
+export const VALIDATOR_MATCH_PASSWORD = (val) => ({
   type: VALIDATOR_TYPE_MATCH_PASSWORD,
+  val: val,
+});
+export const VALIDATOR_PASSWORD = (val) => ({
+  type: VALIDATOR_TYPE_PASSWORD,
   val: val,
 });
 
@@ -41,6 +46,11 @@ export const validate = (value, validators) => {
     }
     if (validator.type === VALIDATOR_TYPE_MATCH_PASSWORD) {
       isValid = isValid && value === validators[0].val.value;
+    }
+    if (validator.type === VALIDATOR_TYPE_PASSWORD) {
+      const check = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
+      isValid =
+        isValid && check.test(value);
     }
   }
   return isValid;
