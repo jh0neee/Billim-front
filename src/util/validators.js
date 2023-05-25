@@ -5,6 +5,7 @@ const VALIDATOR_TYPE_MIN = "MIN"; // 최솟값
 const VALIDATOR_TYPE_MAX = "MAX"; // 최댓값
 const VALIDATOR_TYPE_MATCH_PASSWORD = "MATCH_PASSWORD";
 const VALIDATOR_TYPE_PASSWORD = "PASSWORD";
+const VALIDATOR_TYPE_NAME = "NAME";
 
 export const VALIDATOR_REQUIRE = () => ({ type: VALIDATOR_TYPE_REQUIRE });
 export const VALIDATOR_MINLENGTH = (val) => ({
@@ -23,6 +24,10 @@ export const VALIDATOR_MATCH_PASSWORD = (val) => ({
 });
 export const VALIDATOR_PASSWORD = (val) => ({
   type: VALIDATOR_TYPE_PASSWORD,
+  val: val,
+});
+export const VALIDATOR_NAME = (val) => ({
+  type: VALIDATOR_TYPE_NAME,
   val: val,
 });
 
@@ -49,8 +54,11 @@ export const validate = (value, validators) => {
     }
     if (validator.type === VALIDATOR_TYPE_PASSWORD) {
       const check = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
-      isValid =
-        isValid && check.test(value);
+      isValid = isValid && check.test(value);
+    }
+    if (validator.type === VALIDATOR_TYPE_NAME) {
+      const check = /^[가-힣]{0,}$/;
+      isValid = isValid && check.test(value);
     }
   }
   return isValid;

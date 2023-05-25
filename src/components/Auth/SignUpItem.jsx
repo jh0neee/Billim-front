@@ -4,9 +4,11 @@ import styled, { css } from "styled-components";
 import Input from "../../components/UI/Input";
 import SignUpAddress from "./SignUpAddress";
 import {
-  VALIDATOR_REQUIRE,
   VALIDATOR_PASSWORD,
   VALIDATOR_MATCH_PASSWORD,
+  VALIDATOR_MINLENGTH,
+  VALIDATOR_MAXLENGTH,
+  VALIDATOR_NAME,
 } from "../../util/validators";
 
 export const SignUpItem = styled.li`
@@ -84,8 +86,8 @@ const SignUpItems = (props) => {
           id='name'
           width='17.5rem'
           placeholder='이름을 입력해주세요'
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText='이름을 입력해주세요'
+          validators={[VALIDATOR_NAME()]}
+          errorText='한글로 입력해주세요'
           onInput={onInput}
         />
       </SignUpItem>
@@ -98,8 +100,8 @@ const SignUpItems = (props) => {
           id='nickname'
           width='17.5rem'
           placeholder='닉네임 입력해주세요'
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText='닉네임 입력해주세요'
+          validators={[VALIDATOR_MINLENGTH(2), VALIDATOR_MAXLENGTH(10)]}
+          errorText='2~10자 이내로 입력해주세요'
           onInput={onInput}
         />
       </SignUpItem>
