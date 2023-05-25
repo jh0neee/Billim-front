@@ -31,10 +31,12 @@ const EnterBox = styled.div`
 
 const SignUp = () => {
   const [formState, inputHandler] = useForm({}, false);
+  const { address, address_detail, address_legal } = formState.inputs;
 
   const signUpSubmitHandler = (e) => {
     e.preventDefault();
-    console.log(formState.inputs);
+    const combinedAddress = `${address.value} ${address_detail.value} ${address_legal.value}`;
+    console.log(formState.inputs, combinedAddress);
   };
 
   return (

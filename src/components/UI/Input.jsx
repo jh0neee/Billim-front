@@ -104,10 +104,11 @@ const Input = (props) => {
         bar={props.bar}
         width={props.width}
         height={props.height}
-        value={inputState.value}
+        value={props.value || inputState.value}
         placeholder={props.placeholder}
         onChange={changeHandler}
         onBlur={touchHandler}
+        disabled={props.disabled}
         required
       />
     ) : (

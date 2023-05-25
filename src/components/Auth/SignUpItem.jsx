@@ -2,14 +2,14 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 import Input from "../../components/UI/Input";
-import Button from "../UI/Button";
+import SignUpAddress from "./SignUpAddress";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_PASSWORD,
   VALIDATOR_MATCH_PASSWORD,
 } from "../../util/validators";
 
-const SignUpItem = styled.li`
+export const SignUpItem = styled.li`
   display: grid;
   grid-template-columns: 2fr 5fr 1.7fr;
   align-items: center;
@@ -28,7 +28,7 @@ const SignUpItem = styled.li`
   }
 `;
 
-const SignUpLabel = styled.p`
+export const SignUpLabel = styled.p`
   font-family: "SCDream";
   font-weight: 500;
   font-size: 16.5px;
@@ -104,56 +104,7 @@ const SignUpItems = (props) => {
         />
       </SignUpItem>
       <ContentLine />
-      <SignUpItem>
-        <SignUpLabel>주소</SignUpLabel>
-        <Input
-          element='input'
-          id='address'
-          type='text'
-          width='17.5rem'
-          placeholder='우편번호'
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText={null}
-          onInput={onInput}
-        />
-        <Button sub small width='120px'>
-          우편번호 찾기
-        </Button>
-      </SignUpItem>
-      <SignUpItem lyt>
-        <Input
-          element='input'
-          type='text'
-          id='address_street'
-          width='17.5rem'
-          placeholder='도로명주소'
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText='주소를 입력해주세요'
-          onInput={onInput}
-        />
-      </SignUpItem>
-      <SignUpItem lyt>
-        <Input
-          element='input'
-          type='text'
-          id='address_detail'
-          width='17.5rem'
-          placeholder='상세주소 입력해주세요'
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText={null}
-          onInput={onInput}
-        />
-        <Input
-          element='input'
-          type='text'
-          id='address_legal'
-          width='7.5rem'
-          placeholder='(법정동)'
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText={null}
-          onInput={onInput}
-        />
-      </SignUpItem>
+      <SignUpAddress onInput={onInput} />
     </>
   );
 };
