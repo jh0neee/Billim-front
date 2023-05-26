@@ -6,6 +6,7 @@ import Input from "../UI/Input";
 import { VALIDATOR_REQUIRE } from "../../util/validators";
 import { useForm } from "../../hooks/useForm";
 import { review } from "../../data";
+import StarRating from "./StarRating";
 
 const ReviewLayout = styled.div`
   background-color: #ededed;
@@ -92,6 +93,7 @@ const ExtraButton = styled(Button)`
 
 const Review = () => {
   const [isOpenReview, setIsOpenReview] = useState("");
+  const [rating, setRating] = useState(0);
   const [formState, inputHandler] = useForm({}, false);
 
   const toggleReview = (id) => {
@@ -100,7 +102,7 @@ const Review = () => {
 
   const reviewSubmitHandler = (e) => {
     e.preventDefault();
-    console.log(formState.inputs);
+    console.log(formState.inputs, rating);
   };
 
   return (
@@ -133,6 +135,7 @@ const Review = () => {
             <WritedReview review>
               <p> ➤ 후기 작성하기</p>
               <ReviewInputBox onSubmit={reviewSubmitHandler}>
+                <StarRating rating={rating} setRating={setRating}/>
                 <Input
                   element='textarea'
                   id='review'
