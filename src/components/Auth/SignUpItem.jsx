@@ -1,5 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
+import "react-toastify/dist/ReactToastify.css";
 
 import Input from "../../components/UI/Input";
 import SignUpAddress from "./SignUpAddress";
@@ -10,6 +11,9 @@ import {
   VALIDATOR_MAXLENGTH,
   VALIDATOR_NAME,
 } from "../../util/validators";
+import Button from "../UI/Button";
+import { toast, ToastContainer } from "react-toastify";
+import { review } from "../../data";
 
 export const SignUpItem = styled.li`
   display: grid;
@@ -24,10 +28,6 @@ export const SignUpItem = styled.li`
       margin-top: 0;
       grid-template-columns: 7fr 1.7fr;
     `}
-
-  > Input {
-    grid-area: input;
-  }
 `;
 
 export const SignUpLabel = styled.p`
@@ -43,7 +43,27 @@ const ContentLine = styled.hr`
 `;
 
 const SignUpItems = (props) => {
-  const { onInput, password } = props;
+  const { onInput, password, nickname, setIsCheckSignUp } = props;
+
+  const checkNickname = () => {
+    const isCheck = review
+      .map((item) => item.username)
+      .includes(nickname.value);
+
+    if (nickname.value === "") {
+      toast.warning("닉네임을 입력해주세요");
+    } else if (!nickname.isValid) {
+      toast.warning("닉네임은 2~10자로 입력해주세요");
+    } else {
+      if (isCheck) {
+        toast.error("이미 사용중인 닉네임입니다.");
+        setIsCheckSignUp(true);
+      } else {
+        toast.success("사용가능한 닉네임입니다.");
+        setIsCheckSignUp(false);
+      }
+    }
+  };
 
   return (
     <>
@@ -103,6 +123,16 @@ const SignUpItems = (props) => {
           validators={[VALIDATOR_MINLENGTH(2), VALIDATOR_MAXLENGTH(10)]}
           errorText='2~10자 이내로 입력해주세요'
           onInput={onInput}
+        />
+        <Button type='button' sub small width='120px' onClick={checkNickname}>
+          중복 확인
+        </Button>
+        <ToastContainer
+          position='top-center'
+          limit={1}
+          autoClose={3000}
+          closeButton={false}
+          closeOnClick
         />
       </SignUpItem>
       <ContentLine />
