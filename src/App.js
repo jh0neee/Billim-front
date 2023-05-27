@@ -33,7 +33,6 @@ function App() {
   if (isLoggedIn) {
     routes = (
       <Routes>
-        <Route path='/new' element={<NewProduct />} />
         <Route path='/' element={<Home />} />
         <Route path='/product' element={<ProductList />}>
           <Route path='living' element={<ProductList />} />
@@ -43,6 +42,7 @@ function App() {
         </Route>
         <Route path='/:itemName/detail' element={<ProductDetail />} />
         <Route path='/:itemName/payment' element={<ProductPayment />} />
+        <Route path='/product/new' element={<NewProduct />} />
         <Route path='/mypage' element={<MyPage />}>
           <Route path='/mypage/purchase' element={<PurchaseManagement />} />
           <Route path='/mypage/sales' element={<SalesManagement />} />

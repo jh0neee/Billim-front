@@ -45,7 +45,7 @@ const SalesManagement = () => {
     <>
       <SaleHeader>
         <p>판매중인 상품</p>
-        <EnrollButton to='/new'>상품 등록</EnrollButton>
+        <EnrollButton to='/product/new'>상품 등록</EnrollButton>
       </SaleHeader>
       <SaleLayout>
         {productItems.map((item) => (
