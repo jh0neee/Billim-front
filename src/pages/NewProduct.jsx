@@ -4,6 +4,8 @@ import styled from "styled-components";
 import Input from "../components/UI/Input";
 import Radio from "../components/UI/Radio";
 import Button from "../components/UI/Button";
+import { useForm } from "../hooks/useForm";
+import { VALIDATOR_REQUIRE } from "../util/validators";
 
 const CategoryList = [
   { id: 1, value: "생활용품" },
@@ -73,23 +75,39 @@ const FormBtnBox = styled.div`
 const NewProduct = () => {
   const [checkedCategory, setCheckedCategory] = useState("");
   const [checkedTrade, setCheckedTrade] = useState("");
+  const [formState, inputHandler] = useForm({}, false);
 
   const onCheckedCategory = (e) => {
     setCheckedCategory(e.target.value);
+    inputHandler("category", e.target.value, true);
   };
 
   const onCheckedTrade = (e) => {
     setCheckedTrade(e.target.value);
+    inputHandler("trade_method", e.target.value, true);
+  };
+
+  const submitProductHandler = (e) => {
+    e.preventDefault();
+    console.log(formState.inputs);
   };
 
   return (
     <>
-      <FormLayout>
+      <FormLayout onSubmit={submitProductHandler}>
         <p>상품 등록</p>
         <FormBox>
           <FormItem>
             <p>대여 상품명</p>
-            <FormInput element='input' width='22rem' height='30px' />
+            <Input
+              id='rental_product'
+              element='input'
+              width='22rem'
+              height='30px'
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText='대여할 상품명을 입력해주세요.'
+              onInput={inputHandler}
+            />
           </FormItem>
           <hr width='80%' />
           <FormItem>
@@ -110,7 +128,15 @@ const NewProduct = () => {
           <FormItem>
             <p>대여 요금</p>
             <ItemBox>
-              <FormInput element='input' width='18.5rem' height='30px' />
+              <Input
+                id='rental_fee'
+                element='input'
+                width='18.5rem'
+                height='30px'
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText='대여할 상품의 일일 대여 요금을 입력해주세요.'
+                onInput={inputHandler}
+              />
               <p>원/[일]</p>
             </ItemBox>
           </FormItem>
@@ -132,16 +158,24 @@ const NewProduct = () => {
           <hr width='80%' />
           <FormItem>
             <p>상품 설명</p>
-            <FormInput element='textarea' width='22rem' height='30px' />
+            <Input
+              id='description'
+              element='textarea'
+              width='22rem'
+              height='30px'
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText='대여할 상품에 대한 설명을 입력해주세요.'
+              onInput={inputHandler}
+            />
           </FormItem>
           <hr width='80%' />
         </FormBox>
+        <FormBtnBox>
+          <Button type='submit' width='10rem'>
+            등록하기
+          </Button>
+        </FormBtnBox>
       </FormLayout>
-      <FormBtnBox>
-        <Button type='submit' width='10rem'>
-          등록하기
-        </Button>
-      </FormBtnBox>
     </>
   );
 };
