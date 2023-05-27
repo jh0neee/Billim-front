@@ -15,17 +15,18 @@ const ProductItemBox = styled.div`
 const LikeIcon = styled.div`
   position: absolute;
   top: 9px;
-  left: 142px;
-  font-size: 18px;
+  right: 10px;
+  font-size: 23px;
 `;
 
 const ProductParagraph = styled.p`
-  font-size: 12px;
+  font-size: 14.5px;
+  font-weight: 600;
 
   ${(props) =>
     props.amount &&
     css`
-      margin: 0 10px;
+      margin: 15px 10px 0;
     `}
 `;
 
@@ -48,10 +49,10 @@ const ProductListItem = ({ items }) => {
         <span>검색결과가 없습니다.</span>
       ) : (
         items.map((item) => (
-          <Card key={item.id} width='169px' height='192px'>
+          <Card key={item.id} width='247px' height='323px' border='none'>
             <Link to={`/${item.name}/detail`}>
               <img
-                src='https://via.placeholder.com/169x140'
+                src='https://via.placeholder.com/247x233'
                 alt='상품예시이미지'
               />
             </Link>
@@ -70,7 +71,7 @@ const ProductListItem = ({ items }) => {
                   {item.scope}
                 </ProductParagraph>
               </ProductItemBox>
-              <ProductParagraph amount>\ {item.amount} /일</ProductParagraph>
+              <ProductParagraph amount>\ {item.amount.toLocaleString("ko-KR")} /일</ProductParagraph>
             </Link>
           </Card>
         ))
