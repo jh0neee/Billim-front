@@ -25,6 +25,7 @@ import NewProduct from "./pages/NewProduct.jsx";
 import MyPageCoupon from "./components/MyPage/MyPageCoupon.jsx";
 import FindIdTab from "./components/Auth/FindIdTab.jsx";
 import FindPwTab from "./components/Auth/FindPwTab.jsx";
+import UpdateProduct from "./pages/Product/UpdateProduct.jsx";
 
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -43,6 +44,7 @@ function App() {
         <Route path='/:itemName/detail' element={<ProductDetail />} />
         <Route path='/:itemName/payment' element={<ProductPayment />} />
         <Route path='/product/new' element={<NewProduct />} />
+        <Route path='/product/:productId' element={<UpdateProduct />} />
         <Route path='/mypage' element={<MyPage />}>
           <Route path='/mypage/purchase' element={<PurchaseManagement />} />
           <Route path='/mypage/sales' element={<SalesManagement />} />

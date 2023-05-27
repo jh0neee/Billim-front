@@ -1,99 +1,124 @@
 import format from "date-fns/format";
 
+export const CategoryList = [
+  { id: 1, value: "living" },
+  { id: 2, value: "apparel" },
+  { id: 3, value: "sporting" },
+  { id: 4, value: "electronic" },
+];
+
+export const TradeMethod = [
+  { id: 1, value: "직거래" },
+  { id: 2, value: "택배" },
+];
+
 export const productItems = [
   {
-    id: 1,
+    id: '1',
     name: "상품 A",
     category: "living",
     scope: "5.0",
     amount: 15000,
     likeCount: 0,
+    trade: '직거래',
+    description: '상품 A에 관한 설명입니다.'
   },
   {
-    id: 2,
+    id: '2',
     name: "상품 B",
     category: "sporting",
     scope: "4.5",
     amount: 10000,
     likeCount: 0,
+    trade:'택배',
+    description: '상품 B에 관한 설명입니다.'
   },
   {
-    id: 3,
+    id: '3',
     name: "상품 C",
     category: "living",
     scope: "4.5",
     amount: 56000,
     likeCount: 0,
+    description: '상품 C에 관한 설명입니다.'
   },
   {
-    id: 4,
+    id: '4',
     name: "상품 D",
     category: "apparel",
     scope: "5.0",
     amount: 43000,
     likeCount: 0,
+    description: '상품 D에 관한 설명입니다.'
   },
   {
-    id: 5,
+    id: '5',
     name: "상품 E",
     category: "sporting",
     scope: "4.3",
     amount: 11000,
     likeCount: 0,
+    description: '상품 E에 관한 설명입니다.'
   },
   {
-    id: 6,
+    id: '6',
     name: "상품 F",
     category: "living",
     scope: "5.0",
     amount: 5000,
     likeCount: 0,
+    description: '상품 F에 관한 설명입니다.'
   },
   {
-    id: 7,
+    id: '7',
     name: "상품 G",
     category: "apparel",
     scope: "4.3",
     amount: 10000,
     likeCount: 0,
+    description: '상품 G에 관한 설명입니다.'
   },
   {
-    id: 8,
+    id: '8',
     name: "상품 H",
     category: "sporting",
     scope: "3.8",
     amount: 32000,
     likeCount: 0,
+    description: '상품 H에 관한 설명입니다.'
   },
   {
-    id: 9,
+    id: '9',
     name: "상품 I",
     category: "electronic",
     scope: "4.5",
     amount: 78000,
     likeCount: 0,
+    description: '상품 I에 관한 설명입니다.'
   },
   {
-    id: 10,
+    id: '10',
     name: "상품 J",
     category: "living",
     scope: "5.0",
     amount: 15000,
     likeCount: 0,
+    description: '상품 J에 관한 설명입니다.'
   },
   {
-    id: 11,
+    id: '11',
     name: "상품 K",
     category: "electronic",
     scope: "3.5",
     amount: 112000,
     likeCount: 0,
+    description: '상품 K에 관한 설명입니다.'
   },
 ];
 
 export const review = [
   {
-    id: 1,
+    id: '감자',
     name: '상품A',
     amount: 10000,
     username: "사과",

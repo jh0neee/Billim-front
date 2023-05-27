@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from "react";
 import styled, { css } from "styled-components";
 
-import { inputReducer, initialState } from "../../store/reducer/inputReducer";
+import { inputReducer } from "../../store/reducer/inputReducer";
 
 const defaultInput = css`
   width: ${(props) => props.width || "100%"};
@@ -61,10 +61,22 @@ const ErrorText = styled.p`
 `;
 
 const Input = (props) => {
-  const [inputState, dispatch] = useReducer(inputReducer, initialState);
+  const [inputState, dispatch] = useReducer(inputReducer, {
+    value: props.initialValue || "",
+    isValid: props.initialValid || false,
+    isTouched: false,
+  });
 
   const { id, onInput, setReset, reset } = props;
   const { value, isValid } = inputState;
+
+  useEffect(() => {
+    dispatch({
+      type: "SET_INITIAL",
+      initialValue: props.initialValue,
+      initialValid: props.initialValid,
+    });
+  }, [props.initialValue, props.initialValid]);
 
   useEffect(() => {
     onInput(id, value, isValid);
@@ -104,7 +116,7 @@ const Input = (props) => {
         bar={props.bar}
         width={props.width}
         height={props.height}
-        value={props.value || inputState.value}
+        value={props.value || value}
         placeholder={props.placeholder}
         onChange={changeHandler}
         onBlur={touchHandler}

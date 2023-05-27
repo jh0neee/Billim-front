@@ -1,100 +1,74 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React from "react";
+import { useParams } from "react-router-dom";
 
-import Input from "../components/UI/Input";
-import Radio from "../components/UI/Radio";
-import Button from "../components/UI/Button";
-import { useForm } from "../hooks/useForm";
-import { VALIDATOR_REQUIRE } from "../util/validators";
+import Button from "../../components/UI/Button";
+import Radio from "../../components/UI/Radio";
+import { useForm } from "../../hooks/useForm";
+import { useCheckedInput } from "../../hooks/useCheckedInput";
+import { VALIDATOR_REQUIRE } from "../../util/validators";
+import { CategoryList, TradeMethod, productItems } from "../../data";
+import {
+  FormLayout,
+  FormBox,
+  ItemBox,
+  FormItem,
+  FormInput,
+  FormBtnBox,
+} from "../NewProduct";
 
-const CategoryList = [
-  { id: 1, value: "생활용품" },
-  { id: 2, value: "의류잡화" },
-  { id: 3, value: "운동용품" },
-  { id: 4, value: "전자기기" },
-];
+const UpdateProduct = () => {
+  const productId = useParams().productId;
+  const identifiedProduct = productItems.find((item) => item.id === productId);
+  const initialCategory = identifiedProduct ? identifiedProduct.category : "";
+  const initialTradeMethod = identifiedProduct ? identifiedProduct.trade : "";
+  const [formState, inputHandler] = useForm(
+    {
+      rental_product: {
+        value: identifiedProduct.name,
+        isValid: true,
+      },
+      category: {
+        value: identifiedProduct.category,
+        isValid: true,
+      },
+      rental_fee: {
+        value: identifiedProduct.amount,
+        isValid: true,
+      },
+      trade_method: {
+        value: identifiedProduct.trade,
+        isValid: true,
+      },
+      description: {
+        value: identifiedProduct.description,
+        isValid: true,
+      },
+    },
+    true
+  );
 
-const TradeMethod = [
-  { id: 1, value: "직거래" },
-  { id: 2, value: "택배" },
-];
+  const [checkedCategory, onCheckedCategory] = useCheckedInput(
+    initialCategory,
+    inputHandler
+  );
 
-export const FormLayout = styled.form`
-  width: 60%;
-  margin: 85px auto 0px;
-  padding: 1.5rem 0 0;
-  font-family: SCDream;
+  const [checkedTrade, onCheckedTrade] = useCheckedInput(
+    initialTradeMethod,
+    inputHandler
+  );
 
-  > p {
-    font-family: TRoundWind;
-    font-weight: 700;
-    font-size: 1.7rem;
-    text-align: center;
-  }
-`;
-
-export const FormBox = styled.div`
-  margin: 3rem 0px 0px;
-`;
-
-export const FormItem = styled.div`
-  display: grid;
-  grid-template-columns: 1.6fr 5fr;
-  margin: 20px 5rem 20px 2rem;
-  align-items: center;
-  justify-items: start;
-  margin-left: 6rem;
-  font-size: 0.9rem;
-
-  > p {
-    font-weight: 600;
-    font-size: 1.1rem;
-  }
-`;
-
-export const ItemBox = styled.div`
-  display: flex;
-  align-items: center;
-
-  > p {
-    margin-left: 0.5rem;
-  }
-`;
-
-export const FormInput = styled(Input)`
-  margin-left: 1rem;
-`;
-
-export const FormBtnBox = styled.div`
-  margin: 1rem 0px 2rem;
-  display: flex;
-  justify-content: center;
-  font-weight: 600;
-`;
-
-const NewProduct = () => {
-  const [checkedCategory, setCheckedCategory] = useState("");
-  const [checkedTrade, setCheckedTrade] = useState("");
-  const [formState, inputHandler] = useForm({}, false);
-
-  const onCheckedCategory = (e) => {
-    setCheckedCategory(e.target.value);
-    inputHandler("category", e.target.value, true);
-  };
-
-  const onCheckedTrade = (e) => {
-    setCheckedTrade(e.target.value);
-    inputHandler("trade_method", e.target.value, true);
-  };
-
-  const submitProductHandler = (e) => {
+  const updateSubmitHandler = (e) => {
     e.preventDefault();
     console.log(formState.inputs);
   };
 
+  if (!identifiedProduct) {
+    return <h1>상품을 찾을 수 없어요</h1>;
+  }
+
   return (
     <>
-      <FormLayout onSubmit={submitProductHandler}>
+      <FormLayout onSubmit={updateSubmitHandler}>
         <p>상품 등록</p>
         <FormBox>
           <FormItem>
@@ -106,6 +80,8 @@ const NewProduct = () => {
               height='30px'
               validators={[VALIDATOR_REQUIRE()]}
               errorText='대여할 상품명을 입력해주세요.'
+              initialValue={formState.inputs.rental_product.value}
+              initialValid={formState.inputs.rental_product.isValid}
               onInput={inputHandler}
             />
           </FormItem>
@@ -135,6 +111,8 @@ const NewProduct = () => {
                 height='30px'
                 validators={[VALIDATOR_REQUIRE()]}
                 errorText='대여할 상품의 일일 대여 요금을 입력해주세요.'
+                initialValue={formState.inputs.rental_fee.value}
+                initialValid={formState.inputs.rental_fee.isValid}
                 onInput={inputHandler}
               />
               <p>원/[일]</p>
@@ -165,14 +143,16 @@ const NewProduct = () => {
               height='30px'
               validators={[VALIDATOR_REQUIRE()]}
               errorText='대여할 상품에 대한 설명을 입력해주세요.'
+              initialValue={formState.inputs.description.value}
+              initialValid={formState.inputs.description.isValid}
               onInput={inputHandler}
             />
           </FormItem>
           <hr width='80%' />
         </FormBox>
         <FormBtnBox>
-          <Button type='submit' width='10rem'>
-            등록하기
+          <Button type='submit' disabled={!formState.isValid} width='10rem'>
+            수정하기
           </Button>
         </FormBtnBox>
       </FormLayout>
@@ -180,4 +160,4 @@ const NewProduct = () => {
   );
 };
 
-export default NewProduct;
+export default UpdateProduct;

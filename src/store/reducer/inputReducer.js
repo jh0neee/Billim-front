@@ -1,13 +1,15 @@
 import { validate } from "../../util/validators";
 
-export const initialState = {
-  value: "",
-  isValid: false,
-  isTouched: false,
-};
-
-export const inputReducer = (state = initialState, action) => {
+export const inputReducer = (state, action) => {
   switch (action.type) {
+    case "SET_INITIAL":
+      return {
+        ...state,
+        value: action.initialValue || "",
+        isValid: action.initialValid || false,
+        isTouched: false,
+      };
+
     case "CHANGE":
       return {
         ...state,
@@ -22,7 +24,7 @@ export const inputReducer = (state = initialState, action) => {
       };
 
     case "RESET":
-      return initialState;
+      return { value: "", isValid: false, isTouched: false };
 
     default:
       return state;

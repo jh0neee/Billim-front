@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import DetailHeader from "./DetailHeader";
@@ -69,6 +70,24 @@ const ReviewTitle = styled.p`
   font-weight: 700;
 `;
 
+const ButtonLayout = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 3rem;
+
+  > * {
+    margin-left: 1rem;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration-line: underline;
+      text-underline-position: under;
+    }
+  }
+`;
+
 const DetailView = (props) => {
   const [isViewMore, setIsViewMore] = useState(false);
 
@@ -80,6 +99,9 @@ const DetailView = (props) => {
     <>
       {props.items.map((item) => (
         <DetailLayout key={item.id}>
+          <ButtonLayout>
+            <Link to={`/product/${item.id}`}>수정하기</Link>
+          </ButtonLayout>
           <DetailHeader name={item.name} scope={item.scope} />
           <DetailImage>
             <img
