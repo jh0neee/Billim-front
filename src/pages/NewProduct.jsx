@@ -6,18 +6,7 @@ import Radio from "../components/UI/Radio";
 import Button from "../components/UI/Button";
 import { useForm } from "../hooks/useForm";
 import { VALIDATOR_REQUIRE } from "../util/validators";
-
-const CategoryList = [
-  { id: 1, value: "생활용품" },
-  { id: 2, value: "의류잡화" },
-  { id: 3, value: "운동용품" },
-  { id: 4, value: "전자기기" },
-];
-
-const TradeMethod = [
-  { id: 1, value: "직거래" },
-  { id: 2, value: "택배" },
-];
+import { CategoryList, TradeMethod } from "../data";
 
 export const FormLayout = styled.form`
   width: 60%;

@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import Dropdown from "../../components/UI/DropDown";
 import Input from "../../components/UI/Input";
 import Button from "../../components/UI/Button";
-import { coupons } from "../../data";
+import { TradeMethod, coupons } from "../../data";
 
 const PayInformation = styled.div`
   padding: 0.5rem;
@@ -70,11 +70,6 @@ const DeliveryItems = styled.div`
     `}
 `;
 
-const options = [
-  { id: 1, item: "직거래" },
-  { id: 2, item: "택배" },
-];
-
 const ProductInformation = ({
   selectedOpt,
   setSelectedOpt,
@@ -93,7 +88,7 @@ const ProductInformation = ({
         <PayTitle>거래방법</PayTitle>
         <p></p>
         <TradeDropDown
-          options={options}
+          options={TradeMethod}
           selectedOpt={selectedOpt}
           setSelectedOpt={setSelectedOpt}
         />
