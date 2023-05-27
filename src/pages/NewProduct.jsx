@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
 import Input from "../components/UI/Input";
 import Radio from "../components/UI/Radio";
 import Button from "../components/UI/Button";
 import { useForm } from "../hooks/useForm";
+import { useCheckedInput } from "../hooks/useCheckedInput";
 import { VALIDATOR_REQUIRE } from "../util/validators";
 import { CategoryList, TradeMethod } from "../data";
 
@@ -62,19 +63,12 @@ export const FormBtnBox = styled.div`
 `;
 
 const NewProduct = () => {
-  const [checkedCategory, setCheckedCategory] = useState("");
-  const [checkedTrade, setCheckedTrade] = useState("");
   const [formState, inputHandler] = useForm({}, false);
-
-  const onCheckedCategory = (e) => {
-    setCheckedCategory(e.target.value);
-    inputHandler("category", e.target.value, true);
-  };
-
-  const onCheckedTrade = (e) => {
-    setCheckedTrade(e.target.value);
-    inputHandler("trade_method", e.target.value, true);
-  };
+  const [checkedCategory, onCheckedCategory] = useCheckedInput(
+    "",
+    inputHandler
+  );
+  const [checkedTrade, onCheckedTrade] = useCheckedInput("", inputHandler);
 
   const submitProductHandler = (e) => {
     e.preventDefault();
