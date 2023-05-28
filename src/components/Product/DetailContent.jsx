@@ -1,11 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
-import {
-  TbTruckDelivery,
-  TbHomeMove,
-  TbAward,
-} from "react-icons/tb";
+import { TbTruckDelivery, TbAward } from "react-icons/tb";
+import { FaWalking } from "react-icons/fa";
 import { Profile } from "../UI/Profile";
 
 const ContentTitle = styled.div`
@@ -21,7 +18,7 @@ const CategoryBox = styled.div`
 
   > * {
     &:nth-child(2) {
-      margin: 1.5rem 0.5rem;
+      margin: 2rem 0.5rem;
     }
   }
 `;
@@ -37,31 +34,33 @@ const ContentCategory = styled.div`
         margin-top: 2px;
         margin-left: 0.4rem;
         font-weight: 500;
+        font-size: 1.1rem;
       }
     }
 
     &:nth-child(2) {
-      margin: 0.5rem 0;
-      margin-left: 0.5rem;
+      margin: 0.8rem 0px 0.5rem 2.5rem;
+      font-weight: 700;
+      font-size: 0.9rem;
     }
   }
-`;
-
-const TruckDelivery = styled(TbTruckDelivery)`
-  margin-left: 0.2rem;
 `;
 
 const ContentDescription = styled.div`
   margin: 2rem 0 0.8rem 0.5rem;
   > * {
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+
     &:first-child {
-      margin-bottom: 0.8rem;
+      margin: 0 0 1.5rem 0;
       font-weight: 500;
+      font-size: 1.1rem;
     }
   }
 `;
 
-const DetailContent = () => {
+const DetailContent = ({ tradeMethod }) => {
   return (
     <div>
       <ContentTitle>
@@ -72,21 +71,29 @@ const DetailContent = () => {
       <CategoryBox>
         <ContentCategory>
           <div>
-            <TbHomeMove size='27px' />
+            <FaWalking size='26px' />
             <p>직거래</p>
           </div>
-          <p>가능 / 불가능</p>
+          {tradeMethod === "직거래" || tradeMethod === "둘 다 가능" ? (
+            <p>가능</p>
+          ) : (
+            <p>불가능</p>
+          )}
         </ContentCategory>
         <ContentCategory>
           <div>
-            <TruckDelivery size='27px' />
+            <TbTruckDelivery size='30px' />
             <p>택배</p>
           </div>
-          <p>가능 / 불가능</p>
+          {tradeMethod === "택배" || tradeMethod === "둘 다 가능" ? (
+            <p>가능</p>
+          ) : (
+            <p>불가능</p>
+          )}
         </ContentCategory>
         <ContentCategory>
           <div>
-            <TbAward size='27px' />
+            <TbAward size='28px' />
             <p>USER님은 -등급입니다.</p>
           </div>
         </ContentCategory>

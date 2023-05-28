@@ -130,7 +130,7 @@ const DetailView = (props) => {
             </DetailImageBox>
           </DetailImage>
           <DetailBox>
-            <DetailContent />
+            <DetailContent tradeMethod={item.trade} />
             <DetailConfirm amount={item.amount} name={item.name} />
           </DetailBox>
           <hr />
