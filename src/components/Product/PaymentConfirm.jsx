@@ -80,19 +80,15 @@ const ParagraphBox = styled.div`
 `;
 
 const PaymentConfirm = ({ items, tradeSelectedOpt, couponSelectedOpt }) => {
-  const discountItem = coupons.find((item) => item.item === couponSelectedOpt);
-  
-  const courierFee = tradeSelectedOpt === '택배' ? 3000 : 0;
-  const reserves = 4000;
-  const discounted = Math.round(items.amount * (discountItem?.discount / 100));
-  const days = 4;
-  const total = (
-    items.amount * days +
-    courierFee -
-    discounted -
-    reserves
-  ).toLocaleString("ko-KR");
+  const discountItem = coupons.find((item) => item.value === couponSelectedOpt);
+  const discount = discountItem?.discount || 0;
 
+  const courierFee =
+    tradeSelectedOpt === "택배" || items.trade === "택배" ? 3000 : 0;
+  const point = 4000;
+  const discounted = Math.round(items.amount * (discount / 100));
+  const days = 4;
+  const total = items.amount * days + courierFee - discounted - point;
 
   return (
     <ConfirmBox>
@@ -121,17 +117,19 @@ const PaymentConfirm = ({ items, tradeSelectedOpt, couponSelectedOpt }) => {
         </ParagraphBox>
         <ParagraphBox>
           <p className='left'>쿠폰적용</p>
-          <p className='right'>- \ {isNaN(discounted) ? 0 : discounted}</p>
+          <p className='right'>- \ {discounted}</p>
         </ParagraphBox>
         <ParagraphBox>
           <p className='left'>적립금적용</p>
-          <p className='right'>- \ {reserves}</p>
+          <p className='right'>- \ {point}</p>
         </ParagraphBox>
       </ConfirmBottom>
       <hr />
       <ParagraphBox>
         <p className='left'>총 합계</p>
-        <p className='right'>\ {isNaN(total) ? 0 : total}</p>
+        <p className='right'>
+          \ {isNaN(total) ? 0 : total.toLocaleString("ko-KR")}
+        </p>
       </ParagraphBox>
       <Button width='90%'>확인 및 결제</Button>
     </ConfirmBox>
