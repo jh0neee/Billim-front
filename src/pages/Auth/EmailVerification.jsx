@@ -8,6 +8,7 @@ import Button from "../../components/UI/Button";
 import { emailAction } from "../../store/signup";
 import { useForm } from "../../hooks/useForm";
 import { VALIDATOR_REQUIRE } from "../../util/validators";
+import { Domain } from "../../data";
 
 const VerificationLayout = styled.form`
   display: flex;
@@ -52,14 +53,6 @@ const AtSignParagraph = styled.p`
   font-weight: 700;
 `;
 
-const options = [
-  { id: 1, item: "naver.com" },
-  { id: 2, item: "gmail.com" },
-  { id: 3, item: "daum.net" },
-  { id: 4, item: "nate.com" },
-  { id: 5, item: "hanmail.net" },
-];
-
 const EmailVerification = () => {
   const dispatch = useDispatch();
   const email = useSelector((state) => state.email);
@@ -96,7 +89,7 @@ const EmailVerification = () => {
         />
         <AtSignParagraph>@</AtSignParagraph>
         <Dropdown
-          options={options}
+          options={Domain}
           selectedOpt={selectedOpt}
           setSelectedOpt={setSelectedOpt}
         />

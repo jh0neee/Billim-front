@@ -71,12 +71,11 @@ const DeliveryItems = styled.div`
 `;
 
 const ProductInformation = ({
-  selectedOpt,
-  setSelectedOpt,
-  couponselectedOpt,
+  tradeSelectedOpt,
+  setTradeSelectedOpt,
+  couponSelectedOpt,
   setCouponSelectedOpt,
 }) => {
-
   return (
     <PayInformation>
       <InformationTitle>대여정보</InformationTitle>
@@ -89,8 +88,8 @@ const ProductInformation = ({
         <p></p>
         <TradeDropDown
           options={TradeMethod}
-          selectedOpt={selectedOpt}
-          setSelectedOpt={setSelectedOpt}
+          selectedOpt={tradeSelectedOpt}
+          setSelectedOpt={setTradeSelectedOpt}
         />
       </InformationBox>
       <hr />
@@ -113,12 +112,12 @@ const ProductInformation = ({
         <PayTitle>쿠폰</PayTitle>
         <TradeDropDown
           options={coupons}
-          selectedOpt={couponselectedOpt}
+          selectedOpt={couponSelectedOpt}
           setSelectedOpt={setCouponSelectedOpt}
         />
       </InformationBox>
       <hr />
-      {selectedOpt === "택배" && (
+      {tradeSelectedOpt === "택배" && (
         <PayDelivery>
           <DeliveryItems>
             <PayTitle>이름</PayTitle>

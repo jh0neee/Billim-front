@@ -37,8 +37,8 @@ const ProductPayment = () => {
   
   const navigate = useNavigate();
 
-  const [selectedOpt, setSelectedOpt] = useState("");
-  const [couponselectedOpt, setCouponSelectedOpt] = useState("");
+  const [tradeSelectedOpt, setTradeSelectedOpt] = useState("");
+  const [couponSelectedOpt, setCouponSelectedOpt] = useState("");
 
   return (
     <PaymentLayout>
@@ -48,16 +48,16 @@ const ProductPayment = () => {
       </PaymentTitle>
       <PaymentBox>
         <PaymentInformation
-          selectedOpt={selectedOpt}
-          setSelectedOpt={setSelectedOpt}
-          couponselectedOpt={couponselectedOpt}
+          tradeSelectedOpt={tradeSelectedOpt}
+          setTradeSelectedOpt={setTradeSelectedOpt}
+          couponSelectedOpt={couponSelectedOpt}
           setCouponSelectedOpt={setCouponSelectedOpt}
         />
         <div>
           <PaymentConfirm
             items={loadedContents}
-            selectedOpt={selectedOpt}
-            couponselectedOpt={couponselectedOpt}
+            tradeSelectedOpt={tradeSelectedOpt}
+            couponSelectedOpt={couponSelectedOpt}
           />
         </div>
       </PaymentBox>

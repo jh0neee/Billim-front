@@ -79,10 +79,10 @@ const ParagraphBox = styled.div`
   }
 `;
 
-const PaymentConfirm = ({ items, selectedOpt, couponselectedOpt }) => {
-  const discountItem = coupons.find((item) => item.item === couponselectedOpt);
+const PaymentConfirm = ({ items, tradeSelectedOpt, couponSelectedOpt }) => {
+  const discountItem = coupons.find((item) => item.item === couponSelectedOpt);
   
-  const courierFee = 3000;
+  const courierFee = tradeSelectedOpt === '택배' ? 3000 : 0;
   const reserves = 4000;
   const discounted = Math.round(items.amount * (discountItem?.discount / 100));
   const days = 4;

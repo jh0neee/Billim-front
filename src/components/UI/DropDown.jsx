@@ -65,10 +65,10 @@ const Dropdown = ({ className, options, selectedOpt, setSelectedOpt}) => {
             <DropDownOption
               key={option.id}
               onClick={() => {
-                setSelectedOpt(option.item);
+                setSelectedOpt(option.value);
                 setIsActive(false);
               }}>
-              {option.item}
+              {option.value}
             </DropDownOption>
           ))}
         </DropDown>

@@ -10,6 +10,15 @@ export const CategoryList = [
 export const TradeMethod = [
   { id: 1, value: "직거래" },
   { id: 2, value: "택배" },
+  { id: 3, value: "둘 다 가능" },
+];
+
+export const Domain = [
+  { id: 1, value: "naver.com" },
+  { id: 2, value: "gmail.com" },
+  { id: 3, value: "daum.net" },
+  { id: 4, value: "nate.com" },
+  { id: 5, value: "hanmail.net" },
 ];
 
 export const productItems = [
@@ -267,19 +276,19 @@ export const salesProduct = [
 export const coupons = [
   {
     id: 1,
-    item: '9% 할인 쿠폰',
+    value: '9% 할인 쿠폰',
     discount: 9,
     date: format(new Date(new Date().setDate(new Date().getDate() + 1)), "yyyy-MM-dd"),
   },
   {
     id: 2,
-    item: '19% 할인 쿠폰',
+    value: '19% 할인 쿠폰',
     discount: 19,
     date: format(new Date(), "yyyy-MM-dd"),
   },
   {
     id: 3,
-    item: '5% 할인 쿠폰',
+    value: '5% 할인 쿠폰',
     discount: 5,
     date: format(new Date(new Date().setDate(new Date().getDate() - 1)), "yyyy-MM-dd"),
   },
