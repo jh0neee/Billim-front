@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import Button from "../../components/UI/Button";
 import Radio from "../../components/UI/Radio";
+import Input from "../../components/UI/Input";
 import { useForm } from "../../hooks/useForm";
 import { useCheckedInput } from "../../hooks/useCheckedInput";
 import { VALIDATOR_REQUIRE } from "../../util/validators";
@@ -14,6 +15,8 @@ import {
   FormItem,
   FormInput,
   FormBtnBox,
+  PlaceBox,
+  TradeBox,
 } from "../NewProduct";
 
 const UpdateProduct = () => {
@@ -39,6 +42,10 @@ const UpdateProduct = () => {
         value: identifiedProduct.trade,
         isValid: true,
       },
+      place: {
+        value: identifiedProduct.place,
+        isValid: true,
+      },
       description: {
         value: identifiedProduct.description,
         isValid: true,
@@ -56,6 +63,12 @@ const UpdateProduct = () => {
     initialTradeMethod,
     inputHandler
   );
+
+  useEffect(() => {
+    if (checkedTrade === "택배") {
+      inputHandler("place", "", true);
+    }
+  }, [checkedTrade, inputHandler]);
 
   const updateSubmitHandler = (e) => {
     e.preventDefault();
@@ -121,17 +134,37 @@ const UpdateProduct = () => {
           <hr width='80%' />
           <FormItem>
             <p>거래 방법</p>
-            <div>
+            <TradeBox>
               {TradeMethod.map((item) => (
                 <Radio
                   key={item.id}
                   item={item}
-                  name='trade'
+                  name='trade_method'
                   checked={checkedTrade}
                   onChecked={onCheckedTrade}
                 />
               ))}
-            </div>
+              {(checkedTrade === "직거래" || checkedTrade === "둘 다 가능") && (
+                <PlaceBox>
+                  <p>
+                    거래
+                    <br />
+                    희망지역
+                  </p>
+                  <Input
+                    id='place'
+                    element='input'
+                    width='5rem'
+                    height='23px'
+                    validators={[VALIDATOR_REQUIRE()]}
+                    errorText={null}
+                    initialValue={formState.inputs.place.value}
+                    initialValid={formState.inputs.place.isValid}
+                    onInput={inputHandler}
+                  />
+                </PlaceBox>
+              )}
+            </TradeBox>
           </FormItem>
           <hr width='80%' />
           <FormItem>

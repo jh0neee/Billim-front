@@ -54,6 +54,24 @@ export const ItemBox = styled.div`
 export const FormInput = styled(Input)`
   margin-left: 1rem;
 `;
+export const TradeBox = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const PlaceBox = styled.div`
+  font-size: 0.7rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 1.5rem;
+  text-align: center;
+
+  > p {
+    margin-right: 1rem;
+    line-height: 0.8rem;
+  }
+`;
 
 export const FormBtnBox = styled.div`
   margin: 1rem 0px 2rem;
@@ -126,17 +144,35 @@ const NewProduct = () => {
           <hr width='80%' />
           <FormItem>
             <p>거래 방법</p>
-            <div>
+            <TradeBox>
               {TradeMethod.map((item) => (
                 <Radio
                   key={item.id}
                   item={item}
-                  name='trade'
+                  name='trade_method'
                   checked={checkedTrade}
                   onChecked={onCheckedTrade}
                 />
               ))}
-            </div>
+              {(checkedTrade === "직거래" || checkedTrade === "둘 다 가능") && (
+                <PlaceBox>
+                  <p>
+                    거래
+                    <br />
+                    희망지역
+                  </p>
+                  <Input
+                    id='place'
+                    element='input'
+                    width='5rem'
+                    height='23px'
+                    validators={[VALIDATOR_REQUIRE()]}
+                    errorText={null}
+                    onInput={inputHandler}
+                  />
+                </PlaceBox>
+              )}
+            </TradeBox>
           </FormItem>
           <hr width='80%' />
           <FormItem>
