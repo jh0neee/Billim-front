@@ -57,10 +57,10 @@ const SignUpItems = (props) => {
     } else {
       if (isCheck) {
         toast.error("이미 사용중인 닉네임입니다.");
-        setIsCheckSignUp(true);
+        setIsCheckSignUp(false);
       } else {
         toast.success("사용가능한 닉네임입니다.");
-        setIsCheckSignUp(false);
+        setIsCheckSignUp(true);
       }
     }
   };
