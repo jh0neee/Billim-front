@@ -294,3 +294,14 @@ export const coupons = [
     date: format(new Date(new Date().setDate(new Date().getDate() - 1)), "yyyy-MM-dd"),
   },
 ];
+
+export const user = [
+  {
+    id: 'u1',
+    name: '고구마',
+    nickname: '고구마맛탕',
+    point: 5000,
+    level: 'BRONZE',
+    date: format(new Date(new Date().setDate(new Date().getDate() - 1)), "yyyy-MM-dd")
+  },
+];

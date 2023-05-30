@@ -1,8 +1,10 @@
 import React from "react";
 import styled, { css } from "styled-components";
+
 import Dropdown from "../../components/UI/DropDown";
 import Input from "../../components/UI/Input";
 import Button from "../../components/UI/Button";
+import PaymentPoint from "./PaymentPoint";
 import usePostalCode from "../../hooks/usePostalCode";
 import { BsCheck2Circle } from "react-icons/bs";
 import { VALIDATOR_REQUIRE } from "../../util/validators";
@@ -71,13 +73,6 @@ export const DeliveryItems = styled.div`
       grid-template-columns: 4.6fr 1.8fr 0.5fr;
       justify-items: end;
     `}
-  ${(props) =>
-    props.small &&
-    css`
-      margin: 5px;
-      grid-template-columns: 2fr 2fr 2.7fr;
-      justify-items: start;
-    `}
 `;
 
 const TradeMethodOption = styled.p`
@@ -90,7 +85,8 @@ const ProductInformation = ({
   setTradeSelectedOpt,
   couponSelectedOpt,
   setCouponSelectedOpt,
-  onInput
+  onInput,
+  formState,
 }) => {
   const [postCode, address, legal, postCodeOpenHandler] =
     usePostalCode(onInput);
@@ -124,31 +120,11 @@ const ProductInformation = ({
       </InformationBox>
       <hr />
       <InformationBox>
-        {/* //TODO - 사용에 적은 금액이 보유 적립금에서 차감 */}
         <PayTitle>
           <BsCheck2Circle size='25px' />
           <p>적립금</p>
         </PayTitle>
-        <DeliveryItems small>
-          <p>보유적립금</p>
-          <p>3,000</p>
-        </DeliveryItems>
-        <DeliveryItems small>
-          <p>사용</p>
-          <Input
-            bar
-            id='use_point'
-            element='input'
-            width='8.5rem'
-            height='20px'
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText={null}
-            onInput={onInput}
-          />
-          <Button type="button" sub small width='80px'>
-            사용
-          </Button>
-        </DeliveryItems>
+        <PaymentPoint onInput={onInput} formState={formState} />
       </InformationBox>
       <InformationBox>
         <PayTitle>

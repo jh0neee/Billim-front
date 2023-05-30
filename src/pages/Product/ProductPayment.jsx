@@ -61,6 +61,7 @@ const ProductPayment = () => {
           couponSelectedOpt={couponSelectedOpt}
           setCouponSelectedOpt={setCouponSelectedOpt}
           onInput={inputHandler}
+          formState={formState}
         />
         <div>
           <PaymentConfirm

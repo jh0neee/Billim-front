@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 
 import Button from "../../components/UI/Button";
-import { coupons } from "../../data";
+import { coupons, user } from "../../data";
+import { useSelector } from "react-redux";
 
 const ConfirmBox = styled.div`
   position: sticky;
@@ -79,13 +80,14 @@ const ParagraphBox = styled.div`
   }
 `;
 
-const PaymentConfirm = ({ items, tradeSelectedOpt, couponSelectedOpt, onInput }) => {
+const PaymentConfirm = ({ items, tradeSelectedOpt, couponSelectedOpt, onInput }) => { 
   const discountItem = coupons.find((item) => item.value === couponSelectedOpt);
   const discount = discountItem?.discount || 0;
-
+  
   const courierFee =
-    tradeSelectedOpt === "택배" || items.trade === "택배" ? 3000 : 0;
-  const point = 4000;
+  tradeSelectedOpt === "택배" || items.trade === "택배" ? 3000 : 0;
+  
+  const point = useSelector((state) => state.point.usagePoint);
   const discounted = Math.round(items.amount * (discount / 100));
   const days = 4;
   const total = items.amount * days + courierFee - discounted - point;
@@ -121,11 +123,11 @@ const PaymentConfirm = ({ items, tradeSelectedOpt, couponSelectedOpt, onInput })
         </ParagraphBox>
         <ParagraphBox>
           <p className='left'>쿠폰적용</p>
-          <p className='right'>- \ {discounted}</p>
+          <p className='right'>- \ {discounted.toLocaleString("ko-KR")}</p>
         </ParagraphBox>
         <ParagraphBox>
           <p className='left'>적립금적용</p>
-          <p className='right'>- \ {point}</p>
+          <p className='right'>- \ {Number(point).toLocaleString("ko-KR")}</p>
         </ParagraphBox>
       </ConfirmBottom>
       <hr />
