@@ -1,47 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 
 import Input from "../../components/UI/Input";
 import Button from "../UI/Button";
-import { useDaumPostcodePopup } from "react-daum-postcode";
+import usePostalCode from "../../hooks/usePostalCode";
 import { VALIDATOR_REQUIRE } from "../../util/validators";
 import { SignUpItem, SignUpLabel } from "./SignUpItem";
 
 const SignUpAddress = (props) => {
   const { onInput } = props;
-  const [postCode, setPostCode] = useState("");
-  const [address, setAddress] = useState("");
-  const [legal, setlegal] = useState("");
-
-  const scriptUrl =
-    "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
-  const open = useDaumPostcodePopup(scriptUrl);
-
-  const handleComplete = (data) => {
-    let address = data.address;
-    let extraAddress = "";
-
-    if (data.addressType === "R") {
-      if (data.bname !== "") {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== "") {
-        extraAddress +=
-          extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
-      }
-    }
-
-    setAddress(address);
-    setPostCode(data.zonecode);
-    setlegal(`(${extraAddress})`);
-
-    onInput("address", address, true);
-    onInput("address_legal", extraAddress, true);
-  };
-
-  const postCodeOpenHandler = () => {
-    open({ onComplete: handleComplete });
-  };
-
+  const [postCode, address, legal, postCodeOpenHandler] = usePostalCode(onInput);
+  
   return (
     <>
       <SignUpItem>
