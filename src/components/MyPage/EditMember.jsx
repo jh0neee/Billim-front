@@ -10,7 +10,7 @@ const EditMemberLayout = styled.div`
 
 const EditMemberBox = styled.div`
   display: grid;
-  grid-template-columns: 0.35fr 1fr 0.3fr;
+  grid-template-columns: 0.45fr 1fr 0.3fr;
   align-items: ${(props) => (props.first ? "flex-start" : "center")};
   margin: 2rem 0;
 
@@ -40,7 +40,7 @@ const EditMemberBox = styled.div`
 
 const ExtraButton = styled(Button)`
   margin: 0;
-  width: 60px;
+  width: 80px;
   height: 27px;
   font-size: 10px;
   font-weight: 400;
@@ -77,8 +77,12 @@ const EditMember = () => {
         <hr />
         <EditMemberBox>
           <p>닉네임</p>
-          <p>현재 닉네임</p>
           <ExtraButton sub>닉네임 변경</ExtraButton>
+        </EditMemberBox>
+        <hr />
+        <EditMemberBox>
+          <p>비멀번호</p>
+          <ExtraButton sub>비밀번호 변경</ExtraButton>
         </EditMemberBox>
         <hr />
         <EditMemberBox>
