@@ -6,8 +6,9 @@ import PaymentInformation from "../../components/Product/PaymentInformation";
 import PaymentConfirm from "../../components/Product/PaymentConfirm";
 import { HiChevronLeft } from "react-icons/hi";
 import { productItems } from "../../data";
+import { useForm } from "../../hooks/useForm";
 
-const PaymentLayout = styled.div`
+const PaymentLayout = styled.form`
   width: 80%;
   margin: 120px auto 0;
   font-family: "SCDream";
@@ -34,30 +35,39 @@ const PaymentBox = styled.div`
 const ProductPayment = () => {
   const itemName = useParams().itemName;
   const loadedContents = productItems.find((item) => item.name === itemName);
+  const [formState, inputHandler] = useForm({}, false);
   
   const navigate = useNavigate();
 
   const [tradeSelectedOpt, setTradeSelectedOpt] = useState("");
   const [couponSelectedOpt, setCouponSelectedOpt] = useState("");
 
+  const onSubmit = (e) => {
+    e.preventDefault();
+    console.log(formState.inputs);
+  };
+
   return (
-    <PaymentLayout>
+    <PaymentLayout onSubmit={onSubmit}>
       <PaymentTitle>
         <GoBack size='45px' onClick={() => navigate(-1)} />
         확인 및 결제
       </PaymentTitle>
       <PaymentBox>
         <PaymentInformation
+          items={loadedContents}
           tradeSelectedOpt={tradeSelectedOpt}
           setTradeSelectedOpt={setTradeSelectedOpt}
           couponSelectedOpt={couponSelectedOpt}
           setCouponSelectedOpt={setCouponSelectedOpt}
+          onInput={inputHandler}
         />
         <div>
           <PaymentConfirm
             items={loadedContents}
             tradeSelectedOpt={tradeSelectedOpt}
             couponSelectedOpt={couponSelectedOpt}
+            onInput={inputHandler}
           />
         </div>
       </PaymentBox>

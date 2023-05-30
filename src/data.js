@@ -49,6 +49,7 @@ export const productItems = [
     scope: "4.5",
     amount: 56000,
     likeCount: 0,
+    trade:'둘 다 가능',
     description: '상품 C에 관한 설명입니다.'
   },
   {

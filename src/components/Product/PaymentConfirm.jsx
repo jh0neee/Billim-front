@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 
 import Button from "../../components/UI/Button";
@@ -79,7 +79,7 @@ const ParagraphBox = styled.div`
   }
 `;
 
-const PaymentConfirm = ({ items, tradeSelectedOpt, couponSelectedOpt }) => {
+const PaymentConfirm = ({ items, tradeSelectedOpt, couponSelectedOpt, onInput }) => {
   const discountItem = coupons.find((item) => item.value === couponSelectedOpt);
   const discount = discountItem?.discount || 0;
 
@@ -131,7 +131,7 @@ const PaymentConfirm = ({ items, tradeSelectedOpt, couponSelectedOpt }) => {
           \ {isNaN(total) ? 0 : total.toLocaleString("ko-KR")}
         </p>
       </ParagraphBox>
-      <Button width='90%'>확인 및 결제</Button>
+      <Button width='90%' type='submit'>확인 및 결제</Button>
     </ConfirmBox>
   );
 };
