@@ -90,6 +90,10 @@ const PaymentConfirm = ({ items, tradeSelectedOpt, couponSelectedOpt, onInput })
   const days = 4;
   const total = items.amount * days + courierFee - discounted - point;
 
+  useEffect(() => {
+    onInput("total", total, true);
+  }, [onInput, total]);
+
   return (
     <ConfirmBox>
       <ConfirmTop>
