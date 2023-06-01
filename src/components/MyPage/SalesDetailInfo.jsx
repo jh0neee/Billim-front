@@ -76,7 +76,7 @@ const SalesDetailInfo = ({ label, items }) => {
       <ListCard width='95%'>
         {items.map((item) => (
           <>
-            <SaleBottomBox>
+            <SaleBottomBox key={item.id}>
               <BuyerInfo>
                 <Profile size='70px' />
                 <BottomTextBox status={item.status}>
@@ -85,14 +85,12 @@ const SalesDetailInfo = ({ label, items }) => {
                   <p>대여기간: {item.date}</p>
                 </BottomTextBox>
               </BuyerInfo>
-              <div>
-                {item.status === "대기중" ? (
+              {item.status === "대기중" ? (
+                <div>
                   <ExtraButton>취소하기</ExtraButton>
-                ) : null}
-                {item.status !== "취소" ? (
                   <ExtraButton>채팅하기</ExtraButton>
-                ) : null}
-              </div>
+                </div>
+              ) : null}
             </SaleBottomBox>
             <hr width='100%' />
           </>
