@@ -25,12 +25,15 @@ const ModalHeader = styled.header`
 
 const ModalBox = styled.div`
   font-size: 0.94rem;
-  padding: 0.9rem 0 0.5rem;
+  padding: 1.6rem 0.5rem;
 `;
 
 const ModalFooter = styled.footer`
   display: flex;
   justify-content: flex-end;
+  > * {
+    margin-left: 0.5rem;
+  }
 `;
 
 const ModalOverlay = (props) => {
