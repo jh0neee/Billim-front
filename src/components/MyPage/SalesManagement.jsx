@@ -50,7 +50,7 @@ const SalesManagement = () => {
       <SaleLayout>
         {productItems.map((item) => (
           <SaleBox key={item.id}>
-            <Link to='/mypage/sales/detail'>
+            <Link to={`/mypage/sales/${item.name}/detail`}>
               <img
                 src='https://via.placeholder.com/169x140'
                 alt='상품예시이미지'

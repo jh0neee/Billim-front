@@ -1,9 +1,10 @@
 import React from "react";
 import styled from "styled-components";
+import { Link, useParams } from "react-router-dom";
 
 import SalesDetailInfo from "./SalesDetailInfo";
 import Button from "../UI/Button";
-import { salesProduct } from "../../data";
+import { productItems, salesProduct } from "../../data";
 
 const DetailSaleBox = styled.div`
   background-color: #ededed;
@@ -22,17 +23,20 @@ const TopTextBox = styled.div`
   font-size: 0.8rem;
 
   > * {
-    &:first-child {
-      font-size: 0.9rem;
-      font-weight: 500;
-      padding-bottom: 2rem;
+    &:nth-child(2){
+      padding-top: 2rem;
     }
   }
-
+  
   > div {
     display: flex;
     align-items: center;
   }
+  `;
+
+const ProductText = styled(Link)`
+  font-size: 0.9rem;
+  font-weight: 500;
 `;
 
 const ExtraButton = styled(Button)`
@@ -44,6 +48,9 @@ const ExtraButton = styled(Button)`
 `;
 
 const SalesDetailManagement = () => {
+  const itemName = useParams().itemName;
+  const product = productItems.find(item => item.name === itemName);
+
   const rentalItem = salesProduct.find((item) => item.status === "대여중");
   const waitingItem = salesProduct.filter((item) => item.status === "대기중");
   const used = salesProduct.filter(
@@ -57,7 +64,7 @@ const SalesDetailManagement = () => {
         <SaleTopBox>
           <img src='https://via.placeholder.com/100x120' alt='상품예시이미지' />
           <TopTextBox>
-            <p>상품명</p>
+            <ProductText to={`/${product.name}/detail`}>{product.name}</ProductText>
             <p>상태: {rentalItem.status}</p>
             <div>
               <p>구매자: {rentalItem.customer}</p>
