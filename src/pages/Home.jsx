@@ -1,10 +1,10 @@
 import React from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
-import { GrNext, GrPrevious } from "react-icons/gr";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { carouselSetting } from "../styles/Carousel";
 
 const ContentBox = styled.div`
   margin-top: 85px;
@@ -19,6 +19,7 @@ const Footer = styled.footer`
 
 const CarouselBox = styled.div`
   margin-top: 4.5rem;
+
   > p {
     text-align: center;
     font-family: "TRoundWind";
@@ -41,35 +42,6 @@ const Carousel = styled(Slider)`
   }
 `;
 
-const ArrowButton = styled.button`
-  border-radius: 50%;
-  z-index: 1;
-  ${(props) =>
-    props.pos === "left"
-      ? css`
-          top: 36.67%;
-          left: 0;
-          transform: translate(-50%, 50%);
-        `
-      : css`
-          top: 45%;
-          right: 0;
-          transform: translate(50%, -50%);
-        `}
-  &::before {
-    content: initial;
-  }
-
-  > svg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 20px;
-    height: 20px;
-  }
-`;
-
 const CarouselImgBox = styled.div`
   cursor: pointer;
 
@@ -80,25 +52,8 @@ const CarouselImgBox = styled.div`
 `;
 
 const Home = () => {
-  const setting = {
-    arrows: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    centerMode: true,
-    centerPadding: "0px",
-    prevArrow: (
-      <ArrowButton pos='left'>
-        <GrPrevious />
-      </ArrowButton>
-    ),
-    nextArrow: (
-      <ArrowButton pos='right'>
-        <GrNext />
-      </ArrowButton>
-    ),
-  };
+  const carouselItem = ["item1", "item2", "item3", "item4"];
+
   return (
     <React.Fragment>
       <ContentBox>
@@ -108,23 +63,13 @@ const Home = () => {
       </ContentBox>
       <CarouselBox>
         <p>최근 본 상품</p>
-        <Carousel {...setting}>
-          <CarouselImgBox>
-            <img src='https://via.placeholder.com/200x200' alt='예시이미지' />
-            <p>아이템명1</p>
-          </CarouselImgBox>
-          <CarouselImgBox>
-            <img src='https://via.placeholder.com/200x200' alt='예시이미지' />
-            <p>아이템명2</p>
-          </CarouselImgBox>
-          <CarouselImgBox>
-            <img src='https://via.placeholder.com/200x200' alt='예시이미지' />
-            <p>아이템명3</p>
-          </CarouselImgBox>
-          <CarouselImgBox>
-            <img src='https://via.placeholder.com/200x200' alt='예시이미지' />
-            <p>아이템명4</p>
-          </CarouselImgBox>
+        <Carousel {...carouselSetting}>
+          {carouselItem.map((item, index) => (
+            <CarouselImgBox key={index}>
+              <img src='https://via.placeholder.com/200x200' alt='예시이미지' />
+              <p>{item}</p>
+            </CarouselImgBox>
+          ))}
         </Carousel>
       </CarouselBox>
       <Footer>푸터</Footer>
