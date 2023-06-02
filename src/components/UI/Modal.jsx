@@ -26,6 +26,7 @@ const ModalHeader = styled.header`
 const ModalBox = styled.div`
   font-size: 0.94rem;
   padding: 1.6rem 0.5rem;
+  line-height: 1.4rem;
 `;
 
 const ModalFooter = styled.footer`
