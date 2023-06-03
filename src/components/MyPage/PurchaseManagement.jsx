@@ -63,8 +63,12 @@ const PurchaseDate = styled.p`
   font-size: 0.8rem;
 `;
 
-const CancelButton = styled(Button)`
-  margin-bottom: 1rem;
+const ExtraButton = styled(Button)`
+  margin: ${props => (props.cancel ? '0 0 1.3rem 0' : '0.5rem 0 0 1rem')};
+  width: 60px;
+  height: 27px;
+  font-size: 10px;
+  font-weight: 400;
 `;
 
 const PurchaseManagement = () => {
@@ -116,20 +120,21 @@ const PurchaseManagement = () => {
                 <p>\ {item.amount.toLocaleString('ko-KR')}</p>
                 <SellerBox>
                   {item.seller}
-                  <Button small width="70px">
+                  <ExtraButton small width="70px">
                     문의하기
-                  </Button>
+                  </ExtraButton>
                 </SellerBox>
               </ParagraphBox>
             </ProductBox>
             {item.status === '예약완료' && (
-              <CancelButton
+              <ExtraButton
+                cancel
                 small
                 width="70px"
                 onClick={() => cancelConfirmHandler(item.id)}
               >
                 예약취소
-              </CancelButton>
+              </ExtraButton>
             )}
           </InformBox>
         </ContentBox>
