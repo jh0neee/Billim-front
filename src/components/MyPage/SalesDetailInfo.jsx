@@ -107,8 +107,9 @@ const SalesDetailInfo = ({ label, salesItems, setSalesItems, items }) => {
         }
       >
         <p>
-          해당 상품의 예약이 완전히 취소되며, <br />
-          이후 같은 날짜의 재예약은 불가능할 수 있습니다.
+          예약 취소하면 구매자와의 거래가 중단되며 <br />
+          해당 예약을 되돌릴 수 없습니다. <br />
+          취소하기 전 구매자와의 소통 후 진행해주세요.
         </p>
       </Modal>
       <SaleInfoLayout>
