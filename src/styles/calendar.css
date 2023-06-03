@@ -32,7 +32,7 @@
   overflow: hidden;
 }
 
-.react-datepicker__input-container>input {
+.react-datepicker__input-container > input {
   position: absolute;
   text-align: center;
   color: transparent;
@@ -47,7 +47,7 @@
   background-color: transparent;
 }
 
-.react-datepicker__input-container>input:focus {
+.react-datepicker__input-container > input:focus {
   outline: white;
 }
 
@@ -103,10 +103,30 @@
   background-color: #fff8aa;
 }
 
-.react-datepicker__day--in-selecting-range:not(.react-datepicker__day--in-range, .react-datepicker__month-text--in-range, .react-datepicker__quarter-text--in-range, .react-datepicker__year-text--in-range),
-.react-datepicker__month-text--in-selecting-range:not(.react-datepicker__day--in-range, .react-datepicker__month-text--in-range, .react-datepicker__quarter-text--in-range, .react-datepicker__year-text--in-range),
-.react-datepicker__quarter-text--in-selecting-range:not(.react-datepicker__day--in-range, .react-datepicker__month-text--in-range, .react-datepicker__quarter-text--in-range, .react-datepicker__year-text--in-range),
-.react-datepicker__year-text--in-selecting-range:not(.react-datepicker__day--in-range, .react-datepicker__month-text--in-range, .react-datepicker__quarter-text--in-range, .react-datepicker__year-text--in-range) {
+.react-datepicker__day--in-selecting-range:not(
+    .react-datepicker__day--in-range,
+    .react-datepicker__month-text--in-range,
+    .react-datepicker__quarter-text--in-range,
+    .react-datepicker__year-text--in-range
+  ),
+.react-datepicker__month-text--in-selecting-range:not(
+    .react-datepicker__day--in-range,
+    .react-datepicker__month-text--in-range,
+    .react-datepicker__quarter-text--in-range,
+    .react-datepicker__year-text--in-range
+  ),
+.react-datepicker__quarter-text--in-selecting-range:not(
+    .react-datepicker__day--in-range,
+    .react-datepicker__month-text--in-range,
+    .react-datepicker__quarter-text--in-range,
+    .react-datepicker__year-text--in-range
+  ),
+.react-datepicker__year-text--in-selecting-range:not(
+    .react-datepicker__day--in-range,
+    .react-datepicker__month-text--in-range,
+    .react-datepicker__quarter-text--in-range,
+    .react-datepicker__year-text--in-range
+  ) {
   border-radius: 1rem;
   background-color: rgba(255, 238, 52, 0.5);
   color: #000;
@@ -143,7 +163,7 @@
 
 .react-datepicker__navigation--previous {
   top: 10rem;
-  left: 2px
+  left: 2px;
 }
 
 .react-datepicker__current-month {

@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-import { Profile } from "../UI/Profile";
+import { Profile } from '../UI/Profile';
 
 const ReviewLayout = styled.div`
   display: grid;
@@ -23,7 +23,7 @@ const ReviewContent = styled.div`
       display: flex;
       align-items: center;
     }
-    
+
     &:last-child {
       margin: 0.5rem 0;
     }
@@ -46,10 +46,10 @@ const DetailReview = ({ data, isViewMore }) => {
 
   return (
     <ReviewLayout>
-      {exampleReview.map((rv) => (
+      {exampleReview.map(rv => (
         <ReviewContent key={rv.id}>
           <div>
-            <Profile size='45px' />
+            <Profile size="45px" />
             <ReviewUserBox>
               <p>{rv.username}</p>
               <p>{rv.date}</p>
@@ -60,10 +60,10 @@ const DetailReview = ({ data, isViewMore }) => {
       ))}
 
       {isViewMore &&
-        moreReview.map((rv) => (
+        moreReview.map(rv => (
           <ReviewContent key={rv.id}>
             <div>
-              <Profile size='45px' />
+              <Profile size="45px" />
               <ReviewUserBox>
                 <p>{rv.username}</p>
                 <p>{rv.date}</p>

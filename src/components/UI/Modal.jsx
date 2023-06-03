@@ -1,9 +1,9 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import styled from "styled-components";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import styled from 'styled-components';
 
-import BackDrop from "./BackDrop";
-import { CSSTransition } from "react-transition-group";
+import BackDrop from './BackDrop';
+import { CSSTransition } from 'react-transition-group';
 
 const ModalLayout = styled.div`
   z-index: 100;
@@ -13,7 +13,7 @@ const ModalLayout = styled.div`
   width: 25rem;
   background: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
-  font-family: "SCDream";
+  font-family: 'SCDream';
   padding: 1rem 1.3rem;
 `;
 
@@ -37,21 +37,22 @@ const ModalFooter = styled.footer`
   }
 `;
 
-const ModalOverlay = (props) => {
+const ModalOverlay = props => {
   const content = (
     <ModalLayout className={props.className}>
       <ModalHeader>{props.header}</ModalHeader>
       <form
-        onSubmit={props.onSubmit ? props.onSubmit : (e) => e.preventDefault()}>
+        onSubmit={props.onSubmit ? props.onSubmit : e => e.preventDefault()}
+      >
         <ModalBox>{props.children}</ModalBox>
         <ModalFooter>{props.footer}</ModalFooter>
       </form>
     </ModalLayout>
   );
-  return ReactDOM.createPortal(content, document.getElementById("modal"));
+  return ReactDOM.createPortal(content, document.getElementById('modal'));
 };
 
-const Modal = (props) => {
+const Modal = props => {
   return (
     <>
       {props.show && <BackDrop onClick={props.onCancel} />}
@@ -60,7 +61,8 @@ const Modal = (props) => {
         mountOnEnter
         unmountOnExit
         timeout={200}
-        classNames='modal'>
+        classNames="modal"
+      >
         <ModalOverlay {...props} />
       </CSSTransition>
     </>

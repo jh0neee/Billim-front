@@ -1,22 +1,22 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import PaymentInformation from "../../components/Product/PaymentInformation";
-import PaymentConfirm from "../../components/Product/PaymentConfirm";
-import { HiChevronLeft } from "react-icons/hi";
-import { productItems } from "../../data";
-import { useForm } from "../../hooks/useForm";
+import PaymentInformation from '../../components/Product/PaymentInformation';
+import PaymentConfirm from '../../components/Product/PaymentConfirm';
+import { HiChevronLeft } from 'react-icons/hi';
+import { productItems } from '../../data';
+import { useForm } from '../../hooks/useForm';
 
 const PaymentLayout = styled.form`
   width: 80%;
   margin: 120px auto 0;
-  font-family: "SCDream";
+  font-family: 'SCDream';
 `;
 const PaymentTitle = styled.div`
   display: flex;
   align-items: center;
-  font-family: "TRoundWind";
+  font-family: 'TRoundWind';
   font-size: 1.65rem;
   font-weight: 700;
 `;
@@ -34,15 +34,15 @@ const PaymentBox = styled.div`
 
 const ProductPayment = () => {
   const itemName = useParams().itemName;
-  const loadedContents = productItems.find((item) => item.name === itemName);
+  const loadedContents = productItems.find(item => item.name === itemName);
   const [formState, inputHandler] = useForm({}, false);
-  
+
   const navigate = useNavigate();
 
-  const [tradeSelectedOpt, setTradeSelectedOpt] = useState("");
-  const [couponSelectedOpt, setCouponSelectedOpt] = useState("");
+  const [tradeSelectedOpt, setTradeSelectedOpt] = useState('');
+  const [couponSelectedOpt, setCouponSelectedOpt] = useState('');
 
-  const onSubmit = (e) => {
+  const onSubmit = e => {
     e.preventDefault();
     console.log(formState.inputs);
   };
@@ -50,7 +50,7 @@ const ProductPayment = () => {
   return (
     <PaymentLayout onSubmit={onSubmit}>
       <PaymentTitle>
-        <GoBack size='45px' onClick={() => navigate(-1)} />
+        <GoBack size="45px" onClick={() => navigate(-1)} />
         확인 및 결제
       </PaymentTitle>
       <PaymentBox>

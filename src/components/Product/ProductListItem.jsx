@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import styled, { css } from "styled-components";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import styled, { css } from 'styled-components';
+import { Link } from 'react-router-dom';
 
-import { RiHeart3Fill, RiHeart3Line, RiStarSFill } from "react-icons/ri";
-import Card from "../UI/Card";
+import { RiHeart3Fill, RiHeart3Line, RiStarSFill } from 'react-icons/ri';
+import Card from '../UI/Card';
 
 const ProductItemBox = styled.div`
   margin: 8px 7px 7px;
@@ -23,7 +23,7 @@ const ProductParagraph = styled.p`
   font-size: 14.5px;
   font-weight: 600;
 
-  ${(props) =>
+  ${props =>
     props.amount &&
     css`
       margin: 15px 10px 0;
@@ -33,7 +33,7 @@ const ProductParagraph = styled.p`
 const ProductListItem = ({ items }) => {
   const [isWishAdd, setIsWishAdd] = useState(false);
 
-  const handleWishlistClick = (item) => {
+  const handleWishlistClick = item => {
     setIsWishAdd(!isWishAdd);
 
     item.likeCount += 1;
@@ -48,17 +48,17 @@ const ProductListItem = ({ items }) => {
       {items.length === 0 ? (
         <span>검색결과가 없습니다.</span>
       ) : (
-        items.map((item) => (
-          <Card key={item.id} width='247px' height='323px' border='none'>
+        items.map(item => (
+          <Card key={item.id} width="247px" height="323px" border="none">
             <Link to={`/${item.name}/detail`}>
               <img
-                src='https://via.placeholder.com/247x233'
-                alt='상품예시이미지'
+                src="https://via.placeholder.com/247x233"
+                alt="상품예시이미지"
               />
             </Link>
             <LikeIcon onClick={() => handleWishlistClick(item)}>
               {item.likeCount === 1 ? (
-                <RiHeart3Fill color='red' />
+                <RiHeart3Fill color="red" />
               ) : (
                 <RiHeart3Line />
               )}
@@ -71,7 +71,9 @@ const ProductListItem = ({ items }) => {
                   {item.scope}
                 </ProductParagraph>
               </ProductItemBox>
-              <ProductParagraph amount>\ {item.amount.toLocaleString("ko-KR")} /일</ProductParagraph>
+              <ProductParagraph amount>
+                \ {item.amount.toLocaleString('ko-KR')} /일
+              </ProductParagraph>
             </Link>
           </Card>
         ))

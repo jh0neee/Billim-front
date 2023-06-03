@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
-import { FaCaretDown } from "react-icons/fa";
+import { FaCaretDown } from 'react-icons/fa';
 
 const DropDownBox = styled.div`
   position: relative;
@@ -41,12 +41,12 @@ const DropDownOption = styled.div`
   cursor: pointer;
   transition: all 0.4s;
 
-  &:hover{
+  &:hover {
     background: #f4f4f4;
   }
 `;
 
-const Dropdown = ({ className, options, selectedOpt, setSelectedOpt}) => {
+const Dropdown = ({ className, options, selectedOpt, setSelectedOpt }) => {
   const [isActive, setIsActive] = useState(false);
 
   const handleDropDown = () => {
@@ -56,18 +56,19 @@ const Dropdown = ({ className, options, selectedOpt, setSelectedOpt}) => {
   return (
     <DropDownBox className={className}>
       <SelectButtonBox onClick={handleDropDown}>
-        {selectedOpt === "" ? "선택하세요" : selectedOpt}
-        <FaCaretDown/>
+        {selectedOpt === '' ? '선택하세요' : selectedOpt}
+        <FaCaretDown />
       </SelectButtonBox>
       {isActive && (
         <DropDown>
-          {options.map((option) => (
+          {options.map(option => (
             <DropDownOption
               key={option.id}
               onClick={() => {
                 setSelectedOpt(option.value);
                 setIsActive(false);
-              }}>
+              }}
+            >
               {option.value}
             </DropDownOption>
           ))}

@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
 
-import Dropdown from "../../components/UI/DropDown";
-import Input from "../../components/UI/Input";
-import Button from "../../components/UI/Button";
-import { emailAction } from "../../store/signup";
-import { useForm } from "../../hooks/useForm";
-import { VALIDATOR_REQUIRE } from "../../util/validators";
-import { Domain } from "../../data";
+import Dropdown from '../../components/UI/DropDown';
+import Input from '../../components/UI/Input';
+import Button from '../../components/UI/Button';
+import { emailAction } from '../../store/signup';
+import { useForm } from '../../hooks/useForm';
+import { VALIDATOR_REQUIRE } from '../../util/validators';
+import { Domain } from '../../data';
 
 const VerificationLayout = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: "SCDream";
+  font-family: 'SCDream';
   width: 60%;
   margin: 85px auto 0;
   padding: 1.5rem 0;
@@ -27,7 +27,7 @@ const VerificationLayout = styled.form`
 `;
 
 const VerificationTitle = styled.div`
-  font-family: "TRoundWind";
+  font-family: 'TRoundWind';
   font-weight: 700;
   font-size: 1.7rem;
   text-align: center;
@@ -55,8 +55,8 @@ const AtSignParagraph = styled.p`
 
 const EmailVerification = () => {
   const dispatch = useDispatch();
-  const email = useSelector((state) => state.email);
-  const [selectedOpt, setSelectedOpt] = useState("");
+  const email = useSelector(state => state.email);
+  const [selectedOpt, setSelectedOpt] = useState('');
   const [formState, inputHandler] = useForm({}, false);
 
   useEffect(() => {
@@ -64,13 +64,13 @@ const EmailVerification = () => {
       emailAction.EMAIL_INPUT_CHANGE({
         inputValue: formState.inputs.email?.value,
         selectedOpt,
-      })
+      }),
     );
   }, [dispatch, formState, selectedOpt]);
 
-  const emailSubmitHandler = (e) => {
+  const emailSubmitHandler = e => {
     e.preventDefault();
-    console.log(email.email + "@" + email.domain);
+    console.log(email.email + '@' + email.domain);
   };
 
   return (
@@ -78,11 +78,11 @@ const EmailVerification = () => {
       <VerificationTitle>이메일 인증</VerificationTitle>
       <EmailBox>
         <Input
-          element='input'
-          id='email'
-          type='text'
-          width='150px'
-          placeholder='email'
+          element="input"
+          id="email"
+          type="text"
+          width="150px"
+          placeholder="email"
           validators={[VALIDATOR_REQUIRE()]}
           errorText={null}
           onInput={inputHandler}
@@ -94,7 +94,7 @@ const EmailVerification = () => {
           setSelectedOpt={setSelectedOpt}
         />
       </EmailBox>
-      <Button small width='100px' type='submit'>
+      <Button small width="100px" type="submit">
         인증 받기
       </Button>
     </VerificationLayout>

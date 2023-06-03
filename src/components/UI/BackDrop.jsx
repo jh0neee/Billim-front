@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
-import ReactDOM from "react-dom";
-import styled from "styled-components";
+import React, { useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import styled from 'styled-components';
 
 const BackDropLayout = styled.div`
   position: fixed;
@@ -22,14 +22,14 @@ const BackDrop = () => {
 
     return () => {
       const scrollY = document.body.style.top;
-      document.body.style.cssText = "";
-      window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
+      document.body.style.cssText = '';
+      window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
     };
   }, []);
 
   return ReactDOM.createPortal(
     <BackDropLayout />,
-    document.getElementById("backdrop")
+    document.getElementById('backdrop'),
   );
 };
 

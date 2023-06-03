@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
+import React from 'react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
-import Button from "../UI/Button";
-import { productItems } from "../../data";
+import Button from '../UI/Button';
+import { productItems } from '../../data';
 
 const SaleHeader = styled.div`
   display: flex;
@@ -45,15 +45,15 @@ const SalesManagement = () => {
     <>
       <SaleHeader>
         <p>판매중인 상품</p>
-        <EnrollButton to='/product/new'>상품 등록</EnrollButton>
+        <EnrollButton to="/product/new">상품 등록</EnrollButton>
       </SaleHeader>
       <SaleLayout>
-        {productItems.map((item) => (
+        {productItems.map(item => (
           <SaleBox key={item.id}>
             <Link to={`/mypage/sales/${item.name}/detail`}>
               <img
-                src='https://via.placeholder.com/169x140'
-                alt='상품예시이미지'
+                src="https://via.placeholder.com/169x140"
+                alt="상품예시이미지"
               />
             </Link>
             <p>{item.name}</p>

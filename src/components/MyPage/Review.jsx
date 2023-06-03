@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
-import Button from "../UI/Button";
-import Input from "../UI/Input";
-import { VALIDATOR_REQUIRE } from "../../util/validators";
-import { useForm } from "../../hooks/useForm";
-import { review } from "../../data";
-import StarRating from "./StarRating";
+import Button from '../UI/Button';
+import Input from '../UI/Input';
+import { VALIDATOR_REQUIRE } from '../../util/validators';
+import { useForm } from '../../hooks/useForm';
+import { review } from '../../data';
+import StarRating from './StarRating';
 
 const ReviewLayout = styled.div`
   background-color: #ededed;
@@ -92,15 +92,15 @@ const ExtraButton = styled(Button)`
 `;
 
 const Review = () => {
-  const [isOpenReview, setIsOpenReview] = useState("");
+  const [isOpenReview, setIsOpenReview] = useState('');
   const [rating, setRating] = useState(0);
   const [formState, inputHandler] = useForm({}, false);
 
-  const toggleReview = (id) => {
-    setIsOpenReview((prev) => (prev !== id ? id : false));
+  const toggleReview = id => {
+    setIsOpenReview(prev => (prev !== id ? id : false));
   };
 
-  const reviewSubmitHandler = (e) => {
+  const reviewSubmitHandler = e => {
     e.preventDefault();
     console.log(formState.inputs, rating);
   };
@@ -108,17 +108,17 @@ const Review = () => {
   return (
     <>
       <p>구매 후기</p>
-      {review.map((item) => (
+      {review.map(item => (
         <ReviewLayout key={item.id}>
           <ReviewItemList>
             <TopList>
               <img
-                src='https://via.placeholder.com/100x120'
-                alt='상품예시이미지'
+                src="https://via.placeholder.com/100x120"
+                alt="상품예시이미지"
               />
               <ReviewItemTextBox>
                 <p>{item.name}</p>
-                <p>\ {item.amount.toLocaleString("ko-KR")}</p>
+                <p>\ {item.amount.toLocaleString('ko-KR')}</p>
                 <p>{item.username}</p>
               </ReviewItemTextBox>
             </TopList>
@@ -135,17 +135,17 @@ const Review = () => {
             <WritedReview review>
               <p> ➤ 후기 작성하기</p>
               <ReviewInputBox onSubmit={reviewSubmitHandler}>
-                <StarRating rating={rating} setRating={setRating}/>
+                <StarRating rating={rating} setRating={setRating} />
                 <Input
-                  element='textarea'
-                  id='review'
-                  width='100%'
-                  rows='5'
+                  element="textarea"
+                  id="review"
+                  width="100%"
+                  rows="5"
                   validators={[VALIDATOR_REQUIRE()]}
                   errorText={null}
                   onInput={inputHandler}
                 />
-                <ExtraButton type='submit' disabled={!formState.isValid}>
+                <ExtraButton type="submit" disabled={!formState.isValid}>
                   확인
                 </ExtraButton>
               </ReviewInputBox>

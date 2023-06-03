@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-import ProductListItem from "../../components/Product/ProductListItem";
-import ProductCategory from "../../components/Product/ProductCategory";
-import { Paginate } from "../../components/UI/Pagination";
-import { productItems } from "../../data";
+import ProductListItem from '../../components/Product/ProductListItem';
+import ProductCategory from '../../components/Product/ProductCategory';
+import { Paginate } from '../../components/UI/Pagination';
+import { productItems } from '../../data';
 
 const CategoryLayout = styled.div`
   margin-top: 120px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: "TRoundWind";
+  font-family: 'TRoundWind';
   font-weight: 700;
 `;
 
@@ -32,7 +32,7 @@ const ProductItemLayout = styled.div`
 
 const ProductList = () => {
   const category = useLocation().pathname.slice(9);
-  const { searchItems, isSearching } = useSelector((state) => state.search);
+  const { searchItems, isSearching } = useSelector(state => state.search);
 
   const perPage = 5;
   const [items, setItems] = useState([]);
@@ -42,20 +42,20 @@ const ProductList = () => {
 
   useEffect(() => {
     const filteredItems =
-      category === ""
+      category === ''
         ? productItems
-        : productItems.filter((item) => item.category === category);
+        : productItems.filter(item => item.category === category);
 
     setItems(isSearching ? searchItems : filteredItems);
     setCount(isSearching ? searchItems.length : filteredItems.length);
     setCurrentItems(
       isSearching
         ? searchItems.slice(0, perPage)
-        : filteredItems.slice(0, perPage)
+        : filteredItems.slice(0, perPage),
     );
   }, [category, searchItems, isSearching]);
 
-  const handlePageChange = (pageNumber) => {
+  const handlePageChange = pageNumber => {
     setCurrentPage(pageNumber);
     const firstItemIndex = (pageNumber - 1) * perPage;
     const lastItemIndex = firstItemIndex + perPage;

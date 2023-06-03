@@ -1,8 +1,8 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-import Button from "../UI/Button";
-import { purchasedProduct } from "../../data";
+import Button from '../UI/Button';
+import { purchasedProduct } from '../../data';
 
 const ContentBox = styled.div`
   background-color: #ededed;
@@ -69,8 +69,8 @@ const PurchaseManagement = () => {
   return (
     <>
       <p>구매관리</p>
-      {purchasedProduct.map((item) => (
-        <ContentBox>
+      {purchasedProduct.map(item => (
+        <ContentBox key={item.id}>
           <div>
             <PurchaseState>{item.status}</PurchaseState>
             <PurchaseDate>주문일시 : {item.date}</PurchaseDate>
@@ -78,22 +78,22 @@ const PurchaseManagement = () => {
           <InformBox>
             <ProductBox>
               <img
-                src='https://via.placeholder.com/100x120'
-                alt='상품예시이미지'
+                src="https://via.placeholder.com/100x120"
+                alt="상품예시이미지"
               />
               <ParagraphBox>
                 <p>{item.name}</p>
-                <p>\ {item.amount.toLocaleString("ko-KR")}</p>
+                <p>\ {item.amount.toLocaleString('ko-KR')}</p>
                 <SellerBox>
                   {item.seller}
-                  <Button small width='70px'>
+                  <Button small width="70px">
                     문의하기
                   </Button>
                 </SellerBox>
               </ParagraphBox>
             </ProductBox>
-            {item.status === "예약완료" && (
-              <CancelButton small width='70px'>
+            {item.status === '예약완료' && (
+              <CancelButton small width="70px">
                 예약취소
               </CancelButton>
             )}

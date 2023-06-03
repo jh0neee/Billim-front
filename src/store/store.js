@@ -1,9 +1,9 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
 
-import emailReducer from "./signup";
-import searchReducer from "./search";
-import authReducer from "./auth";
-import pointReducer from "./point";
+import emailReducer from './signup';
+import searchReducer from './search';
+import authReducer from './auth';
+import pointReducer from './point';
 
 const store = configureStore({
   reducer: {

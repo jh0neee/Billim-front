@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
-import DetailHeader from "./DetailHeader";
-import DetailContent from "./DetailContent";
-import DetailConfirm from "./DetailConfirm";
-import DetailReview from "./DetailReview";
-import Modal from "../UI/Modal";
-import Button from "../UI/Button";
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import { review } from "../../data";
+import DetailHeader from './DetailHeader';
+import DetailContent from './DetailContent';
+import DetailConfirm from './DetailConfirm';
+import DetailReview from './DetailReview';
+import Modal from '../UI/Modal';
+import Button from '../UI/Button';
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
+import { review } from '../../data';
 
 const DetailLayout = styled.div`
   width: 70%;
   margin: 120px auto 0;
-  font-family: "SCDream";
+  font-family: 'SCDream';
 `;
 
 const DetailImage = styled.div`
@@ -90,7 +90,7 @@ const ButtonLayout = styled.div`
   }
 `;
 
-const DetailView = (props) => {
+const DetailView = props => {
   const [isViewMore, setIsViewMore] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -107,7 +107,7 @@ const DetailView = (props) => {
 
   const confirmDeleteHandler = () => {
     setShowConfirmModal(false);
-    console.log("삭제되었습니다.");
+    console.log('삭제되었습니다.');
   };
 
   return (
@@ -115,20 +115,21 @@ const DetailView = (props) => {
       <Modal
         show={showConfirmModal}
         onCancel={cancelDeleteHandler}
-        header='삭제하시겠습니까?'
+        header="삭제하시겠습니까?"
         footer={
           <>
-            <Button sub small width='60px' onClick={cancelDeleteHandler}>
+            <Button sub small width="60px" onClick={cancelDeleteHandler}>
               취소
             </Button>
-            <Button small width='60px' onClick={confirmDeleteHandler}>
+            <Button small width="60px" onClick={confirmDeleteHandler}>
               삭제
             </Button>
           </>
-        }>
+        }
+      >
         <p>삭제 후에는 취소할 수 없습니다.</p>
       </Modal>
-      {props.items.map((item) => (
+      {props.items.map(item => (
         <DetailLayout key={item.id}>
           <ButtonLayout>
             <Link to={`/product/${item.id}`}>수정하기</Link>
@@ -137,27 +138,27 @@ const DetailView = (props) => {
           <DetailHeader name={item.name} scope={item.scope} />
           <DetailImage>
             <img
-              src='https://via.placeholder.com/400x300'
-              alt='상품예시이미지'
+              src="https://via.placeholder.com/400x300"
+              alt="상품예시이미지"
             />
             <DetailImageBox>
               <img
-                src='https://via.placeholder.com/200x150'
-                alt='상품예시이미지'
+                src="https://via.placeholder.com/200x150"
+                alt="상품예시이미지"
               />
               <img
-                src='https://via.placeholder.com/200x150'
-                alt='상품예시이미지'
+                src="https://via.placeholder.com/200x150"
+                alt="상품예시이미지"
               />
             </DetailImageBox>
             <DetailImageBox>
               <img
-                src='https://via.placeholder.com/200x150'
-                alt='상품예시이미지'
+                src="https://via.placeholder.com/200x150"
+                alt="상품예시이미지"
               />
               <img
-                src='https://via.placeholder.com/200x150'
-                alt='상품예시이미지'
+                src="https://via.placeholder.com/200x150"
+                alt="상품예시이미지"
               />
             </DetailImageBox>
           </DetailImage>
@@ -170,9 +171,9 @@ const DetailView = (props) => {
             <ReviewTitle>후기</ReviewTitle>
             <DetailReview data={review} isViewMore={isViewMore} />
             {isViewMore ? (
-              <MdKeyboardArrowUp size='35px' onClick={handleViewMore} />
+              <MdKeyboardArrowUp size="35px" onClick={handleViewMore} />
             ) : (
-              <MdKeyboardArrowDown size='35px' onClick={handleViewMore} />
+              <MdKeyboardArrowDown size="35px" onClick={handleViewMore} />
             )}
           </DetailReviewBox>
         </DetailLayout>

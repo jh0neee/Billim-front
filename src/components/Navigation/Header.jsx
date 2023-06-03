@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
-import { IoClose, IoMenu } from "react-icons/io5";
-import NavLinks from "./NavLinks";
-import SideDrawer from "./SideDrawer";
-import SideMenu from "./SideMenu";
-import BackDrop from "../UI/BackDrop";
-import logoImg from "../../asset/image/billim_logo_1.png";
+import { IoClose, IoMenu } from 'react-icons/io5';
+import NavLinks from './NavLinks';
+import SideDrawer from './SideDrawer';
+import SideMenu from './SideMenu';
+import BackDrop from '../UI/BackDrop';
+import logoImg from '../../asset/image/billim_logo_1.png';
 
 const HeaderBox = styled.div`
   position: fixed;
@@ -62,7 +62,7 @@ const Header = () => {
       <HeaderBox>
         <IconOpen onClick={openDrawerHandler} />
         <Link to="/">
-          <LogoImg src={logoImg} alt='logo' />
+          <LogoImg src={logoImg} alt="logo" />
         </Link>
         <NavLinks />
       </HeaderBox>

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+/* eslint-disable camelcase */
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
-import SignUpItems from "../../components/Auth/SignUpItem";
-import Button from "../../components/UI/Button";
-import Modal from "../../components/UI/Modal";
-import { useForm } from "../../hooks/useForm";
+import SignUpItems from '../../components/Auth/SignUpItem';
+import Button from '../../components/UI/Button';
+import Modal from '../../components/UI/Modal';
+import { useForm } from '../../hooks/useForm';
 
 const SignUpLayout = styled.form`
   width: 60%;
@@ -13,7 +14,7 @@ const SignUpLayout = styled.form`
 `;
 
 const SignUpTitle = styled.p`
-  font-family: "TRoundWind";
+  font-family: 'TRoundWind';
   font-weight: 700;
   font-size: 1.7rem;
   text-align: center;
@@ -39,7 +40,7 @@ const SignUp = () => {
 
   const closeModal = () => setShowModal(false);
 
-  const signUpSubmitHandler = (e) => {
+  const signUpSubmitHandler = e => {
     e.preventDefault();
 
     if (isCheckSignUp) {
@@ -54,13 +55,14 @@ const SignUp = () => {
     <>
       <Modal
         show={showModal}
-        header='중복 확인'
+        header="중복 확인"
         onCancel={closeModal}
         footer={
-          <Button small width='60px' onClick={closeModal}>
+          <Button small width="60px" onClick={closeModal}>
             확인
           </Button>
-        }>
+        }
+      >
         닉네임 중복 체크를 먼저 해 주세요
       </Modal>
       <SignUpLayout onSubmit={signUpSubmitHandler}>
@@ -74,7 +76,7 @@ const SignUp = () => {
           />
         </SignUpBox>
         <EnterBox>
-          <Button type='submit' width='15rem'>
+          <Button type="submit" width="15rem">
             회원가입하기
           </Button>
         </EnterBox>

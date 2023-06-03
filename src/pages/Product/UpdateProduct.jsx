@@ -1,13 +1,13 @@
-import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
-import Button from "../../components/UI/Button";
-import Radio from "../../components/UI/Radio";
-import Input from "../../components/UI/Input";
-import { useForm } from "../../hooks/useForm";
-import { useCheckedInput } from "../../hooks/useCheckedInput";
-import { VALIDATOR_REQUIRE } from "../../util/validators";
-import { CategoryList, TradeMethod, productItems } from "../../data";
+import Button from '../../components/UI/Button';
+import Radio from '../../components/UI/Radio';
+import Input from '../../components/UI/Input';
+import { useForm } from '../../hooks/useForm';
+import { useCheckedInput } from '../../hooks/useCheckedInput';
+import { VALIDATOR_REQUIRE } from '../../util/validators';
+import { CategoryList, TradeMethod, productItems } from '../../data';
 import {
   FormLayout,
   FormBox,
@@ -17,13 +17,13 @@ import {
   FormBtnBox,
   PlaceBox,
   TradeBox,
-} from "../NewProduct";
+} from '../NewProduct';
 
 const UpdateProduct = () => {
   const productId = useParams().productId;
-  const identifiedProduct = productItems.find((item) => item.id === productId);
-  const initialCategory = identifiedProduct ? identifiedProduct.category : "";
-  const initialTradeMethod = identifiedProduct ? identifiedProduct.trade : "";
+  const identifiedProduct = productItems.find(item => item.id === productId);
+  const initialCategory = identifiedProduct ? identifiedProduct.category : '';
+  const initialTradeMethod = identifiedProduct ? identifiedProduct.trade : '';
   const [formState, inputHandler] = useForm(
     {
       rental_product: {
@@ -51,26 +51,26 @@ const UpdateProduct = () => {
         isValid: true,
       },
     },
-    true
+    true,
   );
 
   const [checkedCategory, onCheckedCategory] = useCheckedInput(
     initialCategory,
-    inputHandler
+    inputHandler,
   );
 
   const [checkedTrade, onCheckedTrade] = useCheckedInput(
     initialTradeMethod,
-    inputHandler
+    inputHandler,
   );
 
   useEffect(() => {
-    if (checkedTrade === "택배") {
-      inputHandler("place", "", true);
+    if (checkedTrade === '택배') {
+      inputHandler('place', '', true);
     }
   }, [checkedTrade, inputHandler]);
 
-  const updateSubmitHandler = (e) => {
+  const updateSubmitHandler = e => {
     e.preventDefault();
     console.log(formState.inputs);
   };
@@ -87,43 +87,43 @@ const UpdateProduct = () => {
           <FormItem>
             <p>대여 상품명</p>
             <FormInput
-              id='rental_product'
-              element='input'
-              width='22rem'
-              height='30px'
+              id="rental_product"
+              element="input"
+              width="22rem"
+              height="30px"
               validators={[VALIDATOR_REQUIRE()]}
-              errorText='대여할 상품명을 입력해주세요.'
+              errorText="대여할 상품명을 입력해주세요."
               initialValue={formState.inputs.rental_product.value}
               initialValid={formState.inputs.rental_product.isValid}
               onInput={inputHandler}
             />
           </FormItem>
-          <hr width='80%' />
+          <hr width="80%" />
           <FormItem>
             <p>카테고리</p>
             <div>
-              {CategoryList.map((item) => (
+              {CategoryList.map(item => (
                 <Radio
                   key={item.id}
                   item={item}
-                  name='category'
+                  name="category"
                   checked={checkedCategory}
                   onChecked={onCheckedCategory}
                 />
               ))}
             </div>
           </FormItem>
-          <hr width='80%' />
+          <hr width="80%" />
           <FormItem>
             <p>대여 요금</p>
             <ItemBox>
               <FormInput
-                id='rental_fee'
-                element='input'
-                width='18.5rem'
-                height='30px'
+                id="rental_fee"
+                element="input"
+                width="18.5rem"
+                height="30px"
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText='대여할 상품의 일일 대여 요금을 입력해주세요.'
+                errorText="대여할 상품의 일일 대여 요금을 입력해주세요."
                 initialValue={formState.inputs.rental_fee.value}
                 initialValid={formState.inputs.rental_fee.isValid}
                 onInput={inputHandler}
@@ -131,20 +131,20 @@ const UpdateProduct = () => {
               <p>원/[일]</p>
             </ItemBox>
           </FormItem>
-          <hr width='80%' />
+          <hr width="80%" />
           <FormItem>
             <p>거래 방법</p>
             <TradeBox>
-              {TradeMethod.map((item) => (
+              {TradeMethod.map(item => (
                 <Radio
                   key={item.id}
                   item={item}
-                  name='trade_method'
+                  name="trade_method"
                   checked={checkedTrade}
                   onChecked={onCheckedTrade}
                 />
               ))}
-              {(checkedTrade === "직거래" || checkedTrade === "둘 다 가능") && (
+              {(checkedTrade === '직거래' || checkedTrade === '둘 다 가능') && (
                 <PlaceBox>
                   <p>
                     거래
@@ -152,10 +152,10 @@ const UpdateProduct = () => {
                     희망지역
                   </p>
                   <Input
-                    id='place'
-                    element='input'
-                    width='5rem'
-                    height='23px'
+                    id="place"
+                    element="input"
+                    width="5rem"
+                    height="23px"
                     validators={[VALIDATOR_REQUIRE()]}
                     errorText={null}
                     initialValue={formState.inputs.place.value}
@@ -166,25 +166,25 @@ const UpdateProduct = () => {
               )}
             </TradeBox>
           </FormItem>
-          <hr width='80%' />
+          <hr width="80%" />
           <FormItem>
             <p>상품 설명</p>
             <FormInput
-              id='description'
-              element='textarea'
-              width='22rem'
-              height='30px'
+              id="description"
+              element="textarea"
+              width="22rem"
+              height="30px"
               validators={[VALIDATOR_REQUIRE()]}
-              errorText='대여할 상품에 대한 설명을 입력해주세요.'
+              errorText="대여할 상품에 대한 설명을 입력해주세요."
               initialValue={formState.inputs.description.value}
               initialValid={formState.inputs.description.isValid}
               onInput={inputHandler}
             />
           </FormItem>
-          <hr width='80%' />
+          <hr width="80%" />
         </FormBox>
         <FormBtnBox>
-          <Button type='submit' disabled={!formState.isValid} width='10rem'>
+          <Button type="submit" disabled={!formState.isValid} width="10rem">
             수정하기
           </Button>
         </FormBtnBox>

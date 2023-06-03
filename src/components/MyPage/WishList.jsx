@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import styled, { css } from "styled-components";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import styled, { css } from 'styled-components';
+import { Link } from 'react-router-dom';
 
-import { RiHeart3Fill, RiHeart3Line, RiStarSFill } from "react-icons/ri";
-import { productItems } from "../../data";
+import { RiHeart3Fill, RiHeart3Line, RiStarSFill } from 'react-icons/ri';
+import { productItems } from '../../data';
 
 const WishListLayout = styled.div`
   margin: 1rem;
@@ -49,7 +49,7 @@ const LikeIcon = styled.div`
 const ProductParagraph = styled.p`
   font-size: 12px;
 
-  ${(props) =>
+  ${props =>
     props.amount &&
     css`
       margin: 0 10px;
@@ -58,9 +58,9 @@ const ProductParagraph = styled.p`
 
 const WishList = () => {
   const [isWishAdd, setIsWishAdd] = useState(false);
-  const favoriteItems = productItems.filter((item) => item.likeCount === 1);
+  const favoriteItems = productItems.filter(item => item.likeCount === 1);
 
-  const handleWishlistClick = (item) => {
+  const handleWishlistClick = item => {
     setIsWishAdd(!isWishAdd);
 
     item.likeCount += 1;
@@ -77,17 +77,17 @@ const WishList = () => {
         <NoneText>관심상품이 없습니다.</NoneText>
       ) : (
         <WishListLayout>
-          {favoriteItems.map((item) => (
-            <ListBox>
+          {favoriteItems.map(item => (
+            <ListBox key={item.id}>
               <Link to={`/${item.name}/detail`}>
                 <img
-                  src='https://via.placeholder.com/169x140'
-                  alt='상품예시이미지'
+                  src="https://via.placeholder.com/169x140"
+                  alt="상품예시이미지"
                 />
               </Link>
               <LikeIcon onClick={() => handleWishlistClick(item)}>
                 {item.likeCount === 1 ? (
-                  <RiHeart3Fill color='red' />
+                  <RiHeart3Fill color="red" />
                 ) : (
                   <RiHeart3Line />
                 )}

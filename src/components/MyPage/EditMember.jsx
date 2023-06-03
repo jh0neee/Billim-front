@@ -1,8 +1,8 @@
-import React from "react";
-import styled, { css } from "styled-components";
+import React from 'react';
+import styled, { css } from 'styled-components';
 
-import Button from "../UI/Button";
-import { Profile } from "../UI/Profile";
+import Button from '../UI/Button';
+import { Profile } from '../UI/Profile';
 
 const EditMemberLayout = styled.div`
   margin: 0 0 3rem;
@@ -11,10 +11,10 @@ const EditMemberLayout = styled.div`
 const EditMemberBox = styled.div`
   display: grid;
   grid-template-columns: 0.45fr 1fr 0.3fr;
-  align-items: ${(props) => (props.first ? "flex-start" : "center")};
+  align-items: ${props => (props.first ? 'flex-start' : 'center')};
   margin: 2rem 0;
 
-  ${(props) =>
+  ${props =>
     props.first &&
     css`
       > p,
@@ -45,7 +45,7 @@ const ExtraButton = styled(Button)`
   font-size: 10px;
   font-weight: 400;
 
-  ${(props) =>
+  ${props =>
     props.kakao &&
     css`
       width: 35px;
@@ -66,7 +66,7 @@ const EditMember = () => {
         <EditMemberBox first>
           <p>사진</p>
           <div>
-            <Profile size='50px' />
+            <Profile size="50px" />
             <p>
               회원님을 알릴 수 있는 사진을 등록해주세요. <br />
               등록된 사진은 회원님의 게시물이나 댓글에 사용됩니다.

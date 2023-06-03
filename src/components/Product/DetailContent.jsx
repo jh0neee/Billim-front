@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-import { TbTruckDelivery, TbAward } from "react-icons/tb";
-import { FaWalking } from "react-icons/fa";
-import { Profile } from "../UI/Profile";
+import { TbTruckDelivery, TbAward } from 'react-icons/tb';
+import { FaWalking } from 'react-icons/fa';
+import { Profile } from '../UI/Profile';
 
 const ContentTitle = styled.div`
   display: flex;
@@ -65,16 +65,16 @@ const DetailContent = ({ tradeMethod }) => {
     <div>
       <ContentTitle>
         <p>UESR님이 대여하는 상품</p>
-        <Profile size='45px' />
+        <Profile size="45px" />
       </ContentTitle>
       <hr />
       <CategoryBox>
         <ContentCategory>
           <div>
-            <FaWalking size='26px' />
+            <FaWalking size="26px" />
             <p>직거래</p>
           </div>
-          {tradeMethod === "직거래" || tradeMethod === "둘 다 가능" ? (
+          {tradeMethod === '직거래' || tradeMethod === '둘 다 가능' ? (
             <p>가능</p>
           ) : (
             <p>불가능</p>
@@ -82,10 +82,10 @@ const DetailContent = ({ tradeMethod }) => {
         </ContentCategory>
         <ContentCategory>
           <div>
-            <TbTruckDelivery size='30px' />
+            <TbTruckDelivery size="30px" />
             <p>택배</p>
           </div>
-          {tradeMethod === "택배" || tradeMethod === "둘 다 가능" ? (
+          {tradeMethod === '택배' || tradeMethod === '둘 다 가능' ? (
             <p>가능</p>
           ) : (
             <p>불가능</p>
@@ -93,7 +93,7 @@ const DetailContent = ({ tradeMethod }) => {
         </ContentCategory>
         <ContentCategory>
           <div>
-            <TbAward size='28px' />
+            <TbAward size="28px" />
             <p>USER님은 -등급입니다.</p>
           </div>
         </ContentCategory>

@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
-import styled from "styled-components";
+import React, { useEffect } from 'react';
+import styled from 'styled-components';
 
-import Button from "../../components/UI/Button";
-import { coupons, user } from "../../data";
-import { useSelector } from "react-redux";
+import Button from '../../components/UI/Button';
+import { coupons } from '../../data';
+import { useSelector } from 'react-redux';
 
 const ConfirmBox = styled.div`
   position: sticky;
@@ -80,64 +80,71 @@ const ParagraphBox = styled.div`
   }
 `;
 
-const PaymentConfirm = ({ items, tradeSelectedOpt, couponSelectedOpt, onInput }) => { 
-  const discountItem = coupons.find((item) => item.value === couponSelectedOpt);
+const PaymentConfirm = ({
+  items,
+  tradeSelectedOpt,
+  couponSelectedOpt,
+  onInput,
+}) => {
+  const discountItem = coupons.find(item => item.value === couponSelectedOpt);
   const discount = discountItem?.discount || 0;
-  
+
   const courierFee =
-  tradeSelectedOpt === "택배" || items.trade === "택배" ? 3000 : 0;
-  
-  const point = useSelector((state) => state.point.usagePoint);
+    tradeSelectedOpt === '택배' || items.trade === '택배' ? 3000 : 0;
+
+  const point = useSelector(state => state.point.usagePoint);
   const discounted = Math.round(items.amount * (discount / 100));
   const days = 4;
   const total = items.amount * days + courierFee - discounted - point;
 
   useEffect(() => {
-    onInput("total", total, true);
+    onInput('total', total, true);
   }, [onInput, total]);
 
   return (
     <ConfirmBox>
       <ConfirmTop>
-        <img src='https://via.placeholder.com/100x100' alt='상품예시이미지' />
+        <img src="https://via.placeholder.com/100x100" alt="상품예시이미지" />
         <div>
           <p>[ {items.category} ]</p>
           <p>{items.name}</p>
-          <p className='name'>판매자명</p>
+          <p className="name">판매자명</p>
         </div>
       </ConfirmTop>
       <hr />
       <ConfirmBottom>
         <p>요금세부정보</p>
         <ParagraphBox>
-          <p className='left'>\ {items.amount.toLocaleString("ko-KR")} / 일</p>
-          <p className='right'>\ {items.amount.toLocaleString("ko-KR")}</p>
+          <p className="left">\ {items.amount.toLocaleString('ko-KR')} / 일</p>
+          <p className="right">\ {items.amount.toLocaleString('ko-KR')}</p>
         </ParagraphBox>
         <ParagraphBox>
-          <p className='left'>대여일</p>
-          <p className='right'>{days}일</p>
+          <p className="left">대여일</p>
+          <p className="right">{days}일</p>
         </ParagraphBox>
         <ParagraphBox>
-          <p className='left'>배송료</p>
-          <p className='right'>\ {courierFee.toLocaleString("ko-KR")}</p>
+          <p className="left">배송료</p>
+          <p className="right">\ {courierFee.toLocaleString('ko-KR')}</p>
         </ParagraphBox>
         <ParagraphBox>
-          <p className='left'>쿠폰적용</p>
-          <p className='right'>- \ {discounted.toLocaleString("ko-KR")}</p>
+          <p className="left">쿠폰적용</p>
+          <p className="right">- \ {discounted.toLocaleString('ko-KR')}</p>
         </ParagraphBox>
         <ParagraphBox>
-          <p className='left'>적립금적용</p>
-          <p className='right'>- \ {Number(point).toLocaleString("ko-KR")}</p>
+          <p className="left">적립금적용</p>
+          <p className="right">- \ {Number(point).toLocaleString('ko-KR')}</p>
         </ParagraphBox>
       </ConfirmBottom>
       <hr />
       <ParagraphBox>
-        <p className='left'>총 합계</p>
-        <p className='right'>
-          \ {isNaN(total) ? 0 : total.toLocaleString("ko-KR")}
+        <p className="left">총 합계</p>
+        <p className="right">
+          \ {isNaN(total) ? 0 : total.toLocaleString('ko-KR')}
         </p>
       </ParagraphBox>
-      <Button width='90%' type='submit'>확인 및 결제</Button>
+      <Button width="90%" type="submit">
+        확인 및 결제
+      </Button>
     </ConfirmBox>
   );
 };

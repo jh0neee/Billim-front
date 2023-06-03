@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const StyledInput = styled.input`
   appearance: none;
@@ -23,7 +23,7 @@ const Radio = ({ item, name, checked, onChecked }) => {
   return (
     <>
       <StyledInput
-        type='radio'
+        type="radio"
         id={`radio-${item.value}`}
         name={name}
         value={item.value}

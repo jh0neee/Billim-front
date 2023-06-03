@@ -1,7 +1,7 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import styled from "styled-components";
-import { CSSTransition } from "react-transition-group";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import styled from 'styled-components';
+import { CSSTransition } from 'react-transition-group';
 
 const SideDrawerLayout = styled.aside`
   position: fixed;
@@ -13,21 +13,22 @@ const SideDrawerLayout = styled.aside`
   background: white;
 `;
 
-const SideDrawer = (props) => {
+const SideDrawer = props => {
   const content = (
     <CSSTransition
       in={props.show}
       timeout={200}
-      classNames='slide-left'
+      classNames="slide-left"
       mountOnEnter
-      unmountOnExit>
+      unmountOnExit
+    >
       <SideDrawerLayout onClick={props.onClick}>
         {props.children}
       </SideDrawerLayout>
     </CSSTransition>
   );
-  
-  return ReactDOM.createPortal(content, document.getElementById("drawer"));
+
+  return ReactDOM.createPortal(content, document.getElementById('drawer'));
 };
 
 export default SideDrawer;

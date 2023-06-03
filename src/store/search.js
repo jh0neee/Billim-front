@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   searchItems: [],
@@ -6,14 +6,14 @@ const initialState = {
 };
 
 const searchSlice = createSlice({
-  name: "search",
+  name: 'search',
   initialState,
   reducers: {
     CLICK_SEARCH(state, action) {
       const { inputValue, search, item } = action.payload;
       state.isSearching = search;
-      state.searchItems = item.filter((item) =>
-        item.name.toLowerCase().includes(inputValue.toLowerCase())
+      state.searchItems = item.filter(item =>
+        item.name.toLowerCase().includes(inputValue.toLowerCase()),
       );
     },
     CLEAR_SEARCH(state, action) {

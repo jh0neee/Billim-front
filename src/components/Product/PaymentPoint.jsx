@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 
-import Input from "../../components/UI/Input";
-import Button from "../../components/UI/Button";
-import { user } from "../../data";
-import { GrPowerReset } from "react-icons/gr";
-import { pointAction } from "../../store/point";
-import { useDispatch, useSelector } from "react-redux";
-import { toast, ToastContainer } from "react-toastify";
-import { VALIDATOR_REQUIRE } from "../../util/validators";
+import Input from '../../components/UI/Input';
+import Button from '../../components/UI/Button';
+import { user } from '../../data';
+import { GrPowerReset } from 'react-icons/gr';
+import { pointAction } from '../../store/point';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast, ToastContainer } from 'react-toastify';
+import { VALIDATOR_REQUIRE } from '../../util/validators';
 
 const PointLayout = styled.div`
   display: grid;
@@ -27,7 +27,7 @@ const PaymentPoint = ({ onInput, formState }) => {
   const point = user[0].point;
 
   const dispatch = useDispatch();
-  const remainingPoints = useSelector((state) => state.point.remainingPoint);
+  const remainingPoints = useSelector(state => state.point.remainingPoint);
 
   const [isBtnEnabled, setIsBtnEnabled] = useState(true);
   const [resetInput, setResetInput] = useState(false);
@@ -43,7 +43,7 @@ const PaymentPoint = ({ onInput, formState }) => {
       dispatch(pointAction.usePoints(usageAmount));
       setIsBtnEnabled(false);
     } else {
-      toast.error("사용가능 적립금보다 많습니다.");
+      toast.error('사용가능 적립금보다 많습니다.');
     }
   };
 
@@ -64,10 +64,10 @@ const PaymentPoint = ({ onInput, formState }) => {
         <p>사용</p>
         <Input
           bar
-          id='use_point'
-          element='input'
-          width='8.5rem'
-          height='20px'
+          id="use_point"
+          element="input"
+          width="8.5rem"
+          height="20px"
           reset={resetInput}
           setReset={setResetInput}
           validators={[VALIDATOR_REQUIRE()]}
@@ -75,17 +75,18 @@ const PaymentPoint = ({ onInput, formState }) => {
           onInput={onInput}
         />
         <Button
-          type='button'
+          type="button"
           sub
           small
-          width='80px'
+          width="80px"
           onClick={applyUsageAmount}
-          disabled={!isBtnEnabled}>
+          disabled={!isBtnEnabled}
+        >
           사용
         </Button>
         <ResetButton onClick={resetUsageAmount} />
         <ToastContainer
-          position='top-center'
+          position="top-center"
           limit={1}
           autoClose={3000}
           pauseOnHover={false}

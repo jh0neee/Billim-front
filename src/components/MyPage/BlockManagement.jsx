@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-import Button from "../UI/Button";
-import { Profile } from "../UI/Profile";
-import { review } from "../../data";
+import Button from '../UI/Button';
+import { Profile } from '../UI/Profile';
+import { review } from '../../data';
 
 const BlockLayout = styled.div`
   margin: 0.5rem 0;
@@ -54,10 +54,10 @@ const BlockManagement = () => {
     <>
       <p>차단관리</p>
       <BlockLayout>
-        {review.map((item) => (
+        {review.map(item => (
           <BlockItemBox key={item.id}>
             <BlockTopBox>
-              <Profile size='50px' />
+              <Profile size="50px" />
               <BlockItemTextBox>
                 <p>{item.username}</p>
                 <p>차단일자 : {item.date}</p>

@@ -1,11 +1,11 @@
-import React, { useEffect, useReducer } from "react";
-import styled, { css } from "styled-components";
+import React, { useEffect, useReducer } from 'react';
+import styled, { css } from 'styled-components';
 
-import { inputReducer } from "../../store/reducer/inputReducer";
+import { inputReducer } from '../../store/reducer/inputReducer';
 
 const defaultInput = css`
-  width: ${(props) => props.width || "100%"};
-  border: 1px solid ${(props) => props.theme.borderColor};
+  width: ${props => props.width || '100%'};
+  border: 1px solid ${props => props.theme.borderColor};
   outline: 0;
   font-size: 0.85rem;
   font-weight: 400;
@@ -24,10 +24,10 @@ const InputLabel = styled.label`
 
 const StyledInput = styled.input`
   ${defaultInput}
-  height: ${(props) => props.height || "43px"};
+  height: ${props => props.height || '43px'};
   padding: 1.6px 12.8px;
 
-  ${(props) =>
+  ${props =>
     props.bar &&
     css`
       height: 30px;
@@ -53,16 +53,16 @@ const ErrorText = styled.p`
   font-size: 0.5rem;
   color: red;
 
-  ${(props) =>
+  ${props =>
     props.null &&
     css`
       display: none;
     `}
 `;
 
-const Input = (props) => {
+const Input = props => {
   const [inputState, dispatch] = useReducer(inputReducer, {
-    value: props.initialValue || "",
+    value: props.initialValue || '',
     isValid: props.initialValid || false,
     isTouched: false,
   });
@@ -72,7 +72,7 @@ const Input = (props) => {
 
   useEffect(() => {
     dispatch({
-      type: "SET_INITIAL",
+      type: 'SET_INITIAL',
       initialValue: props.initialValue,
       initialValid: props.initialValid,
     });
@@ -82,34 +82,34 @@ const Input = (props) => {
     onInput(id, value, isValid);
   }, [id, value, isValid, onInput]);
 
-  const changeHandler = (e) => {
+  const changeHandler = e => {
     dispatch({
-      type: "CHANGE",
+      type: 'CHANGE',
       val: e.target.value,
       validators: props.validators,
     });
 
-    if (typeof setReset === "function") {
+    if (typeof setReset === 'function') {
       setReset(false);
     }
   };
 
   const touchHandler = () => {
     dispatch({
-      type: "TOUCH",
+      type: 'TOUCH',
     });
   };
 
   useEffect(() => {
     if (reset) {
       dispatch({
-        type: "RESET",
+        type: 'RESET',
       });
     }
   }, [reset]);
 
   const element =
-    props.element === "input" ? (
+    props.element === 'input' ? (
       <StyledInput
         id={props.id}
         type={props.type}

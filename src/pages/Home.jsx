@@ -1,10 +1,10 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { carouselSetting } from "../styles/Carousel";
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { carouselSetting } from '../styles/Carousel';
 
 const ContentBox = styled.div`
   margin-top: 85px;
@@ -22,7 +22,7 @@ const CarouselBox = styled.div`
 
   > p {
     text-align: center;
-    font-family: "TRoundWind";
+    font-family: 'TRoundWind';
     font-size: 1.4rem;
     font-weight: 500;
   }
@@ -52,21 +52,21 @@ const CarouselImgBox = styled.div`
 `;
 
 const Home = () => {
-  const carouselItem = ["item1", "item2", "item3", "item4"];
+  const carouselItem = ['item1', 'item2', 'item3', 'item4'];
 
   return (
     <React.Fragment>
       <ContentBox>
-        <img src='https://via.placeholder.com/1260x400' alt='예시이미지' />
-        <img src='https://via.placeholder.com/1260x400' alt='예시이미지' />
-        <img src='https://via.placeholder.com/1260x400' alt='예시이미지' />
+        <img src="https://via.placeholder.com/1260x400" alt="예시이미지" />
+        <img src="https://via.placeholder.com/1260x400" alt="예시이미지" />
+        <img src="https://via.placeholder.com/1260x400" alt="예시이미지" />
       </ContentBox>
       <CarouselBox>
         <p>최근 본 상품</p>
         <Carousel {...carouselSetting}>
           {carouselItem.map((item, index) => (
             <CarouselImgBox key={index}>
-              <img src='https://via.placeholder.com/200x200' alt='예시이미지' />
+              <img src="https://via.placeholder.com/200x200" alt="예시이미지" />
               <p>{item}</p>
             </CarouselImgBox>
           ))}

@@ -1,11 +1,12 @@
-import styled, { css } from "styled-components";
-import { GrNext, GrPrevious } from "react-icons/gr";
+import React from 'react';
+import styled, { css } from 'styled-components';
+import { GrNext, GrPrevious } from 'react-icons/gr';
 
 const ArrowButton = styled.button`
   border-radius: 50%;
   z-index: 1;
-  ${(props) =>
-    props.pos === "left"
+  ${props =>
+    props.pos === 'left'
       ? css`
           top: 36.67%;
           left: 0;
@@ -37,14 +38,14 @@ export const carouselSetting = {
   slidesToShow: 3,
   slidesToScroll: 1,
   centerMode: true,
-  centerPadding: "0px",
+  centerPadding: '0px',
   prevArrow: (
-    <ArrowButton pos='left'>
+    <ArrowButton pos="left">
       <GrPrevious />
     </ArrowButton>
   ),
   nextArrow: (
-    <ArrowButton pos='right'>
+    <ArrowButton pos="right">
       <GrNext />
     </ArrowButton>
   ),

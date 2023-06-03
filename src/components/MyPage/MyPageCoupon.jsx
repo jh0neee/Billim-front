@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
-import { coupons } from "../../data";
+import { coupons } from '../../data';
 
 const CouponLayout = styled.div`
   margin: 0.5rem 0;
@@ -38,8 +38,8 @@ const CouponItemBox = styled.div`
 
 const MyPageCoupon = () => {
   const [sortedCoupons, setSortedCoupons] = useState(coupons);
-  
-  let copyCoupons = [...sortedCoupons];
+
+  const copyCoupons = [...sortedCoupons];
 
   const newestHandler = () => {
     setSortedCoupons(copyCoupons.sort((a, b) => b.discount - a.discount));
@@ -47,7 +47,7 @@ const MyPageCoupon = () => {
 
   const byDiscountHandler = () => {
     setSortedCoupons(
-      copyCoupons.sort((a, b) => new Date(a.date) - new Date(b.date))
+      copyCoupons.sort((a, b) => new Date(a.date) - new Date(b.date)),
     );
   };
 
@@ -61,7 +61,7 @@ const MyPageCoupon = () => {
       </CouponTab>
       <hr />
       <CouponLayout>
-        {sortedCoupons.map((item) => (
+        {sortedCoupons.map(item => (
           <CouponItemBox key={item.id}>
             <p>{item.discount}%</p>
             <p>{item.item}</p>

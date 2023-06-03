@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Link, useParams } from "react-router-dom";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { Link, useParams } from 'react-router-dom';
 
-import SalesDetailInfo from "./SalesDetailInfo";
-import Button from "../UI/Button";
-import { productItems, salesProduct } from "../../data";
+import SalesDetailInfo from './SalesDetailInfo';
+import Button from '../UI/Button';
+import { productItems, salesProduct } from '../../data';
 
 const DetailSaleBox = styled.div`
   background-color: #ededed;
@@ -49,13 +49,13 @@ const ExtraButton = styled(Button)`
 
 const SalesDetailManagement = () => {
   const itemName = useParams().itemName;
-  const selectedProduct = productItems.find((item) => item.name === itemName);
+  const selectedProduct = productItems.find(item => item.name === itemName);
   const [salesItems, setSalesItems] = useState(salesProduct);
 
-  const rentalItem = salesItems.find((item) => item.status === "대여중");
-  const waitingItem = salesItems.filter((item) => item.status === "대기중");
+  const rentalItem = salesItems.find(item => item.status === '대여중');
+  const waitingItem = salesItems.filter(item => item.status === '대기중');
   const used = salesItems.filter(
-    (item) => item.status === "취소" || item.status === "완료"
+    item => item.status === '취소' || item.status === '완료',
   );
 
   return (
@@ -63,7 +63,7 @@ const SalesDetailManagement = () => {
       <p>판매관리</p>
       <DetailSaleBox>
         <SaleTopBox>
-          <img src='https://via.placeholder.com/100x120' alt='상품예시이미지' />
+          <img src="https://via.placeholder.com/100x120" alt="상품예시이미지" />
           <TopTextBox>
             <ProductText to={`/${selectedProduct.name}/detail`}>
               {selectedProduct.name}
@@ -78,12 +78,12 @@ const SalesDetailManagement = () => {
         </SaleTopBox>
         <hr />
         <SalesDetailInfo
-          label='대기 내역'
+          label="대기 내역"
           salesItems={salesItems}
           setSalesItems={setSalesItems}
           items={waitingItem}
         />
-        <SalesDetailInfo label='완료 내역' items={used} />
+        <SalesDetailInfo label="완료 내역" items={used} />
       </DetailSaleBox>
     </>
   );

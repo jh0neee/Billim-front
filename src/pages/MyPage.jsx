@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "styled-components";
-import { Outlet } from "react-router-dom";
+import React from 'react';
+import styled from 'styled-components';
+import { Outlet } from 'react-router-dom';
 
-import MyPageUser from "../components/MyPage/MyPageUser";
-import MyPageSideBar from "../components/MyPage/MyPageSideBar";
+import MyPageUser from '../components/MyPage/MyPageUser';
+import MyPageSideBar from '../components/MyPage/MyPageSideBar';
 
 const MyPageLayout = styled.div`
   width: 70%;
@@ -19,7 +19,7 @@ const MyPageBox = styled.div`
 `;
 
 const MyPageContent = styled.div`
-    padding-top: 1.5rem;
+  padding-top: 1.5rem;
 
   > * {
     &:first-child {

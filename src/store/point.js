@@ -1,12 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   remainingPoint: 0,
   usagePoint: 0,
-}
+};
 
 const pointSlice = createSlice({
-  name: "point",
+  name: 'point',
   initialState,
   reducers: {
     updatePoints: (state, action) => {
@@ -16,7 +16,7 @@ const pointSlice = createSlice({
       state.usagePoint = action.payload;
       state.remainingPoint -= state.usagePoint;
     },
-  }
+  },
 });
 
 export const pointAction = pointSlice.actions;

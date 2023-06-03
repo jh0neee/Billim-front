@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-import { RiStarSFill } from "react-icons/ri";
+import { RiStarSFill } from 'react-icons/ri';
 
 const TitleBox = styled.div`
   padding: 1rem 0;
@@ -9,7 +9,7 @@ const TitleBox = styled.div`
 
 const DetailTitle = styled.div`
   margin-bottom: 0.7rem;
-  font-family: "TRoundWind";
+  font-family: 'TRoundWind';
   font-weight: 700;
   font-size: 1.5rem;
 `;
@@ -27,7 +27,7 @@ const TitleParagraph = styled.div`
   font-weight: 500;
 `;
 
-const DetailHeader = (props) => {
+const DetailHeader = props => {
   return (
     <TitleBox>
       <DetailTitle>{props.name}</DetailTitle>

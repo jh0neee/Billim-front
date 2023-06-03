@@ -1,20 +1,20 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  email: "",
-  domain: "",
-}
+  email: '',
+  domain: '',
+};
 
 const emailSlice = createSlice({
-  name: "email",
+  name: 'email',
   initialState,
   reducers: {
     EMAIL_INPUT_CHANGE(state, action) {
-      const {inputValue, selectedOpt} = action.payload;
+      const { inputValue, selectedOpt } = action.payload;
       state.email = inputValue;
       state.domain = selectedOpt;
-    }
-  }
+    },
+  },
 });
 
 export const emailAction = emailSlice.actions;

@@ -1,14 +1,14 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import styled from "styled-components";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 
-import Input from "../../components/UI/Input";
-import Button from "../../components/UI/Button";
-import { ImBubble } from "react-icons/im";
-import { authAction } from "../../store/auth";
-import { VALIDATOR_REQUIRE } from "../../util/validators";
-import { useForm } from "../../hooks/useForm";
+import Input from '../../components/UI/Input';
+import Button from '../../components/UI/Button';
+import { ImBubble } from 'react-icons/im';
+import { authAction } from '../../store/auth';
+import { VALIDATOR_REQUIRE } from '../../util/validators';
+import { useForm } from '../../hooks/useForm';
 
 const SignInLayout = styled.form`
   margin-top: 8.5rem;
@@ -16,7 +16,7 @@ const SignInLayout = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: "SCDream";
+  font-family: 'SCDream';
 
   > * {
     &:nth-child(2) {
@@ -75,7 +75,7 @@ const SignIn = () => {
   const dispatch = useDispatch();
   const [formState, inputHandler] = useForm({}, false);
 
-  const SubmitHandler = (e) => {
+  const SubmitHandler = e => {
     e.preventDefault();
     console.log(formState.inputs);
 
@@ -85,32 +85,32 @@ const SignIn = () => {
   return (
     <SignInLayout onSubmit={SubmitHandler}>
       <Input
-        element='input'
-        id='id'
-        type='text'
-        width='300px'
-        placeholder='ID'
+        element="input"
+        id="id"
+        type="text"
+        width="300px"
+        placeholder="ID"
         validators={[VALIDATOR_REQUIRE()]}
-        errorText='아이디를 입력해주세요'
+        errorText="아이디를 입력해주세요"
         onInput={inputHandler}
       />
       <Input
-        element='input'
-        id='password'
-        type='password'
-        width='300px'
-        placeholder='Password'
+        element="input"
+        id="password"
+        type="password"
+        width="300px"
+        placeholder="Password"
         validators={[VALIDATOR_REQUIRE()]}
-        errorText='비밀번호를 입력해주세요'
+        errorText="비밀번호를 입력해주세요"
         onInput={inputHandler}
       />
-      <Button type='submit' disabled={!formState.isValid}>
+      <Button type="submit" disabled={!formState.isValid}>
         로그인
       </Button>
       <FindButtonBox>
-        <Link to='/finduser/id'>아이디 찾기</Link>
+        <Link to="/finduser/id">아이디 찾기</Link>
         <span>|</span>
-        <Link to='/finduser/password'>비밀번호 찾기</Link>
+        <Link to="/finduser/password">비밀번호 찾기</Link>
       </FindButtonBox>
       <ButtonBox>
         <KakaoIcon />
@@ -121,7 +121,7 @@ const SignIn = () => {
           빌림의 회원이 되시면 <br />
           만원 할인쿠폰을 드립니다.
         </p>
-        <Button sub='true' small='true' to='/emailverify' width='80px'>
+        <Button sub="true" small="true" to="/emailverify" width="80px">
           회원가입
         </Button>
       </SignUpBox>

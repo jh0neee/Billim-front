@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
-import DetePicker from "react-datepicker";
-import { ko } from "date-fns/locale";
-import "react-datepicker/dist/react-datepicker.css";
-import "../../styles/calendar.css";
+import DetePicker from 'react-datepicker';
+import { ko } from 'date-fns/locale';
+import 'react-datepicker/dist/react-datepicker.css';
+import '../../styles/calendar.css';
 
-import Button from "../UI/Button";
-import differenceInDays from "date-fns/differenceInDays";
+import Button from '../UI/Button';
+import differenceInDays from 'date-fns/differenceInDays';
 
 const ConfirmBox = styled.div`
   display: grid;
@@ -42,27 +42,27 @@ const PaymentBox = styled.div`
   }
 `;
 
-const DetailConfirm = (props) => {
+const DetailConfirm = props => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
   const days = differenceInDays(endDate, startDate);
-  const total = (props.amount * days).toLocaleString("ko-KR");
+  const total = (props.amount * days).toLocaleString('ko-KR');
 
-  const onChangeCalendar = (dates) => {
+  const onChangeCalendar = dates => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
   };
 
-  const dateToString = (date) => {
+  const dateToString = date => {
     if (date === null) return;
 
     return (
       date.getFullYear() +
-      "-" +
-      (date.getMonth() + 1).toString().padStart(2, "0") +
-      "-" +
-      date.getDate().toString().padStart(2, "0")
+      '-' +
+      (date.getMonth() + 1).toString().padStart(2, '0') +
+      '-' +
+      date.getDate().toString().padStart(2, '0')
     );
   };
 
@@ -83,20 +83,18 @@ const DetailConfirm = (props) => {
       <p>
         {dateToString(startDate)} &ensp; ~ &ensp; {dateToString(endDate)}
       </p>
-      <hr width='75%' />
+      <hr width="75%" />
       <PaymentBox>
-        <p className='left'>\ {props.amount.toLocaleString("ko-KR")} / 일</p>
-        <p className='right'>\ {props.amount.toLocaleString("ko-KR")}</p>
+        <p className="left">\ {props.amount.toLocaleString('ko-KR')} / 일</p>
+        <p className="right">\ {props.amount.toLocaleString('ko-KR')}</p>
       </PaymentBox>
       <PaymentBox>
-        <p className='left'>대여일</p>
-        <p className='right'>{isNaN(days) ? "0일" : days + "일"}</p>
+        <p className="left">대여일</p>
+        <p className="right">{isNaN(days) ? '0일' : days + '일'}</p>
       </PaymentBox>
       <PaymentBox>
-        <p className='left'>총 합계</p>
-        <p className='right'>
-          {isNaN(days) ? "￦ 0" : "￦ " + total}
-        </p>
+        <p className="left">총 합계</p>
+        <p className="right">{isNaN(days) ? '￦ 0' : '￦ ' + total}</p>
       </PaymentBox>
       <Button to={`/${props.name}/payment`}>결제하기</Button>
     </ConfirmBox>
