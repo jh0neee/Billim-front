@@ -2,7 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Button from '../UI/Button';
+import Modal from '../UI/Modal';
 import { purchasedProduct } from '../../data';
+import { useCancelReservation } from '../../hooks/useCancelReservation';
 
 const ContentBox = styled.div`
   background-color: #ededed;
@@ -66,10 +68,38 @@ const CancelButton = styled(Button)`
 `;
 
 const PurchaseManagement = () => {
+  const {
+    updatedItem,
+    showReservaionModal,
+    cancelCancellationHandler,
+    cancelConfirmHandler,
+    cancelReservationHandler,
+  } = useCancelReservation(purchasedProduct);
+
   return (
     <>
+      <Modal
+        show={showReservaionModal}
+        onCancel={cancelCancellationHandler}
+        header="예약을 취소하시겠습니까?"
+        footer={
+          <>
+            <Button sub small width="60px" onClick={cancelCancellationHandler}>
+              아니오
+            </Button>
+            <Button small width="60px" onClick={cancelReservationHandler}>
+              예
+            </Button>
+          </>
+        }
+      >
+        <p>
+          해당 상품의 예약이 완전히 취소되며, <br />
+          동일한 예약일자에 재예약할 수 없습니다.
+        </p>
+      </Modal>
       <p>구매관리</p>
-      {purchasedProduct.map(item => (
+      {updatedItem.map(item => (
         <ContentBox key={item.id}>
           <div>
             <PurchaseState>{item.status}</PurchaseState>
@@ -93,7 +123,11 @@ const PurchaseManagement = () => {
               </ParagraphBox>
             </ProductBox>
             {item.status === '예약완료' && (
-              <CancelButton small width="70px">
+              <CancelButton
+                small
+                width="70px"
+                onClick={() => cancelConfirmHandler(item.id)}
+              >
                 예약취소
               </CancelButton>
             )}
