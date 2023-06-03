@@ -7,6 +7,7 @@ const VALIDATOR_TYPE_EMAIL = 'EMAIL';
 const VALIDATOR_TYPE_MATCH_PASSWORD = 'MATCH_PASSWORD';
 const VALIDATOR_TYPE_PASSWORD = 'PASSWORD';
 const VALIDATOR_TYPE_NAME = 'NAME';
+const VALIDATOR_TYPE_NUMBER = 'NUMBER';
 
 export const VALIDATOR_REQUIRE = () => ({ type: VALIDATOR_TYPE_REQUIRE });
 export const VALIDATOR_MINLENGTH = val => ({
@@ -30,6 +31,10 @@ export const VALIDATOR_PASSWORD = val => ({
 });
 export const VALIDATOR_NAME = val => ({
   type: VALIDATOR_TYPE_NAME,
+  val,
+});
+export const VALIDATOR_NUMBER = val => ({
+  type: VALIDATOR_TYPE_NUMBER,
   val,
 });
 
@@ -63,6 +68,10 @@ export const validate = (value, validators) => {
     }
     if (validator.type === VALIDATOR_TYPE_NAME) {
       const check = /^[가-힣]{0,}$/;
+      isValid = isValid && check.test(value);
+    }
+    if (validator.type === VALIDATOR_TYPE_NUMBER) {
+      const check = /^[0-9]+$/;
       isValid = isValid && check.test(value);
     }
   }

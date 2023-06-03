@@ -5,7 +5,11 @@ import Input from '../UI/Input';
 import Button from '../UI/Button';
 import useTimer from '../../hooks/useTimer';
 import { useForm } from '../../hooks/useForm';
-import { VALIDATOR_EMAIL, VALIDATOR_REQUIRE } from '../../util/validators';
+import {
+  VALIDATOR_EMAIL,
+  VALIDATOR_NUMBER,
+  VALIDATOR_REQUIRE,
+} from '../../util/validators';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -20,7 +24,6 @@ const TimeOut = styled.p`
 `;
 
 const TimeOutMessage = styled.p`
-  padding-left: 6px;
   font-size: 0.5rem;
   color: red;
 `;
@@ -90,15 +93,24 @@ const FindPwTab = () => {
           type="text"
           label="인증번호"
           placeholder="인증번호 입력해주세요"
-          validators={[VALIDATOR_REQUIRE()]}
+          validators={[VALIDATOR_NUMBER()]}
           errorText={null}
           onInput={inputHandler}
         />
         {emailSent && <TimeOut>{timer > '00:00' ? timer : '00:00'}</TimeOut>}
-        <Button type="submit" sub small width="125px" disabled={isExpired}>
+        <Button
+          type="submit"
+          sub
+          small
+          width="125px"
+          disabled={!formState.isValid || isExpired}
+        >
           인증하기
         </Button>
       </FindUserBox>
+      {!formState.isValid && (
+        <TimeOutMessage>숫자만 입력해주세요.</TimeOutMessage>
+      )}
       {isExpired && (
         <TimeOutMessage>
           인증 시간이 만료되었습니다. 인증번호를 재발급해주세요.
