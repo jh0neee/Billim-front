@@ -15,6 +15,10 @@ const CouponTab = styled.div`
 
   > p {
     margin: 0 0.5rem;
+    font-weight: ${props => (props.active ? '700' : 'normal')};
+    &.active {
+      font-weight: 700;
+    }
   }
 `;
 
@@ -38,17 +42,20 @@ const CouponItemBox = styled.div`
 
 const MyPageCoupon = () => {
   const [sortedCoupons, setSortedCoupons] = useState(coupons);
+  const [activeTab, setActiveTab] = useState('newest');
 
   const copyCoupons = [...sortedCoupons];
 
   const newestHandler = () => {
-    setSortedCoupons(copyCoupons.sort((a, b) => b.discount - a.discount));
-  };
-
-  const byDiscountHandler = () => {
+    setActiveTab('newest');
     setSortedCoupons(
       copyCoupons.sort((a, b) => new Date(a.date) - new Date(b.date)),
     );
+  };
+
+  const byDiscountHandler = () => {
+    setActiveTab('byDiscount');
+    setSortedCoupons(copyCoupons.sort((a, b) => b.discount - a.discount));
   };
 
   return (
@@ -56,8 +63,19 @@ const MyPageCoupon = () => {
       <p>보유 쿠폰 {coupons.length}</p>
       <hr />
       <CouponTab>
-        <p onClick={newestHandler}>최신순</p>|
-        <p onClick={byDiscountHandler}>할인순</p>
+        <p
+          onClick={newestHandler}
+          className={activeTab === 'newest' ? 'active' : ''}
+        >
+          최신순
+        </p>
+        |
+        <p
+          onClick={byDiscountHandler}
+          className={activeTab === 'byDiscount' ? 'active' : ''}
+        >
+          할인순
+        </p>
       </CouponTab>
       <hr />
       <CouponLayout>
