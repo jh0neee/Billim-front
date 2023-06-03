@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import Button from '../UI/Button';
@@ -68,39 +68,26 @@ const ExtraButton = styled(Button)`
   font-weight: 400;
 `;
 
-const SalesDetailInfo = ({ label, salesItems, setSalesItems, items }) => {
-  const [selectedId, setSelectedId] = useState('');
-  const [showReservaionModal, setShowReservationModal] = useState(false);
-
-  const cancelCancellationHandler = () => {
-    setShowReservationModal(false);
-  };
-  const cancelConfirmHandler = id => {
-    setShowReservationModal(true);
-    setSelectedId(id);
-  };
-
-  const cancelReservationHandler = () => {
-    setShowReservationModal(false);
-    const updatedItem = salesItems.map(item =>
-      item.id === selectedId ? { ...item, status: '취소' } : item,
-    );
-
-    setSalesItems(updatedItem);
-  };
-
+const SalesDetailInfo = ({
+  label,
+  showModal,
+  onConfirm,
+  onCancellation,
+  onCancelHandler,
+  items,
+}) => {
   return (
     <>
       <Modal
-        show={showReservaionModal}
-        onCancel={cancelCancellationHandler}
+        show={showModal}
+        onCancel={onCancellation}
         header="예약을 취소하시겠습니까?"
         footer={
           <>
-            <Button sub small width="60px" onClick={cancelCancellationHandler}>
+            <Button sub small width="60px" onClick={onCancellation}>
               아니오
             </Button>
-            <Button small width="60px" onClick={cancelReservationHandler}>
+            <Button small width="60px" onClick={onCancelHandler}>
               예
             </Button>
           </>
@@ -131,9 +118,7 @@ const SalesDetailInfo = ({ label, salesItems, setSalesItems, items }) => {
                   </BuyerInfo>
                   {item.status === '대기중' ? (
                     <div>
-                      <ExtraButton
-                        onClick={() => cancelConfirmHandler(item.id)}
-                      >
+                      <ExtraButton onClick={() => onConfirm(item.id)}>
                         취소하기
                       </ExtraButton>
                       <ExtraButton>채팅하기</ExtraButton>

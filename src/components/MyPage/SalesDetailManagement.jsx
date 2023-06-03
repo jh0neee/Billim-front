@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Link, useParams } from 'react-router-dom';
 
 import SalesDetailInfo from './SalesDetailInfo';
 import Button from '../UI/Button';
 import { productItems, salesProduct } from '../../data';
+import { useCancelReservation } from '../../hooks/useCancelReservation';
 
 const DetailSaleBox = styled.div`
   background-color: #ededed;
@@ -50,11 +51,18 @@ const ExtraButton = styled(Button)`
 const SalesDetailManagement = () => {
   const itemName = useParams().itemName;
   const selectedProduct = productItems.find(item => item.name === itemName);
-  const [salesItems, setSalesItems] = useState(salesProduct);
 
-  const rentalItem = salesItems.find(item => item.status === '대여중');
-  const waitingItem = salesItems.filter(item => item.status === '대기중');
-  const used = salesItems.filter(
+  const {
+    updatedItem,
+    showReservaionModal,
+    cancelCancellationHandler,
+    cancelConfirmHandler,
+    cancelReservationHandler,
+  } = useCancelReservation(salesProduct);
+
+  const rentalItem = updatedItem.find(item => item.status === '대여중');
+  const waitingItem = updatedItem.filter(item => item.status === '대기중');
+  const used = updatedItem.filter(
     item => item.status === '취소' || item.status === '완료',
   );
 
@@ -79,8 +87,10 @@ const SalesDetailManagement = () => {
         <hr />
         <SalesDetailInfo
           label="대기 내역"
-          salesItems={salesItems}
-          setSalesItems={setSalesItems}
+          showModal={showReservaionModal}
+          onConfirm={cancelConfirmHandler}
+          onCancellation={cancelCancellationHandler}
+          onCancelHandler={cancelReservationHandler}
           items={waitingItem}
         />
         <SalesDetailInfo label="완료 내역" items={used} />
