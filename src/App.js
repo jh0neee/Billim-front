@@ -27,6 +27,8 @@ import FindIdTab from './components/Auth/FindIdTab.jsx';
 import FindPwTab from './components/Auth/FindPwTab.jsx';
 import UpdateProduct from './pages/Product/UpdateProduct.jsx';
 import Chat from './pages/Chat.jsx';
+import MessageChat from './components/Chat/MessageChat.jsx';
+import BlockChat from './components/Chat/BlockChat.jsx';
 
 function App() {
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
@@ -36,7 +38,10 @@ function App() {
     routes = (
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/chat" element={<Chat />} />
+        <Route path="/chat" element={<Chat />}>
+          <Route path="/chat" element={<BlockChat />} />
+          <Route path="/chat/messages" element={<MessageChat />} />
+        </Route>
         <Route path="/product" element={<ProductList />}>
           <Route path="living" element={<ProductList />} />
           <Route path="apparel" element={<ProductList />} />
