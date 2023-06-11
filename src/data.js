@@ -324,6 +324,10 @@ export const user = [
     nickname: '고구마맛탕',
     point: 5000,
     level: 'BRONZE',
+    postcode: '12345',
+    address: '서울 강남구 선릉로 12길 34',
+    address_detail: 'OO아파트 123동',
+    address_legal: 'OO동',
     date: format(
       new Date(new Date().setDate(new Date().getDate() - 1)),
       'yyyy-MM-dd',
