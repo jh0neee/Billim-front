@@ -67,7 +67,7 @@ const Input = props => {
     isTouched: false,
   });
 
-  const { id, onInput, setReset, reset } = props;
+  const { id, onInput, setReset, reset, setIsCheckNickname } = props;
   const { value, isValid } = inputState;
 
   useEffect(() => {
@@ -91,6 +91,10 @@ const Input = props => {
 
     if (typeof setReset === 'function') {
       setReset(false);
+    }
+
+    if (id === 'nickname') {
+      setIsCheckNickname(false);
     }
   };
 

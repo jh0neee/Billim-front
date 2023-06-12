@@ -3,7 +3,10 @@ import styled, { css } from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Input from '../../components/UI/Input';
+import Button from '../UI/Button';
 import SignUpAddress from './SignUpAddress';
+import { useCheckNickname } from '../../hooks/useCheckedNickname';
+import { ToastContainer } from 'react-toastify';
 import {
   VALIDATOR_PASSWORD,
   VALIDATOR_MATCH_PASSWORD,
@@ -11,9 +14,6 @@ import {
   VALIDATOR_MAXLENGTH,
   VALIDATOR_NAME,
 } from '../../util/validators';
-import Button from '../UI/Button';
-import { toast, ToastContainer } from 'react-toastify';
-import { review } from '../../data';
 
 export const SignUpItem = styled.li`
   display: grid;
@@ -43,25 +43,8 @@ const ContentLine = styled.hr`
 `;
 
 const SignUpItems = props => {
-  const { onInput, password, nickname, setIsCheckSignUp } = props;
-
-  const checkNickname = () => {
-    const isCheck = review.map(item => item.username).includes(nickname.value);
-
-    if (nickname.value === '') {
-      toast.warning('닉네임을 입력해주세요');
-    } else if (!nickname.isValid) {
-      toast.warning('닉네임은 2~10자로 입력해주세요');
-    } else {
-      if (isCheck) {
-        toast.error('이미 사용중인 닉네임입니다.');
-        setIsCheckSignUp(false);
-      } else {
-        toast.success('사용가능한 닉네임입니다.');
-        setIsCheckSignUp(true);
-      }
-    }
-  };
+  const { onInput, password, nickname, setIsCheckNickname } = props;
+  const [checkNickname] = useCheckNickname(nickname, setIsCheckNickname);
 
   return (
     <>

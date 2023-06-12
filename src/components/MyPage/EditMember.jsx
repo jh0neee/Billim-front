@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import Button from '../UI/Button';
 import Input from '../UI/Input';
+import Modal from '../UI/Modal';
 import usePostalCode from '../../hooks/usePostalCode';
+import { useCheckNickname } from '../../hooks/useCheckedNickname';
 import { Profile } from '../UI/Profile';
 import { useForm } from '../../hooks/useForm';
 import { user } from '../../data';
+import { ToastContainer } from 'react-toastify';
 import { FormBtnBox } from '../../pages/NewProduct';
 import {
   VALIDATOR_MATCH_PASSWORD,
@@ -88,6 +91,9 @@ const ExtraInput = styled(Input)`
 `;
 
 const EditMember = () => {
+  const [isCheckNickname, setIsCheckNickname] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+
   const [formState, inputHandler] = useForm({
     nickname: {
       value: user[0].nickname,
@@ -111,17 +117,40 @@ const EditMember = () => {
     },
   });
 
+  const closeModal = () => setShowModal(false);
+
+  const [checkNickname] = useCheckNickname(
+    formState.inputs.nickname,
+    setIsCheckNickname,
+  );
   const [postCode, address, legal, postCodeOpenHandler] =
     usePostalCode(inputHandler);
 
   const EditSubmitHandler = e => {
     e.preventDefault();
-    console.log(formState.inputs);
+
+    if (isCheckNickname) {
+      console.log(formState.inputs);
+    } else {
+      setShowModal(true);
+    }
   };
 
   return (
     // FIXME - 비밀번호 확인되면 정보수정페이지로 넘어가기
     <>
+      <Modal
+        show={showModal}
+        header="중복 확인"
+        onCancel={closeModal}
+        footer={
+          <Button small width="60px" onClick={closeModal}>
+            확인
+          </Button>
+        }
+      >
+        닉네임 중복 체크를 먼저 해 주세요
+      </Modal>
       <p>회원정보수정</p>
       <hr />
       <EditMemberLayout onSubmit={EditSubmitHandler}>
@@ -144,14 +173,22 @@ const EditMember = () => {
             id="nickname"
             height="30px"
             width="10rem"
+            setIsCheckNickname={setIsCheckNickname}
             validators={[VALIDATOR_REQUIRE()]}
             initialValue={formState.inputs.nickname.value}
             initialValid={formState.inputs.nickname.isValid}
             onInput={inputHandler}
           />
-          <ExtraButton type="button" sub>
+          <ExtraButton type="button" sub onClick={checkNickname}>
             중복 확인
           </ExtraButton>
+          <ToastContainer
+            position="top-center"
+            limit={1}
+            autoClose={3000}
+            closeButton={false}
+            closeOnClick
+          />
         </EditMemberBox>
         <hr />
         <EditMemberBox mainInput>

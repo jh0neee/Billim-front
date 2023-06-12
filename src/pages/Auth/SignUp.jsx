@@ -35,7 +35,7 @@ const SignUp = () => {
   const [formState, inputHandler] = useForm({}, false);
   const { address, address_detail, address_legal } = formState.inputs;
 
-  const [isCheckSignUp, setIsCheckSignUp] = useState(false);
+  const [isCheckNickname, setIsCheckNickname] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   const closeModal = () => setShowModal(false);
@@ -43,7 +43,7 @@ const SignUp = () => {
   const signUpSubmitHandler = e => {
     e.preventDefault();
 
-    if (isCheckSignUp) {
+    if (isCheckNickname) {
       const combinedAddress = `${address.value} ${address_detail.value} ${address_legal.value}`;
       console.log(formState.inputs, combinedAddress);
     } else {
@@ -72,7 +72,7 @@ const SignUp = () => {
             onInput={inputHandler}
             password={formState.inputs.password}
             nickname={formState.inputs.nickname}
-            setIsCheckSignUp={setIsCheckSignUp}
+            setIsCheckNickname={setIsCheckNickname}
           />
         </SignUpBox>
         <EnterBox>
