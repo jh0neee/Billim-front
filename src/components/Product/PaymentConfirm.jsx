@@ -82,6 +82,7 @@ const ParagraphBox = styled.div`
 
 const PaymentConfirm = ({
   items,
+  days,
   tradeSelectedOpt,
   couponSelectedOpt,
   onInput,
@@ -94,8 +95,8 @@ const PaymentConfirm = ({
 
   const point = useSelector(state => state.point.usagePoint);
   const discounted = Math.round(items.amount * (discount / 100));
-  const days = 4;
-  const total = items.amount * days + courierFee - discounted - point;
+  const numberOfDays = days;
+  const total = items.amount * numberOfDays + courierFee - discounted - point;
 
   useEffect(() => {
     onInput('total', total, true);
@@ -120,7 +121,7 @@ const PaymentConfirm = ({
         </ParagraphBox>
         <ParagraphBox>
           <p className="left">대여일</p>
-          <p className="right">{days}일</p>
+          <p className="right">{numberOfDays}일</p>
         </ParagraphBox>
         <ParagraphBox>
           <p className="left">배송료</p>

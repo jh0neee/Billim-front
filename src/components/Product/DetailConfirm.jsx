@@ -8,6 +8,7 @@ import '../../styles/calendar.css';
 
 import Button from '../UI/Button';
 import differenceInDays from 'date-fns/differenceInDays';
+import { useNavigate } from 'react-router-dom';
 
 const ConfirmBox = styled.div`
   display: grid;
@@ -43,9 +44,10 @@ const PaymentBox = styled.div`
 `;
 
 const DetailConfirm = props => {
+  const navigate = useNavigate();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
-  const days = differenceInDays(endDate, startDate);
+  const days = differenceInDays(endDate, startDate) + 1;
   const total = (props.amount * days).toLocaleString('ko-KR');
 
   const onChangeCalendar = dates => {
@@ -55,7 +57,7 @@ const DetailConfirm = props => {
   };
 
   const dateToString = date => {
-    if (date === null) return;
+    if (date === null) return '';
 
     return (
       date.getFullYear() +
@@ -64,6 +66,14 @@ const DetailConfirm = props => {
       '-' +
       date.getDate().toString().padStart(2, '0')
     );
+  };
+
+  const rentalDate = `${dateToString(startDate)}  ~  ${dateToString(endDate)}`;
+
+  const handlePayment = () => {
+    const paymentUrl = `/${props.name}/payment`;
+
+    navigate(paymentUrl, { state: { rentalDate, days } });
   };
 
   return (
@@ -80,9 +90,7 @@ const DetailConfirm = props => {
         isClearable={true}
         inline
       />
-      <p>
-        {dateToString(startDate)} &ensp; ~ &ensp; {dateToString(endDate)}
-      </p>
+      <p>{rentalDate}</p>
       <hr width="75%" />
       <PaymentBox>
         <p className="left">\ {props.amount.toLocaleString('ko-KR')} / 일</p>
@@ -96,7 +104,7 @@ const DetailConfirm = props => {
         <p className="left">총 합계</p>
         <p className="right">{isNaN(days) ? '￦ 0' : '￦ ' + total}</p>
       </PaymentBox>
-      <Button to={`/${props.name}/payment`}>결제하기</Button>
+      <Button onClick={handlePayment}>결제하기</Button>
     </ConfirmBox>
   );
 };

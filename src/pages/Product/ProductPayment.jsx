@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import PaymentInformation from '../../components/Product/PaymentInformation';
 import PaymentConfirm from '../../components/Product/PaymentConfirm';
@@ -33,6 +33,9 @@ const PaymentBox = styled.div`
 `;
 
 const ProductPayment = () => {
+  const location = useLocation();
+  const { rentalDate, days } = location.state;
+
   const itemName = useParams().itemName;
   const loadedContents = productItems.find(item => item.name === itemName);
   const [formState, inputHandler] = useForm({}, false);
@@ -56,6 +59,7 @@ const ProductPayment = () => {
       <PaymentBox>
         <PaymentInformation
           items={loadedContents}
+          rentalDate={rentalDate}
           tradeSelectedOpt={tradeSelectedOpt}
           setTradeSelectedOpt={setTradeSelectedOpt}
           couponSelectedOpt={couponSelectedOpt}
@@ -66,6 +70,7 @@ const ProductPayment = () => {
         <div>
           <PaymentConfirm
             items={loadedContents}
+            days={days}
             tradeSelectedOpt={tradeSelectedOpt}
             couponSelectedOpt={couponSelectedOpt}
             onInput={inputHandler}

@@ -81,6 +81,7 @@ const TradeMethodOption = styled.p`
 
 const ProductInformation = ({
   items,
+  rentalDate,
   tradeSelectedOpt,
   setTradeSelectedOpt,
   couponSelectedOpt,
@@ -99,7 +100,7 @@ const ProductInformation = ({
           <BsCheck2Circle size="25px" />
           <p>이용일자</p>
         </PayTitle>
-        <p>23-05-12 ~ 23-05-17</p>
+        <p>{rentalDate}</p>
       </InformationBox>
       <InformationBox>
         <PayTitle>
