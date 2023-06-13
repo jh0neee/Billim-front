@@ -4,12 +4,30 @@ import { Outlet } from 'react-router-dom';
 
 import MyPageUser from '../components/MyPage/MyPageUser';
 import MyPageSideBar from '../components/MyPage/MyPageSideBar';
+import MyPageUserReward from '../components/MyPage/MyPageUserReward';
 
 const MyPageLayout = styled.div`
   width: 70%;
   margin: 120px auto 0px;
   padding: auto 0;
   font-family: SCDream;
+`;
+
+const MyPageUserBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  > * {
+    &:first-child {
+      display: flex;
+      margin-left: 1rem;
+    }
+    &:last-child {
+      display: flex;
+    }
+  }
 `;
 
 const MyPageBox = styled.div`
@@ -34,7 +52,10 @@ const MyPageContent = styled.div`
 const MyPage = () => {
   return (
     <MyPageLayout>
-      <MyPageUser />
+      <MyPageUserBox>
+        <MyPageUser />
+        <MyPageUserReward />
+      </MyPageUserBox>
       <MyPageBox>
         <MyPageSideBar />
         <MyPageContent>
