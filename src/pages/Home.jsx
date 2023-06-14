@@ -5,9 +5,16 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { carouselSetting } from '../styles/Carousel';
+import theme from '../styles/theme';
 
 const ContentBox = styled.div`
-  margin-top: 85px;
+  max-width: 1440px;
+  margin: 85px auto 0;
+  text-align: center;
+
+  @media ${theme.tablet}, ${theme.mobile} {
+    margin: 150px auto 0;
+  }
 `;
 
 const Footer = styled.footer`
@@ -57,21 +64,24 @@ const Home = () => {
   return (
     <React.Fragment>
       <ContentBox>
+        {/* <img src="https://via.placeholder.com/1260x400" alt="예시이미지" />
         <img src="https://via.placeholder.com/1260x400" alt="예시이미지" />
-        <img src="https://via.placeholder.com/1260x400" alt="예시이미지" />
-        <img src="https://via.placeholder.com/1260x400" alt="예시이미지" />
+        <img src="https://via.placeholder.com/1260x400" alt="예시이미지" /> */}
+        <CarouselBox>
+          <p>최근 본 상품</p>
+          <Carousel {...carouselSetting}>
+            {carouselItem.map((item, index) => (
+              <CarouselImgBox key={index}>
+                <img
+                  src="https://via.placeholder.com/200x200"
+                  alt="예시이미지"
+                />
+                <p>{item}</p>
+              </CarouselImgBox>
+            ))}
+          </Carousel>
+        </CarouselBox>
       </ContentBox>
-      <CarouselBox>
-        <p>최근 본 상품</p>
-        <Carousel {...carouselSetting}>
-          {carouselItem.map((item, index) => (
-            <CarouselImgBox key={index}>
-              <img src="https://via.placeholder.com/200x200" alt="예시이미지" />
-              <p>{item}</p>
-            </CarouselImgBox>
-          ))}
-        </Carousel>
-      </CarouselBox>
       <Footer>푸터</Footer>
     </React.Fragment>
   );

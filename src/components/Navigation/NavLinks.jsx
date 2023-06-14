@@ -8,7 +8,6 @@ import { authAction } from '../../store/auth';
 import { Profile } from '../UI/Profile';
 
 const NavList = styled.ul`
-  margin-left: 3rem;
   margin-top: 0.5rem;
   display: flex;
   align-items: center;

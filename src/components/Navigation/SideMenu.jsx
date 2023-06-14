@@ -3,21 +3,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import theme from '../../styles/theme';
 import { searchAction } from '../../store/search';
 
 const SideNavList = styled.ul`
   list-style: none;
-  margin: 0px;
+  margin: 3rem 0;
   width: 100%;
+  padding: 5% 15%;
   display: flex;
-  padding: 20px 60px;
   flex-direction: column;
 
   ${props =>
     props.sub &&
     css`
       align-items: flex-end;
-      padding: 10px 20px 0 0;
+      margin: 0;
+      padding: 0 0.75rem 0 0;
       @keyframes slide {
         0% {
           transform: translateY(-10%);
@@ -27,22 +29,52 @@ const SideNavList = styled.ul`
         }
       }
       animation: slide 0.25s ease-out forwards;
+
+      @media ${theme.desktop}, ${theme.tablet}, ${theme.mobile} {
+        padding: 0 0.75rem 0 0;
+      }
+      @media (max-height: 600px) {
+        padding: 0 10px 0 0;
+      }
     `}
 
   .line {
     width: 100%;
     margin: 20px 0;
   }
+
+  @media ${theme.desktop} {
+    padding: 5% 23%;
+  }
+  @media ${theme.tablet} {
+    margin: 10px 0;
+    padding: 15%;
+  }
+  @media ${theme.mobile} {
+    margin: 10px 0;
+    padding: 15% 25%;
+  }
+  @media (max-height: 600px) {
+    padding: 5% 20%;
+  }
 `;
 
 const SideNavItem = styled.li`
-  margin: 0.5rem 0.1rem;
+  margin: 0.5rem 1.25rem;
+  line-height: 1.3;
 
   ${props =>
     props.leftIn &&
     css`
-      padding-left: 0.4rem;
+      padding-left: 0.75rem;
     `}
+
+  @media ${theme.desktop} {
+    line-height: ${props => (props.mainlink ? '2' : '1.5')};
+  }
+  @media (max-height: 600px) {
+    line-height: ${props => (props.mainlink ? '1' : '0.8')};
+  }
 `;
 
 const SideLink = styled(NavLink)`
@@ -57,13 +89,29 @@ const SideLink = styled(NavLink)`
   &:hover {
     color: ${props => props.theme.fontHover};
   }
+
+  @media ${theme.desktop} {
+    font-size: ${props => (props.mainlink ? '150%' : '100%')};
+  }
+  @media (max-height: 600px) {
+    font-size: ${props => (props.mainlink ? '1.2rem' : '0.8rem')};
+  }
 `;
 
 const MyPageTitle = styled.p`
+  display: flex;
+  justify-content: flex-end;
   cursor: pointer;
   font-family: 'TRoundWind';
   font-weight: 700;
   font-size: 1.5rem;
+
+  @media ${theme.desktop} {
+    font-size: 150%;
+  }
+  @media (max-height: 600px) {
+    font-size: 1.2rem;
+  }
 `;
 
 const SideMenu = () => {
@@ -110,8 +158,10 @@ const SideMenu = () => {
       </SideNavItem>
       <hr className="line" />
       {isLoggedIn && (
-        <SideNavItem>
-          <MyPageTitle onClick={slideHandler}>마이페이지</MyPageTitle>
+        <>
+          <SideNavItem>
+            <MyPageTitle onClick={slideHandler}>마이페이지</MyPageTitle>
+          </SideNavItem>
           {isSlideMenu && (
             <SideNavList sub>
               <SideNavItem>
@@ -134,7 +184,7 @@ const SideMenu = () => {
               </SideNavItem>
             </SideNavList>
           )}
-        </SideNavItem>
+        </>
       )}
     </SideNavList>
   );
