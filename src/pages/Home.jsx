@@ -8,11 +8,19 @@ import { carouselSetting } from '../styles/Carousel';
 import theme from '../styles/theme';
 
 const ContentBox = styled.div`
-  max-width: 1440px;
+  max-width: 1024px;
   margin: 85px auto 0;
   text-align: center;
 
+  @media ${theme.desktop} {
+    max-width: 1440px;
+  }
+  @media ${theme.laptop} {
+    max-width: 768px;
+  }
+
   @media ${theme.tablet}, ${theme.mobile} {
+    max-width: 375px;
     margin: 150px auto 0;
   }
 `;
@@ -37,15 +45,45 @@ const CarouselBox = styled.div`
 
 const Carousel = styled(Slider)`
   margin-top: 2rem;
-  margin-left: 20%;
-  width: 60%;
+  margin-left: 13%;
+  width: 80%;
   text-align: center;
 
   .slick-list {
     overflow: hidden;
-    height: 18.5vw;
     text-align: center;
-    margin-left: 45px;
+  }
+
+  .slick-dots {
+    bottom: -55px;
+    right: 38px;
+  }
+
+  @media ${theme.desktop} {
+    margin-top: 2rem;
+    margin-left: 20%;
+    width: 69%;
+
+    .slick-dots {
+      right: 60px;
+    }
+  }
+  @media ${theme.laptop} {
+    margin: 2rem auto;
+    padding-left: 2.8rem;
+    width: 67%;
+
+    .slick-dots {
+      right: -8px;
+    }
+  }
+  @media ${theme.tablet}, ${theme.mobile} {
+    padding-left: 1.8rem;
+    width: 66%;
+
+    .slick-dots {
+      right: 2px;
+    }
   }
 `;
 
@@ -54,7 +92,24 @@ const CarouselImgBox = styled.div`
 
   > p {
     padding-top: 10px;
-    padding-right: 40px;
+    padding-right: 29%;
+    text-align: center;
+  }
+
+  @media ${theme.desktop} {
+    > p {
+      padding-right: 41%;
+    }
+  }
+  @media ${theme.laptop} {
+    > p {
+      padding-right: 16%;
+    }
+  }
+  @media ${theme.tablet}, ${theme.mobile} {
+    > p {
+      padding-right: 12%;
+    }
   }
 `;
 
