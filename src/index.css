@@ -10,6 +10,16 @@ body {
   margin: 0;
 }
 
+main {
+  width: 100%;
+}
+
+.center {
+  @media (min-width: 1440px) {
+    max-width: 1440px;
+  }
+}
+
 /* side Drawer animation */
 .slide-left-enter {
   transform: translateX(-100%);

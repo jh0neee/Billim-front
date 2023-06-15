@@ -9,20 +9,25 @@ import { emailAction } from '../../store/signup';
 import { useForm } from '../../hooks/useForm';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { Domain } from '../../data';
+import theme from '../../styles/theme';
 
 const VerificationLayout = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
   font-family: 'SCDream';
-  width: 60%;
-  margin: 85px auto 0;
+  width: 98%;
+  margin: 7rem auto 0;
   padding: 1.5rem 0;
 
   > * {
     &:last-child {
       margin: 2rem;
     }
+  }
+
+  @media ${theme.tablet}, ${theme.mobile} {
+    margin: 10rem auto 0;
   }
 `;
 
@@ -34,7 +39,8 @@ const VerificationTitle = styled.div`
 `;
 
 const EmailBox = styled.div`
-  margin: 3rem auto 0;
+  margin: 3rem auto 1rem;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,9 +53,34 @@ const EmailBox = styled.div`
       margin-left: 1rem;
     }
   }
+
+  @media ${theme.tablet}, ${theme.mobile} {
+    margin-bottom: 0;
+  }
+`;
+
+const EmailInput = styled(Input)`
+  width: 150px;
+  @media ${theme.tablet}, ${theme.mobile} {
+    width: 136px;
+  }
+  @media ${theme.desktop} {
+    width: 200px;
+  }
+`;
+
+const EmailDropBox = styled(Dropdown)`
+  width: 150px;
+  @media ${theme.tablet}, ${theme.mobile} {
+    width: 136px;
+  }
+  @media ${theme.desktop} {
+    width: 200px;
+  }
 `;
 
 const AtSignParagraph = styled.p`
+  font-size: 1.2rem;
   font-weight: 700;
 `;
 
@@ -74,28 +105,27 @@ const EmailVerification = () => {
   };
 
   return (
-    <VerificationLayout onSubmit={emailSubmitHandler}>
+    <VerificationLayout className="center" onSubmit={emailSubmitHandler}>
       <VerificationTitle>이메일 인증</VerificationTitle>
       <EmailBox>
-        <Input
+        <EmailInput
           element="input"
           id="email"
           type="text"
-          width="150px"
           placeholder="email"
           validators={[VALIDATOR_REQUIRE()]}
           errorText={null}
           onInput={inputHandler}
         />
         <AtSignParagraph>@</AtSignParagraph>
-        <Dropdown
+        <EmailDropBox
           options={Domain}
           selectedOpt={selectedOpt}
           setSelectedOpt={setSelectedOpt}
         />
       </EmailBox>
-      <Button small width="100px" type="submit">
-        인증 받기
+      <Button small width="120px" type="submit">
+        인증하기
       </Button>
     </VerificationLayout>
   );
