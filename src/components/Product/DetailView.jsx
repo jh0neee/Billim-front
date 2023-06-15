@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -104,6 +104,21 @@ const DetailView = props => {
   const handleViewMore = () => {
     setIsViewMore(!isViewMore);
   };
+
+  useEffect(() => {
+    let viewedProduct = localStorage.getItem('recentItems');
+
+    if (viewedProduct == null) {
+      viewedProduct = [];
+    } else {
+      viewedProduct = JSON.parse(viewedProduct);
+    }
+
+    viewedProduct.push(props.items[0].name);
+    viewedProduct = new Set(viewedProduct);
+    viewedProduct = [...viewedProduct].slice(-4);
+    localStorage.setItem('recentItems', JSON.stringify(viewedProduct));
+  }, []);
 
   const confirmDeleteHandler = () => {
     setShowConfirmModal(false);
