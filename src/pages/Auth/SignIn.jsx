@@ -9,9 +9,11 @@ import { ImBubble } from 'react-icons/im';
 import { authAction } from '../../store/auth';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useForm } from '../../hooks/useForm';
+import theme from '../../styles/theme';
 
 const SignInLayout = styled.form`
-  margin-top: 8.5rem;
+  margin: 9.5rem auto 0;
+  width: fit-content;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,6 +28,10 @@ const SignInLayout = styled.form`
     &:nth-child(3) {
       margin-top: 1rem;
     }
+  }
+
+  @media ${theme.tablet}, ${theme.mobile} {
+    margin: 10.5rem auto 0;
   }
 `;
 
