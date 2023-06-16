@@ -6,11 +6,24 @@ import SignUpItems from '../../components/Auth/SignUpItem';
 import Button from '../../components/UI/Button';
 import Modal from '../../components/UI/Modal';
 import { useForm } from '../../hooks/useForm';
+import theme from '../../styles/theme';
 
 const SignUpLayout = styled.form`
   width: 60%;
+  max-width: 615px;
   margin: 85px auto 0;
   padding: 1.5rem 0;
+
+  @media ${theme.desktop} {
+    max-width: 900px;
+  }
+  @media ${theme.laptop} {
+    width: 70%;
+  }
+  @media ${theme.mobile}, ${theme.tablet} {
+    width: 75%;
+    margin: 150px auto 0;
+  }
 `;
 
 const SignUpTitle = styled.p`

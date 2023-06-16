@@ -4,17 +4,31 @@ import styled from 'styled-components';
 
 import BackDrop from './BackDrop';
 import { CSSTransition } from 'react-transition-group';
+import theme from '../../styles/theme';
 
 const ModalLayout = styled.div`
   z-index: 100;
   position: fixed;
-  top: 28vh;
-  left: 37%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 100vh;
   width: 25rem;
   background: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   font-family: 'SCDream';
   padding: 1rem 1.3rem;
+
+  @media ${theme.desktop} {
+    width: 25%;
+    max-width: 1440px;
+  }
+  @media ${theme.mobile}, ${theme.tablet}, ${theme.laptop} {
+    max-width: 400px;
+    width: 90%;
+  }
+  @media (min-height: 100vh) {
+    top: 50%;
+  }
 `;
 
 const ModalHeader = styled.header`

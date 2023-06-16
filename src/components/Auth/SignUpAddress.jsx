@@ -1,10 +1,13 @@
 import React from 'react';
 
-import Input from '../../components/UI/Input';
-import Button from '../UI/Button';
 import usePostalCode from '../../hooks/usePostalCode';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
-import { SignUpItem, SignUpLabel } from './SignUpItem';
+import {
+  SignUpItem,
+  SignUpLabel,
+  SignUpInput,
+  SignUpButton,
+} from './SignUpItem';
 
 const SignUpAddress = props => {
   const { onInput } = props;
@@ -15,11 +18,11 @@ const SignUpAddress = props => {
     <>
       <SignUpItem>
         <SignUpLabel>주소</SignUpLabel>
-        <Input
+        <SignUpInput
           element="input"
           id="postcode"
           type="text"
-          width="17.5rem"
+          wth="17.5rem"
           placeholder="우편번호"
           validators={[VALIDATOR_REQUIRE()]}
           value={postCode}
@@ -27,16 +30,16 @@ const SignUpAddress = props => {
           onInput={onInput}
           disabled={true}
         />
-        <Button sub small width="120px" onClick={postCodeOpenHandler}>
+        <SignUpButton sub small onClick={postCodeOpenHandler}>
           우편번호 찾기
-        </Button>
+        </SignUpButton>
       </SignUpItem>
       <SignUpItem lyt>
-        <Input
+        <SignUpInput
           element="input"
           type="text"
           id="address"
-          width="17.5rem"
+          wth="17.5rem"
           placeholder="도로명주소"
           value={address}
           validators={[VALIDATOR_REQUIRE()]}
@@ -46,21 +49,22 @@ const SignUpAddress = props => {
         />
       </SignUpItem>
       <SignUpItem lyt>
-        <Input
+        <SignUpInput
           element="input"
           type="text"
           id="address_detail"
-          width="17.5rem"
+          wth="17.5rem"
           placeholder="상세주소 입력해주세요"
           validators={[VALIDATOR_REQUIRE()]}
           errorText={null}
           onInput={onInput}
         />
-        <Input
+        <SignUpInput
+          extra
           element="input"
           type="text"
           id="address_legal"
-          width="8.5rem"
+          wth="8.5rem"
           placeholder="(법정동)"
           validators={[VALIDATOR_REQUIRE()]}
           errorText={null}
