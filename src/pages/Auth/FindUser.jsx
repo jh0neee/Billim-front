@@ -1,12 +1,21 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import theme from '../../styles/theme';
 
 const TabLayout = styled.div`
   width: 400px;
   margin: 7rem auto 0;
   display: flex;
   flex-direction: column;
+
+  @media ${theme.tablet} {
+    margin-top: 10rem;
+  }
+  @media ${theme.mobile} {
+    margin-top: 10rem;
+    max-width: 350px;
+  }
 `;
 
 const TabMenu = styled.ul`

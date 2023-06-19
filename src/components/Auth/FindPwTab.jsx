@@ -12,11 +12,30 @@ import {
 } from '../../util/validators';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import theme from '../../styles/theme';
 
 const FindUserBox = styled.form`
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+`;
+
+const FindUserInput = styled(Input)`
+  > input {
+    width: 250px;
+
+    @media ${theme.mobile} {
+      width: 200px;
+    }
+  }
+`;
+
+const FindUserVerifyInput = styled(Input)`
+  > input {
+    @media ${theme.mobile} {
+      width: 170px;
+    }
+  }
 `;
 
 const TimeOut = styled.p`
@@ -63,13 +82,12 @@ const FindPwTab = () => {
         onInput={inputHandler}
       />
       <FindUserBox onSubmit={sendVerificationCodeHandler}>
-        <Input
+        <FindUserInput
           bar
           element="input"
           id="email"
           type="text"
           label="이메일"
-          width="250px"
           placeholder="이메일 입력해주세요"
           validators={[VALIDATOR_EMAIL()]}
           errorText="이메일 형식에 알맞게 입력해주세요"
@@ -86,7 +104,7 @@ const FindPwTab = () => {
         />
       </FindUserBox>
       <FindUserBox onSubmit={handleVerifyEmail}>
-        <Input
+        <FindUserVerifyInput
           bar
           element="input"
           id="code"
