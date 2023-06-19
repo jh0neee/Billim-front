@@ -6,6 +6,7 @@ import styled, { css, keyframes } from 'styled-components';
 import { TbMessageChatbot } from 'react-icons/tb';
 import { authAction } from '../../store/auth';
 import { Profile } from '../UI/Profile';
+import theme from '../../styles/theme';
 
 const NavList = styled.ul`
   margin-top: 0.5rem;
@@ -67,12 +68,28 @@ const DropMenu = styled.ul`
   > :first-child {
     margin-bottom: 1rem;
   }
+
+  @media ${theme.mobile} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90vw;
+    top: 54px;
+    right: -16px;
+    font-size: 0.9rem;
+
+    > *:not(:last-child) {
+      margin-bottom: 0;
+      margin-right: 3.5rem;
+    }
+  }
 `;
 
 const NavLinks = () => {
   const dispatch = useDispatch();
   const [isSlideMenu, setIsSlideMenu] = useState(false);
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+  const isMobile = window.innerWidth <= 480;
 
   const slideHandler = () => {
     setIsSlideMenu(!isSlideMenu);
@@ -84,7 +101,7 @@ const NavLinks = () => {
 
   return (
     <NavList>
-      {isLoggedIn && (
+      {!isMobile && isLoggedIn && (
         <NavItem>
           <StyledNavLink to="/chat">
             <TbMessageChatbot size="38px" />
@@ -96,6 +113,11 @@ const NavLinks = () => {
           <Profile size="35px" />
           {isSlideMenu && (
             <DropMenu show={isSlideMenu}>
+              {isMobile && (
+                <li>
+                  <Link to="/chat">채팅하기</Link>
+                </li>
+              )}
               <li>
                 <Link to="/mypage/purchase">마이페이지</Link>
               </li>
