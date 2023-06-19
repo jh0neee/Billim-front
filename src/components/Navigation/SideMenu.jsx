@@ -29,13 +29,6 @@ const SideNavList = styled.ul`
         }
       }
       animation: slide 0.25s ease-out forwards;
-
-      @media ${theme.desktop}, ${theme.tablet}, ${theme.mobile} {
-        padding: 0 0.75rem 0 0;
-      }
-      @media (max-height: 600px) {
-        padding: 0 10px 0 0;
-      }
     `}
 
   .line {
@@ -44,18 +37,18 @@ const SideNavList = styled.ul`
   }
 
   @media ${theme.desktop} {
-    padding: 5% 23%;
+    padding: ${props => (props.sub ? '0 0.75rem 0 0' : '5% 23%')};
   }
   @media ${theme.tablet} {
-    margin: 10px 0;
-    padding: 15%;
+    margin: ${props => (props.sub ? '0' : '10px 0')};
+    padding: ${props => (props.sub ? '0 0.75rem 0 0' : '15%')};
   }
   @media ${theme.mobile} {
-    margin: 10px 0;
-    padding: 15% 25%;
+    margin: ${props => (props.sub ? '0' : '10px 0')};
+    padding: ${props => (props.sub ? '0 0.75rem 0 0' : '15% 25%')};
   }
   @media (max-height: 600px) {
-    padding: 5% 20%;
+    padding: ${props => (props.sub ? '0 10px 0 0' : '5% 20%')};
   }
 `;
 
@@ -94,7 +87,7 @@ const SideLink = styled(NavLink)`
     font-size: ${props => (props.mainlink ? '150%' : '100%')};
   }
   @media (max-height: 600px) {
-    font-size: ${props => (props.mainlink ? '1.2rem' : '0.8rem')};
+    font-size: ${props => (props.mainlink ? '1.2rem' : '0.9rem')};
   }
 `;
 
@@ -115,7 +108,6 @@ const MyPageTitle = styled.p`
 `;
 
 const SideMenu = () => {
-  // NOTE - 마이페이지는 로그인 시에만 보이도록
   const [isSlideMenu, setIsSlideMenu] = useState(false);
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
