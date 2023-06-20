@@ -7,6 +7,12 @@ import ProductListItem from '../../components/Product/ProductListItem';
 import ProductCategory from '../../components/Product/ProductCategory';
 import { Paginate } from '../../components/UI/Pagination';
 import { productItems } from '../../data';
+import theme from '../../styles/theme';
+
+const ProductLayout = styled.div`
+  max-width: 1440px;
+  margin: 0 auto;
+`;
 
 const CategoryLayout = styled.div`
   margin-top: 120px;
@@ -15,18 +21,30 @@ const CategoryLayout = styled.div`
   align-items: center;
   font-family: 'TRoundWind';
   font-weight: 700;
+
+  @media ${theme.tablet}, ${theme.mobile} {
+    margin-top: 150px;
+  }
+  @media (max-width: 890px) {
+    flex-direction: column;
+  }
 `;
 
 const ProductItemLayout = styled.div`
   margin: 5rem;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(230px, auto));
   row-gap: 3.5rem;
+  column-gap: 2.5rem;
   justify-items: center;
   font-family: SCDream;
 
   > * {
     cursor: pointer;
+  }
+
+  @media ${theme.tablet} {
+    grid-template-columns: repeat(auto-fill, minmax(200px, auto));
   }
 `;
 
@@ -34,7 +52,7 @@ const ProductList = () => {
   const category = useLocation().pathname.slice(9);
   const { searchItems, isSearching } = useSelector(state => state.search);
 
-  const perPage = 5;
+  const perPage = 20;
   const [items, setItems] = useState([]);
   const [count, setCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -63,7 +81,7 @@ const ProductList = () => {
   };
 
   return (
-    <>
+    <ProductLayout>
       <CategoryLayout>
         <ProductCategory />
       </CategoryLayout>
@@ -79,7 +97,7 @@ const ProductList = () => {
           onChange={handlePageChange}
         />
       )}
-    </>
+    </ProductLayout>
   );
 };
 

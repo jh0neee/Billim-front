@@ -10,6 +10,7 @@ import { useForm } from '../../hooks/useForm';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { searchAction } from '../../store/search';
 import { productItems } from '../../data';
+import theme from '../../styles/theme';
 
 const CategoryBox = styled.div`
   margin-left: 3rem;
@@ -25,12 +26,40 @@ const CategoryBox = styled.div`
     align-items: center;
     cursor: pointer;
   }
+
+  @media ${theme.laptop} {
+    > * {
+      margin-left: 3rem;
+    }
+  }
+  @media (max-width: 890px) {
+    margin-left: 0;
+
+    > * {
+      margin: 0 1.5rem;
+    }
+  }
+  @media ${theme.mobile} {
+    > * {
+      margin: 0 0.8rem;
+    }
+  }
 `;
 
 const SearchBox = styled.form`
   margin-right: 6.5rem;
   display: flex;
   align-items: center;
+
+  @media (max-width: 890px) {
+    margin: 1rem 0 0;
+  }
+`;
+
+const SearchButton = styled(Button)`
+  @media (max-width: 890px) {
+    margin: 0.5rem 0.3rem 0;
+  }
 `;
 
 const ProductCategory = () => {
@@ -90,9 +119,9 @@ const ProductCategory = () => {
           errorText={null}
           onInput={inputHandler}
         />
-        <Button sub small type="submit" width="45px">
+        <SearchButton sub small type="submit" width="45px">
           검색
-        </Button>
+        </SearchButton>
       </SearchBox>
     </>
   );
