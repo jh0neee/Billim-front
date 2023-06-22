@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
+import axios from 'axios';
+import theme from '../../styles/theme';
 import Dropdown from '../../components/UI/DropDown';
 import Input from '../../components/UI/Input';
 import Button from '../../components/UI/Button';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import ErrorModal from '../../util/ErrorModal';
 import { emailAction } from '../../store/signup';
+import { Domain } from '../../data';
 import { useForm } from '../../hooks/useForm';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
-import { Domain } from '../../data';
-import theme from '../../styles/theme';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const VerificationLayout = styled.form`
   display: flex;
@@ -39,7 +45,7 @@ const VerificationTitle = styled.div`
 `;
 
 const EmailBox = styled.div`
-  margin: 3rem auto 1rem;
+  margin: 2rem auto 1rem;
   width: 100%;
   display: flex;
   align-items: center;
@@ -85,9 +91,14 @@ const AtSignParagraph = styled.p`
 `;
 
 const EmailVerification = () => {
+  const url = process.env.REACT_APP_URL;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const email = useSelector(state => state.email);
   const [selectedOpt, setSelectedOpt] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
   const [formState, inputHandler] = useForm({}, false);
 
   useEffect(() => {
@@ -101,33 +112,66 @@ const EmailVerification = () => {
 
   const emailSubmitHandler = e => {
     e.preventDefault();
-    console.log(email.email + '@' + email.domain);
+
+    setIsLoading(true);
+    axios
+      .post(
+        `${url}/member/email/send`,
+        { email: `${email.email}@${email.domain}` },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
+      .then(response => {
+        if (response.status === 200) {
+          navigate('/emailverify/confirm');
+        } else {
+          toast.success('이메일 발송에 실패했습니다.');
+        }
+        setIsLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setIsLoading(false);
+        throw err;
+      });
   };
 
   return (
-    <VerificationLayout className="center" onSubmit={emailSubmitHandler}>
-      <VerificationTitle>이메일 인증</VerificationTitle>
-      <EmailBox>
-        <EmailInput
-          element="input"
-          id="email"
-          type="text"
-          placeholder="email"
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText={null}
-          onInput={inputHandler}
+    <>
+      <ErrorModal error={error} onClear={() => setError(null)} />
+      <VerificationLayout className="center" onSubmit={emailSubmitHandler}>
+        <ToastContainer
+          position="top-center"
+          limit={1}
+          autoClose={3000}
+          closeButton={false}
+          closeOnClick
         />
-        <AtSignParagraph>@</AtSignParagraph>
-        <EmailDropBox
-          options={Domain}
-          selectedOpt={selectedOpt}
-          setSelectedOpt={setSelectedOpt}
-        />
-      </EmailBox>
-      <Button small width="120px" type="submit">
-        인증하기
-      </Button>
-    </VerificationLayout>
+        {isLoading && <LoadingSpinner asOverlay />}
+        <VerificationTitle>이메일 인증</VerificationTitle>
+        <EmailBox>
+          <EmailInput
+            element="input"
+            id="email"
+            type="text"
+            placeholder="email"
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText={null}
+            onInput={inputHandler}
+          />
+          <AtSignParagraph>@</AtSignParagraph>
+          <EmailDropBox
+            options={Domain}
+            selectedOpt={selectedOpt}
+            setSelectedOpt={setSelectedOpt}
+          />
+        </EmailBox>
+        <Button small width="120px" type="submit">
+          인증하기
+        </Button>
+      </VerificationLayout>
+    </>
   );
 };
 
