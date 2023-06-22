@@ -113,6 +113,10 @@ const EmailVerification = () => {
   const emailSubmitHandler = e => {
     e.preventDefault();
 
+    if (!formState.isValid) {
+      alert('빈칸 없이 작성해주세요.');
+    }
+
     setIsLoading(true);
     axios
       .post(

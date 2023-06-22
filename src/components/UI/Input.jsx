@@ -125,7 +125,6 @@ const Input = props => {
         onChange={changeHandler}
         onBlur={touchHandler}
         disabled={props.disabled}
-        required
       />
     ) : (
       <StyledTextArea
@@ -137,7 +136,6 @@ const Input = props => {
         placeholder={props.placeholder}
         onChange={changeHandler}
         onBlur={touchHandler}
-        required
       />
     );
 
