@@ -14,8 +14,6 @@ import { emailAction } from '../../store/signup';
 import { Domain } from '../../data';
 import { useForm } from '../../hooks/useForm';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const VerificationLayout = styled.form`
   display: flex;
@@ -118,24 +116,30 @@ const EmailVerification = () => {
     }
 
     setIsLoading(true);
+    const userEmail = `${email.email}@${email.domain}`;
+
     axios
       .post(
         `${url}/member/email/send`,
-        { email: `${email.email}@${email.domain}` },
+        { email: userEmail },
         {
           headers: { 'Content-Type': 'application/json' },
         },
       )
       .then(response => {
         if (response.status === 200) {
-          navigate('/emailverify/confirm');
+          navigate('/emailverify/confirm', { state: { email: userEmail } });
         } else {
-          toast.success('이메일 발송에 실패했습니다.');
+          setError(response.data.message);
         }
         setIsLoading(false);
       })
       .catch(err => {
-        setError(err.message);
+        if (err.response && err.response.data && err.response.data.message) {
+          setError(err.response.data.message);
+        } else {
+          setError(err.message);
+        }
         setIsLoading(false);
         throw err;
       });
@@ -145,13 +149,6 @@ const EmailVerification = () => {
     <>
       <ErrorModal error={error} onClear={() => setError(null)} />
       <VerificationLayout className="center" onSubmit={emailSubmitHandler}>
-        <ToastContainer
-          position="top-center"
-          limit={1}
-          autoClose={3000}
-          closeButton={false}
-          closeOnClick
-        />
         {isLoading && <LoadingSpinner asOverlay />}
         <VerificationTitle>이메일 인증</VerificationTitle>
         <EmailBox>

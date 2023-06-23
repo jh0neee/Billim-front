@@ -29,6 +29,7 @@ import UpdateProduct from './pages/Product/UpdateProduct.jsx';
 import Chat from './pages/Chat.jsx';
 import MessageChat from './components/Chat/MessageChat.jsx';
 import BlockChat from './components/Chat/BlockChat.jsx';
+import EmailConfirm from './pages/Auth/EmailConfirm.jsx';
 
 function App() {
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
@@ -85,6 +86,7 @@ function App() {
           <Route path="/finduser/password" element={<FindPwTab />} />
         </Route>
         <Route path="/emailverify" element={<EmailVerification />} />
+        <Route path="/emailverify/confirm" element={<EmailConfirm />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
