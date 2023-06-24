@@ -114,6 +114,7 @@ const EmailVerification = () => {
 
     if (!formState.isValid) {
       alert('빈칸 없이 작성해주세요.');
+      return;
     }
 
     onLoading(true);
