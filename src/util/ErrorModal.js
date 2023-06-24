@@ -15,10 +15,7 @@ const ErrorModal = props => {
         </Button>
       }
     >
-      <p>
-        {props.error}: <br />
-        잠시 후 다시 시도해주세요.
-      </p>
+      <p>{props.error}</p>
     </Modal>
   );
 };

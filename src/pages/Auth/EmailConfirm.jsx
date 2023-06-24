@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -6,6 +6,7 @@ import axios from 'axios';
 import theme from '../../styles/theme';
 import ErrorModal from '../../util/ErrorModal';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import { useLoadingError } from '../../hooks/useLoadingError';
 import { TbMailCheck } from 'react-icons/tb';
 
 const ConfirmLayout = styled.div`
@@ -47,8 +48,8 @@ const EmailConfirm = () => {
   const navigate = useNavigate();
   const userEmail = location?.state?.email;
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+  const { isLoading, error, onLoading, clearError, errorHandler } =
+    useLoadingError();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -56,7 +57,7 @@ const EmailConfirm = () => {
     const authToken = searchParams.get('authToken');
 
     const sendVerification = () => {
-      setIsLoading(true);
+      onLoading(true);
 
       axios
         .post(
@@ -70,14 +71,12 @@ const EmailConfirm = () => {
           if (response.status === 200) {
             navigate('/signup', { state: { email } });
           } else {
-            setError('이메일 인증에 실패했습니다');
+            errorHandler(response);
           }
-          setIsLoading(false);
+          onLoading(false);
         })
         .catch(err => {
-          setError(err.message);
-          setIsLoading(false);
-          throw err;
+          errorHandler(err);
         });
     };
 
@@ -88,7 +87,7 @@ const EmailConfirm = () => {
 
   return (
     <>
-      <ErrorModal error={error} onClear={() => setError(null)} />
+      <ErrorModal error={error} onClear={clearError} />
       <ConfirmLayout>
         {isLoading && <LoadingSpinner asOverlay />}
         <TbMailCheck color="#fcd34d" size="100px" />

@@ -28,7 +28,7 @@ export const useCheckNickname = (nickname, setIsCheck) => {
         }
       })
       .catch(err => {
-        console.log(err.message);
+        toast.error(err.response.data.message || err.message);
       });
   };
 

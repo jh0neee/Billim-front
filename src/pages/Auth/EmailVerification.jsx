@@ -13,6 +13,7 @@ import ErrorModal from '../../util/ErrorModal';
 import { emailAction } from '../../store/signup';
 import { Domain } from '../../data';
 import { useForm } from '../../hooks/useForm';
+import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 
 const VerificationLayout = styled.form`
@@ -95,8 +96,8 @@ const EmailVerification = () => {
 
   const email = useSelector(state => state.email);
   const [selectedOpt, setSelectedOpt] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+  const { isLoading, error, onLoading, clearError, errorHandler } =
+    useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
 
   useEffect(() => {
@@ -115,7 +116,7 @@ const EmailVerification = () => {
       alert('빈칸 없이 작성해주세요.');
     }
 
-    setIsLoading(true);
+    onLoading(true);
     const userEmail = `${email.email}@${email.domain}`;
 
     axios
@@ -130,24 +131,18 @@ const EmailVerification = () => {
         if (response.status === 200) {
           navigate('/emailverify/confirm', { state: { email: userEmail } });
         } else {
-          setError(response.data.message);
+          errorHandler(response);
         }
-        setIsLoading(false);
+        onLoading(false);
       })
       .catch(err => {
-        if (err.response && err.response.data && err.response.data.message) {
-          setError(err.response.data.message);
-        } else {
-          setError(err.message);
-        }
-        setIsLoading(false);
-        throw err;
+        errorHandler(err);
       });
   };
 
   return (
     <>
-      <ErrorModal error={error} onClear={() => setError(null)} />
+      <ErrorModal error={error} onClear={clearError} />
       <VerificationLayout className="center" onSubmit={emailSubmitHandler}>
         {isLoading && <LoadingSpinner asOverlay />}
         <VerificationTitle>이메일 인증</VerificationTitle>
