@@ -30,7 +30,7 @@ const SignUpAddress = props => {
           onInput={onInput}
           disabled={true}
         />
-        <SignUpButton sub small onClick={postCodeOpenHandler}>
+        <SignUpButton type="button" sub small onClick={postCodeOpenHandler}>
           우편번호 찾기
         </SignUpButton>
       </SignUpItem>

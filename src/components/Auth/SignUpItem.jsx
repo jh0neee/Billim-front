@@ -1,13 +1,11 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import 'react-toastify/dist/ReactToastify.css';
 
 import Input from '../../components/UI/Input';
 import Button from '../UI/Button';
 import SignUpAddress from './SignUpAddress';
 import theme from '../../styles/theme';
 import { useCheckNickname } from '../../hooks/useCheckedNickname';
-import { ToastContainer } from 'react-toastify';
 import {
   VALIDATOR_PASSWORD,
   VALIDATOR_MATCH_PASSWORD,
@@ -18,19 +16,23 @@ import {
 
 export const SignUpItem = styled.li`
   display: grid;
-  grid-template-columns: 2fr 5fr 1.7fr;
+  grid-template-columns: ${({ email }) =>
+    email ? '2fr 3.7fr 3fr' : '2fr 5fr 1.7fr'};
   align-items: center;
   justify-items: center;
+  font-family: 'SCDream';
 
   @media ${theme.desktop} {
     ${props =>
       !props.lyt &&
       css`
-        grid-template-columns: 3fr 4fr 2fr;
+        grid-template-columns: ${({ email }) =>
+          email ? '3fr 2.7fr 3.3fr' : '3fr 4fr 2fr'};
       `}
   }
   @media ${theme.tablet} {
-    grid-template-columns: 2fr 5fr;
+    grid-template-columns: ${({ email }) =>
+      email ? '2.8fr 6fr 1fr' : '2fr 5fr'};
   }
   @media ${theme.mobile} {
     grid-template-columns: none;
@@ -65,7 +67,6 @@ export const SignUpItem = styled.li`
 `;
 
 export const SignUpLabel = styled.p`
-  font-family: 'SCDream';
   font-weight: 500;
   font-size: 16.5px;
 
@@ -121,13 +122,14 @@ export const SignUpButton = styled(Button)`
 `;
 
 const SignUpItems = props => {
-  const { onInput, password, nickname, setIsCheckNickname } = props;
+  const { email, onInput, password, nickname, setIsCheckNickname } = props;
   const [checkNickname] = useCheckNickname(nickname, setIsCheckNickname);
 
   return (
     <>
-      <SignUpItem id="email">
+      <SignUpItem email>
         <SignUpLabel>아이디</SignUpLabel>
+        <p>{email}</p>
       </SignUpItem>
       <ContentLine />
       <SignUpItem>
@@ -139,7 +141,7 @@ const SignUpItems = props => {
           wth="17.5rem"
           placeholder="비밀번호 입력해주세요"
           validators={[VALIDATOR_PASSWORD()]}
-          errorText="영문 대소문자, 숫자를 모두 포함하여 8~16자 입력해주세요"
+          errorText="영문 대소문자, 숫자, 특수문자를 모두 포함하여 8~16자 입력해주세요"
           onInput={onInput}
         />
       </SignUpItem>
@@ -187,13 +189,6 @@ const SignUpItems = props => {
         <SignUpButton type="button" sub small onClick={checkNickname}>
           중복 확인
         </SignUpButton>
-        <ToastContainer
-          position="top-center"
-          limit={1}
-          autoClose={3000}
-          closeButton={false}
-          closeOnClick
-        />
       </SignUpItem>
       <ContentLine />
       <SignUpAddress onInput={onInput} />
