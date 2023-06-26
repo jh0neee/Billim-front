@@ -89,7 +89,7 @@ const SignUp = () => {
           {
             email: userEmail,
             password: formState.inputs.password.value,
-            confirm_password: formState.inputs.confirm_password.value,
+            confirmPassword: formState.inputs.confirmPassword.value,
             name: formState.inputs.name.value,
             nickname: formState.inputs.nickname.value,
             address: combinedAddress,

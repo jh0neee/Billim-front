@@ -150,7 +150,7 @@ const SignUpItems = props => {
         <SignUpInput
           element="input"
           type="password"
-          id="confirm_password"
+          id="confirmPassword"
           wth="17.5rem"
           placeholder="비밀번호 재입력해주세요"
           validators={[VALIDATOR_MATCH_PASSWORD(password)]}
