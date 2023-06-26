@@ -101,7 +101,7 @@ const NewProduct = () => {
           <FormItem>
             <p>대여 상품명</p>
             <FormInput
-              id="rental_product"
+              id="rentalProduct"
               element="input"
               width="22rem"
               height="30px"
@@ -130,7 +130,7 @@ const NewProduct = () => {
             <p>대여 요금</p>
             <ItemBox>
               <FormInput
-                id="rental_fee"
+                id="price"
                 element="input"
                 width="18.5rem"
                 height="30px"
@@ -149,7 +149,7 @@ const NewProduct = () => {
                 <Radio
                   key={item.id}
                   item={item}
-                  name="trade_method"
+                  name="tradeMethods"
                   checked={checkedTrade}
                   onChecked={onCheckedTrade}
                 />
@@ -162,7 +162,7 @@ const NewProduct = () => {
                     희망지역
                   </p>
                   <Input
-                    id="place"
+                    id="tradeArea"
                     element="input"
                     width="5rem"
                     height="23px"
