@@ -32,10 +32,10 @@ import BlockChat from './components/Chat/BlockChat.jsx';
 import EmailConfirm from './pages/Auth/EmailConfirm.jsx';
 
 function App() {
-  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+  const token = useSelector(state => state.auth.token);
 
   let routes;
-  if (isLoggedIn) {
+  if (token) {
     routes = (
       <Routes>
         <Route path="/" element={<Home />} />

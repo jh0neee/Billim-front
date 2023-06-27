@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styled, { css, keyframes } from 'styled-components';
 
-import { TbMessageChatbot } from 'react-icons/tb';
-import { authAction } from '../../store/auth';
-import { Profile } from '../UI/Profile';
 import theme from '../../styles/theme';
+import { TbMessageChatbot } from 'react-icons/tb';
+import { Profile } from '../UI/Profile';
+import { useAuth } from '../../hooks/useAuth';
 
 const NavList = styled.ul`
   margin-top: 0.5rem;
@@ -86,17 +86,13 @@ const DropMenu = styled.ul`
 `;
 
 const NavLinks = () => {
-  const dispatch = useDispatch();
+  const auth = useAuth();
   const [isSlideMenu, setIsSlideMenu] = useState(false);
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const isMobile = window.innerWidth <= 480;
 
   const slideHandler = () => {
     setIsSlideMenu(!isSlideMenu);
-  };
-
-  const logoutHandler = () => {
-    dispatch(authAction.LOGOUT());
   };
 
   return (
@@ -122,7 +118,7 @@ const NavLinks = () => {
                 <Link to="/mypage/purchase">마이페이지</Link>
               </li>
               <li>
-                <Link to="/" onClick={logoutHandler}>
+                <Link to="/" onClick={auth.logout}>
                   로그아웃
                 </Link>
               </li>
