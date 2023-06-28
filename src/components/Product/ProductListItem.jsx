@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import { RiHeart3Fill, RiHeart3Line, RiStarSFill } from 'react-icons/ri';
 import Card from '../UI/Card';
-import image from '../../asset/image/exampleImage.jpg';
+import { RiHeart3Fill, RiHeart3Line, RiStarSFill } from 'react-icons/ri';
 
 const ProductCard = styled(Card)`
   width: 100%;
@@ -81,10 +80,10 @@ const ProductListItem = ({ items }) => {
         <span>검색결과가 없습니다.</span>
       ) : (
         items.map(item => (
-          <ProductCard key={item.id}>
-            <Link to={`/${item.name}/detail`}>
+          <ProductCard key={item.productId}>
+            <Link to={`/${item.productId}/detail`}>
               <ImageBox>
-                <ProductImage src={image} alt="상품예시이미지" />
+                <ProductImage src={item.imageUrls[0]} alt="상품이미지" />
               </ImageBox>
             </Link>
             <LikeIcon onClick={() => handleWishlistClick(item)}>
@@ -95,16 +94,16 @@ const ProductListItem = ({ items }) => {
               )}
             </LikeIcon>
             <ProductInfoBox>
-              <Link to={`/${item.name}/detail`}>
+              <Link to={`/${item.productId}/detail`}>
                 <ProductItemBox>
-                  <ProductParagraph>{item.name}</ProductParagraph>
+                  <ProductParagraph>{item.productName}</ProductParagraph>
                   <ProductParagraph>
                     <RiStarSFill />
-                    {item.scope}
+                    {item.starRating}
                   </ProductParagraph>
                 </ProductItemBox>
                 <ProductParagraph amount>
-                  \ {item.amount.toLocaleString('ko-KR')} /일
+                  \ {item.price.toLocaleString('ko-KR')} /일
                 </ProductParagraph>
               </Link>
             </ProductInfoBox>
