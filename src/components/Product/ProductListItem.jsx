@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
+import axios from 'axios';
 import Card from '../UI/Card';
+import ErrorModal from '../../util/ErrorModal';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import { useAuth } from '../../hooks/useAuth';
+import { useLoadingError } from '../../hooks/useLoadingError';
 import { RiHeart3Fill, RiHeart3Line, RiStarSFill } from 'react-icons/ri';
-
 const ProductCard = styled(Card)`
   width: 100%;
   border: none;
@@ -62,20 +66,55 @@ const ProductParagraph = styled.p`
 `;
 
 const ProductListItem = ({ items }) => {
-  const [isWishAdd, setIsWishAdd] = useState(false);
+  const url = process.env.REACT_APP_URL;
+  const navigate = useNavigate();
+  const auth = useAuth();
+  const [interestList, setInterestList] = useState([]);
+  const { isLoading, error, onLoading, clearError, errorHandler } =
+    useLoadingError();
 
-  const handleWishlistClick = item => {
-    setIsWishAdd(!isWishAdd);
+  const handleInterestToggle = item => {
+    const interestedProductId = item.productId;
+    const isInterested = interestList.includes(interestedProductId);
 
-    item.likeCount += 1;
-
-    if (item.likeCount === 2) {
-      item.likeCount -= 2;
-    }
+    onLoading(true);
+    axios
+      .post(
+        `${url}/product/interest`,
+        {
+          interest: !isInterested,
+          productId: interestedProductId,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${auth.token}`,
+          },
+        },
+      )
+      .then(() => {
+        setInterestList(prevItem => {
+          if (isInterested) {
+            return prevItem.filter(id => id !== interestedProductId);
+          } else {
+            return [...prevItem, interestedProductId];
+          }
+        });
+        onLoading(false);
+      })
+      .catch(err => {
+        if (err.response.status === 401) {
+          navigate('/login');
+          return;
+        }
+        errorHandler(err);
+      });
   };
 
   return (
     <>
+      <ErrorModal error={error} onClear={clearError} />
+      {isLoading && <LoadingSpinner asOverlay />}
       {items.length === 0 ? (
         <span>검색결과가 없습니다.</span>
       ) : (
@@ -86,11 +125,11 @@ const ProductListItem = ({ items }) => {
                 <ProductImage src={item.imageUrls[0]} alt="상품이미지" />
               </ImageBox>
             </Link>
-            <LikeIcon onClick={() => handleWishlistClick(item)}>
-              {item.likeCount === 1 ? (
+            <LikeIcon onClick={() => handleInterestToggle(item)}>
+              {interestList.includes(item.productId) ? (
                 <RiHeart3Fill color="red" />
               ) : (
-                <RiHeart3Line />
+                <RiHeart3Line color="grey" />
               )}
             </LikeIcon>
             <ProductInfoBox>
