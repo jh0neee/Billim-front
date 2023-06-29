@@ -27,19 +27,17 @@ const TitleParagraph = styled.div`
   font-weight: 500;
 `;
 
-const DetailHeader = props => {
+const DetailHeader = ({ name, scope, grade, reviewCount }) => {
   return (
     <TitleBox>
-      <DetailTitle>{props.name}</DetailTitle>
+      <DetailTitle>{name}</DetailTitle>
       <TitleCollection>
         <RiStarSFill />
-        <TitleParagraph>{props.scope}</TitleParagraph>
+        <TitleParagraph>{scope}</TitleParagraph>
         <p>|</p>
-        <TitleParagraph>후기 n개</TitleParagraph>
+        <TitleParagraph>{grade}</TitleParagraph>
         <p>|</p>
-        <TitleParagraph>등급</TitleParagraph>
-        <p>|</p>
-        <TitleParagraph>지역</TitleParagraph>
+        <TitleParagraph>후기 {reviewCount}개</TitleParagraph>
       </TitleCollection>
     </TitleBox>
   );
