@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { authAction } from '../store/auth';
 import axios from 'axios';
@@ -6,6 +7,7 @@ import axios from 'axios';
 export const useAuth = () => {
   const url = process.env.REACT_APP_URL;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const token = useSelector(state => state.auth.token);
 
@@ -30,7 +32,6 @@ export const useAuth = () => {
   // 엑세스 토큰 갱신 함수
   const refreshAccessToken = () => {
     const refreshTokenData = localStorage.getItem('userData');
-    console.log(refreshTokenData);
     if (refreshTokenData) {
       const { refreshToken } = JSON.parse(refreshTokenData);
       axios
@@ -46,15 +47,16 @@ export const useAuth = () => {
         .catch(err => {
           console.error('error', err);
           handleLogout();
+          navigate('/login');
         });
     } else {
       handleLogout();
+      navigate('/login');
     }
   };
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('userData'));
-    console.log(storedData);
     if (storedData && storedData.accessToken) {
       handleLogin(storedData.accessToken, storedData.refreshToken);
     }
