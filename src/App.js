@@ -49,7 +49,7 @@ function App() {
           <Route path="sporting" element={<ProductList />} />
           <Route path="electronic" element={<ProductList />} />
         </Route>
-        <Route path="/:itemName/detail" element={<ProductDetail />} />
+        <Route path="/:productId/detail" element={<ProductDetail />} />
         <Route path="/:itemName/payment" element={<ProductPayment />} />
         <Route path="/product/new" element={<NewProduct />} />
         <Route path="/product/:productId" element={<UpdateProduct />} />
@@ -79,7 +79,7 @@ function App() {
           <Route path="sporting" element={<ProductList />} />
           <Route path="electronic" element={<ProductList />} />
         </Route>
-        <Route path="/:itemName/detail" element={<ProductDetail />} />
+        <Route path="/:productId/detail" element={<ProductDetail />} />
         <Route path="/login" element={<SignIn />} />
         <Route path="/finduser" element={<FindUser />}>
           <Route path="/finduser/id" element={<FindIdTab />} />

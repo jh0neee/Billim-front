@@ -1,14 +1,51 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import axios from 'axios';
 import DetailView from '../../components/Product/DetailView';
-import { productItems } from '../../data';
+import ErrorModal from '../../util/ErrorModal';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import { useLoadingError } from '../../hooks/useLoadingError';
 
 const ProductDetail = () => {
-  const itemName = useParams().itemName;
-  const loadedContents = productItems.filter(item => item.name === itemName);
+  const url = process.env.REACT_APP_URL;
+  const productId = useParams().productId;
+  const [loadedContents, setLoadedConntents] = useState();
+  const { isLoading, error, onLoading, clearError, errorHandler } =
+    useLoadingError();
 
-  return <DetailView items={loadedContents} />;
+  useEffect(() => {
+    onLoading(true);
+    axios
+      .get(`${url}/product/detail/${productId}`)
+      .then(response => {
+        const responseData = response.data;
+        setLoadedConntents(responseData);
+        onLoading(false);
+      })
+      .catch(err => {
+        errorHandler(err);
+      });
+  }, [productId, url]);
+
+  const productDeleteHandler = deletedProductId => {
+    setLoadedConntents(prev => {
+      prev.filter(product => product.productId !== deletedProductId);
+    });
+  };
+
+  return (
+    <>
+      <ErrorModal error={error} onClear={clearError} />
+      {isLoading && <LoadingSpinner asOverlay />}
+      {!isLoading && loadedContents && (
+        <DetailView
+          items={loadedContents}
+          onDeleteProduct={productDeleteHandler}
+        />
+      )}
+    </>
+  );
 };
 
 export default ProductDetail;
