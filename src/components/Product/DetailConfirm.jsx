@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 import DetePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
@@ -8,7 +9,6 @@ import '../../styles/calendar.css';
 
 import Button from '../UI/Button';
 import differenceInDays from 'date-fns/differenceInDays';
-import { useNavigate } from 'react-router-dom';
 
 const ConfirmBox = styled.div`
   display: grid;
@@ -43,12 +43,12 @@ const PaymentBox = styled.div`
   }
 `;
 
-const DetailConfirm = props => {
+const DetailConfirm = ({ amount, name, alreadyDates }) => {
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
   const days = differenceInDays(endDate, startDate) + 1;
-  const total = (props.amount * days).toLocaleString('ko-KR');
+  const total = (amount * days).toLocaleString('ko-KR');
 
   const onChangeCalendar = dates => {
     const [start, end] = dates;
@@ -68,10 +68,12 @@ const DetailConfirm = props => {
     );
   };
 
+  const disabledDates = alreadyDates.map(dateString => new Date(dateString));
+
   const rentalDate = `${dateToString(startDate)}  ~  ${dateToString(endDate)}`;
 
   const handlePayment = () => {
-    const paymentUrl = `/${props.name}/payment`;
+    const paymentUrl = `/${name}/payment`;
 
     navigate(paymentUrl, { state: { rentalDate, days } });
   };
@@ -88,13 +90,14 @@ const DetailConfirm = props => {
         minDate={new Date()}
         locale={ko}
         isClearable={true}
+        excludeDates={disabledDates}
         inline
       />
       <p>{rentalDate}</p>
       <hr width="75%" />
       <PaymentBox>
-        <p className="left">\ {props.amount.toLocaleString('ko-KR')} / 일</p>
-        <p className="right">\ {props.amount.toLocaleString('ko-KR')}</p>
+        <p className="left">\ {amount?.toLocaleString('ko-KR')} / 일</p>
+        <p className="right">\ {amount?.toLocaleString('ko-KR')}</p>
       </PaymentBox>
       <PaymentBox>
         <p className="left">대여일</p>
