@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
+import format from 'date-fns/format';
+import parseISO from 'date-fns/parseISO';
 import { Profile } from '../UI/Profile';
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 
 const ReviewLayout = styled.div`
   display: grid;
@@ -13,6 +16,10 @@ const ReviewLayout = styled.div`
   > * {
     padding: 1rem;
   }
+`;
+
+const ReviewIconBox = styled.div`
+  margin: 2rem auto 0;
 `;
 
 const ReviewContent = styled.div`
@@ -40,39 +47,58 @@ const ReviewUserBox = styled.div`
   }
 `;
 
-const DetailReview = ({ data, isViewMore }) => {
+const DetailReview = ({ data }) => {
+  const [isViewMore, setIsViewMore] = useState(false);
   const exampleReview = data.slice(0, 4);
   const moreReview = data.slice(4);
 
-  return (
-    <ReviewLayout>
-      {exampleReview.map(rv => (
-        <ReviewContent key={rv.id}>
-          <div>
-            <Profile size="45px" />
-            <ReviewUserBox>
-              <p>{rv.username}</p>
-              <p>{rv.date}</p>
-            </ReviewUserBox>
-          </div>
-          <p>{rv.review}</p>
-        </ReviewContent>
-      ))}
+  const handleViewMore = () => {
+    setIsViewMore(!isViewMore);
+  };
 
-      {isViewMore &&
-        moreReview.map(rv => (
-          <ReviewContent key={rv.id}>
+  const dateFormat = date => {
+    return format(parseISO(date), 'yyyy-MM-dd');
+  };
+
+  return (
+    <>
+      <ReviewLayout>
+        {exampleReview.map(review => (
+          <ReviewContent key={review.reviewId}>
             <div>
-              <Profile size="45px" />
+              <Profile src={review.profileImageUrl} size="45px" />
               <ReviewUserBox>
-                <p>{rv.username}</p>
-                <p>{rv.date}</p>
+                <p>{review.nickname}</p>
+                <p>{dateFormat(review.createdDate)}</p>
               </ReviewUserBox>
             </div>
-            <p>{rv.review}</p>
+            <p>{review.content}</p>
           </ReviewContent>
         ))}
-    </ReviewLayout>
+
+        {isViewMore &&
+          moreReview.map(review => (
+            <ReviewContent key={review.reviewId}>
+              <div>
+                <Profile size="45px" />
+                <ReviewUserBox>
+                  <p>{review.nickname}</p>
+                  <p>{dateFormat(review.createdDate)}</p>
+                </ReviewUserBox>
+              </div>
+              <p>{review.content}</p>
+            </ReviewContent>
+          ))}
+      </ReviewLayout>
+      <ReviewIconBox>
+        {data.length > 4 &&
+          (isViewMore ? (
+            <MdKeyboardArrowUp size="35px" onClick={handleViewMore} />
+          ) : (
+            <MdKeyboardArrowDown size="35px" onClick={handleViewMore} />
+          ))}
+      </ReviewIconBox>
+    </>
   );
 };
 
