@@ -11,21 +11,26 @@ import Button from '../UI/Button';
 import differenceInDays from 'date-fns/differenceInDays';
 
 const ConfirmBox = styled.div`
-  display: grid;
-  align-items: center;
   background: #ededed;
 
-  > * {
-    margin: 0.7rem 0px;
+  > div {
+    max-width: 405px;
+    margin: 0 auto;
+    display: grid;
+    align-items: center;
 
-    &:nth-child(-n + 3),
-    &:last-child {
-      margin: 1rem auto;
-    }
+    > * {
+      margin: 0.7rem 0px;
 
-    &:nth-child(6) {
-      font-weight: 600;
-      font-size: 18px;
+      &:nth-child(-n + 3),
+      &:last-child {
+        margin: 1rem auto;
+      }
+
+      &:nth-child(6) {
+        font-weight: 600;
+        font-size: 18px;
+      }
     }
   }
 `;
@@ -80,34 +85,36 @@ const DetailConfirm = ({ amount, name, alreadyDates }) => {
 
   return (
     <ConfirmBox>
-      <DetePicker
-        showIcon
-        selected={startDate}
-        onChange={onChangeCalendar}
-        startDate={startDate}
-        endDate={endDate}
-        selectsRange
-        minDate={new Date()}
-        locale={ko}
-        isClearable={true}
-        excludeDates={disabledDates}
-        inline
-      />
-      <p>{rentalDate}</p>
-      <hr width="75%" />
-      <PaymentBox>
-        <p className="left">\ {amount?.toLocaleString('ko-KR')} / 일</p>
-        <p className="right">\ {amount?.toLocaleString('ko-KR')}</p>
-      </PaymentBox>
-      <PaymentBox>
-        <p className="left">대여일</p>
-        <p className="right">{isNaN(days) ? '0일' : days + '일'}</p>
-      </PaymentBox>
-      <PaymentBox>
-        <p className="left">총 합계</p>
-        <p className="right">{isNaN(days) ? '￦ 0' : '￦ ' + total}</p>
-      </PaymentBox>
-      <Button onClick={handlePayment}>결제하기</Button>
+      <div>
+        <DetePicker
+          showIcon
+          selected={startDate}
+          onChange={onChangeCalendar}
+          startDate={startDate}
+          endDate={endDate}
+          selectsRange
+          minDate={new Date()}
+          locale={ko}
+          isClearable={true}
+          excludeDates={disabledDates}
+          inline
+        />
+        <p>{rentalDate}</p>
+        <hr width="75%" />
+        <PaymentBox>
+          <p className="left">\ {amount?.toLocaleString('ko-KR')} / 일</p>
+          <p className="right">\ {amount?.toLocaleString('ko-KR')}</p>
+        </PaymentBox>
+        <PaymentBox>
+          <p className="left">대여일</p>
+          <p className="right">{isNaN(days) ? '0일' : days + '일'}</p>
+        </PaymentBox>
+        <PaymentBox>
+          <p className="left">총 합계</p>
+          <p className="right">{isNaN(days) ? '￦ 0' : '￦ ' + total}</p>
+        </PaymentBox>
+        <Button onClick={handlePayment}>결제하기</Button>
+      </div>
     </ConfirmBox>
   );
 };
