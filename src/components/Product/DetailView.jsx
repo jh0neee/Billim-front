@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -8,42 +8,19 @@ import DetailConfirm from './DetailConfirm';
 import DetailReview from './DetailReview';
 import Modal from '../UI/Modal';
 import Button from '../UI/Button';
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
-import { review } from '../../data';
+import DetailImageGallery from './DetailImageGallery';
+import theme from '../../styles/theme';
 
 const DetailLayout = styled.div`
+  max-width: 1140px;
   width: 70%;
   margin: 120px auto 0;
   font-family: 'SCDream';
-`;
 
-const DetailImage = styled.div`
-  margin: 3rem 0;
-  display: flex;
-  justify-content: center;
-
-  > div {
-    display: flex;
-    flex-direction: column;
-  }
-
-  > * {
-    &:first-child {
-      margin-right: 1rem;
-    }
-  }
-`;
-
-const DetailImageBox = styled.div`
-  > * {
-    &:first-child {
-      margin-bottom: 1rem;
-      margin-right: 1rem;
-    }
-
-    &:last-child {
-      margin-right: 1rem;
-    }
+  @media (max-width: 925px), ${theme.mobile} {
+    width: 100%;
+    margin: 150px auto 0;
+    overflow-x: hidden;
   }
 `;
 
@@ -52,6 +29,26 @@ const DetailBox = styled.div`
   grid-template-columns: 2fr 1fr;
   column-gap: 1.5rem;
   padding: 2.5rem 0px;
+
+  @media (max-width: 925px) {
+    width: 70%;
+    margin: 0 auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: 2fr;
+    column-gap: 0;
+    row-gap: 1.5rem;
+  }
+  @media ${theme.mobile} {
+    width: 80%;
+    margin: 0 auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: 2fr;
+    column-gap: 0;
+    row-gap: 1.5rem;
+  }
+  @media (max-width: 400px) {
+    width: 90%;
+  }
 `;
 
 const DetailReviewBox = styled.div`
@@ -59,10 +56,13 @@ const DetailReviewBox = styled.div`
   display: flex;
   flex-direction: column;
 
-  > * {
-    &:last-child {
-      margin: 2rem auto 0;
-    }
+  @media (max-width: 925px) {
+    width: 70%;
+    margin: 2rem auto;
+  }
+  @media ${theme.mobile} {
+    width: 80%;
+    margin: 2rem auto;
   }
 `;
 
@@ -90,8 +90,14 @@ const ButtonLayout = styled.div`
   }
 `;
 
-const DetailView = props => {
-  const [isViewMore, setIsViewMore] = useState(false);
+const StyledLine = styled.hr`
+  @media (max-width: 925px), ${theme.mobile} {
+    width: 90%;
+  }
+`;
+
+const DetailView = ({ items }) => {
+  console.log(items);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const deleteWarningHandler = () => {
@@ -100,25 +106,6 @@ const DetailView = props => {
   const cancelDeleteHandler = () => {
     setShowConfirmModal(false);
   };
-
-  const handleViewMore = () => {
-    setIsViewMore(!isViewMore);
-  };
-
-  useEffect(() => {
-    let viewedProduct = localStorage.getItem('recentItems');
-
-    if (viewedProduct == null) {
-      viewedProduct = [];
-    } else {
-      viewedProduct = JSON.parse(viewedProduct);
-    }
-
-    viewedProduct.push(props.items[0].name);
-    viewedProduct = new Set(viewedProduct);
-    viewedProduct = [...viewedProduct].slice(-4);
-    localStorage.setItem('recentItems', JSON.stringify(viewedProduct));
-  }, []);
 
   const confirmDeleteHandler = () => {
     setShowConfirmModal(false);
@@ -144,55 +131,39 @@ const DetailView = props => {
       >
         <p>삭제 후에는 취소할 수 없습니다.</p>
       </Modal>
-      {props.items.map(item => (
-        <DetailLayout key={item.id}>
-          <ButtonLayout>
-            <Link to={`/product/${item.id}`}>수정하기</Link>
-            <Link onClick={deleteWarningHandler}>삭제하기</Link>
-          </ButtonLayout>
-          <DetailHeader name={item.name} scope={item.scope} />
-          <DetailImage>
-            <img
-              src="https://via.placeholder.com/400x300"
-              alt="상품예시이미지"
-            />
-            <DetailImageBox>
-              <img
-                src="https://via.placeholder.com/200x150"
-                alt="상품예시이미지"
-              />
-              <img
-                src="https://via.placeholder.com/200x150"
-                alt="상품예시이미지"
-              />
-            </DetailImageBox>
-            <DetailImageBox>
-              <img
-                src="https://via.placeholder.com/200x150"
-                alt="상품예시이미지"
-              />
-              <img
-                src="https://via.placeholder.com/200x150"
-                alt="상품예시이미지"
-              />
-            </DetailImageBox>
-          </DetailImage>
-          <DetailBox>
-            <DetailContent tradeMethod={item.trade} />
-            <DetailConfirm amount={item.amount} name={item.name} />
-          </DetailBox>
-          <hr />
-          <DetailReviewBox>
-            <ReviewTitle>후기</ReviewTitle>
-            <DetailReview data={review} isViewMore={isViewMore} />
-            {isViewMore ? (
-              <MdKeyboardArrowUp size="35px" onClick={handleViewMore} />
-            ) : (
-              <MdKeyboardArrowDown size="35px" onClick={handleViewMore} />
-            )}
-          </DetailReviewBox>
-        </DetailLayout>
-      ))}
+      <DetailLayout key={items.productId}>
+        <ButtonLayout>
+          <Link to={`/product/${items.productId}`}>수정하기</Link>
+          <Link onClick={deleteWarningHandler}>삭제하기</Link>
+        </ButtonLayout>
+        <DetailHeader
+          name={items.productName}
+          scope={items.starRating}
+          grade={items.sellerGrade}
+          reviewCount={items.productReviewLists.length}
+        />
+        <DetailImageGallery images={items.imageUrls} />
+        <DetailBox>
+          <DetailContent
+            name={items.sellerNickname}
+            tradeMethod={items.tradeMethods}
+            tradeArea={items.tradeArea}
+            detail={items.detail}
+            image={items.sellerProfileImage}
+            grade={items.sellerGrade}
+          />
+          <DetailConfirm
+            amount={items.price}
+            name={items.productName}
+            alreadyDates={items.alreadyDates}
+          />
+        </DetailBox>
+        <StyledLine />
+        <DetailReviewBox>
+          <ReviewTitle>후기</ReviewTitle>
+          <DetailReview data={items.productReviewLists} />
+        </DetailReviewBox>
+      </DetailLayout>
     </>
   );
 };
