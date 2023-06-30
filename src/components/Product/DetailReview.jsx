@@ -8,7 +8,7 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 
 const ReviewLayout = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   grid-template-rows: repeat(auto-fit, 1fr);
   grid-gap: 0.8rem 1rem;
   line-height: 1.5;
@@ -24,6 +24,7 @@ const ReviewIconBox = styled.div`
 
 const ReviewContent = styled.div`
   width: 100%;
+  border-bottom: ${({ dataZero }) => (dataZero ? '0' : '1px solid #dee2e6')};
 
   > * {
     &:first-child {
@@ -32,7 +33,7 @@ const ReviewContent = styled.div`
     }
 
     &:last-child {
-      margin: 0.5rem 0;
+      margin: ${({ dataZero }) => (dataZero ? '0' : '2rem 1rem 1rem')};
     }
   }
 `;
@@ -63,6 +64,11 @@ const DetailReview = ({ data }) => {
   return (
     <>
       <ReviewLayout>
+        {data.length === 0 && (
+          <ReviewContent dataZero>
+            <p>작성된 리뷰가 없습니다.</p>
+          </ReviewContent>
+        )}
         {exampleReview.map(review => (
           <ReviewContent key={review.reviewId}>
             <div>
