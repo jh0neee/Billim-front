@@ -1,9 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { TbTruckDelivery, TbAward } from 'react-icons/tb';
-import { FaWalking } from 'react-icons/fa';
+import theme from '../../styles/theme';
 import { Profile } from '../UI/Profile';
+import { useResize } from '../../hooks/useResize';
+import { FaWalking } from 'react-icons/fa';
+import { TbTruckDelivery, TbAward } from 'react-icons/tb';
 
 const ContentTitle = styled.div`
   display: flex;
@@ -35,19 +37,25 @@ const ContentCategory = styled.div`
         margin-left: 0.4rem;
         font-weight: 500;
         font-size: 1.1rem;
+
+        > span {
+          font-weight: 600;
+          font-size: 1rem;
+        }
       }
     }
 
     &:nth-child(2) {
       margin: 0.8rem 0px 0.5rem 2.5rem;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
   }
 `;
 
 const ContentDescription = styled.div`
   margin: 2rem 0 0.8rem 0.5rem;
+
   > * {
     font-size: 0.9rem;
     margin-left: 0.5rem;
@@ -58,24 +66,60 @@ const ContentDescription = styled.div`
       font-size: 1.1rem;
     }
   }
+
+  @media (max-width: 925px), ${theme.mobile} {
+    margin: 2rem 0px 2rem 0.5rem;
+  }
 `;
 
-const DetailContent = ({ tradeMethod }) => {
+const GradeSpan = styled.span`
+  font-weight: 700;
+`;
+
+const DetailContent = ({
+  name,
+  tradeMethod,
+  detail,
+  image,
+  grade,
+  tradeArea,
+}) => {
+  const { resize } = useResize(925, '<');
+
+  const getGradeIconColor = () => {
+    if (grade === 'BRONZE') {
+      return '#cc8e34';
+    } else if (grade === 'GOLD') {
+      return '#ffd700';
+    } else if (grade === 'SILVER') {
+      return '#c0c0c0';
+    }
+    return '#a0e1f5';
+  };
+
   return (
     <div>
       <ContentTitle>
-        <p>UESR님이 대여하는 상품</p>
-        <Profile size="45px" />
+        <p>{name}님이 대여하는 상품</p>
+        <Profile src={image} size="45px" />
       </ContentTitle>
       <hr />
       <CategoryBox>
         <ContentCategory>
           <div>
             <FaWalking size="26px" />
-            <p>직거래</p>
+            {tradeMethod.includes('DIRECT') ? (
+              <p>
+                직거래 » <span>{tradeArea}</span>
+              </p>
+            ) : (
+              <p>직거래</p>
+            )}
           </div>
-          {tradeMethod === '직거래' || tradeMethod === '둘 다 가능' ? (
-            <p>가능</p>
+          {tradeMethod.includes('DIRECT') || tradeMethod.length === 2 ? (
+            <>
+              <p>가능</p>
+            </>
           ) : (
             <p>불가능</p>
           )}
@@ -85,7 +129,7 @@ const DetailContent = ({ tradeMethod }) => {
             <TbTruckDelivery size="30px" />
             <p>택배</p>
           </div>
-          {tradeMethod === '택배' || tradeMethod === '둘 다 가능' ? (
+          {tradeMethod.includes('DELIVERY') || tradeMethod.length === 2 ? (
             <p>가능</p>
           ) : (
             <p>불가능</p>
@@ -93,16 +137,19 @@ const DetailContent = ({ tradeMethod }) => {
         </ContentCategory>
         <ContentCategory>
           <div>
-            <TbAward size="28px" />
-            <p>USER님은 -등급입니다.</p>
+            <TbAward size="30px" color={getGradeIconColor()} />
+            <p>
+              USER님은 <GradeSpan>{grade}</GradeSpan> 등급입니다.
+            </p>
           </div>
         </ContentCategory>
       </CategoryBox>
       <hr />
       <ContentDescription>
         <p>상품 설명</p>
-        <p>아주아주아주 매우매우 좋은 특별한 상품</p>
+        <p>{detail}</p>
       </ContentDescription>
+      {resize && <hr />}
     </div>
   );
 };
