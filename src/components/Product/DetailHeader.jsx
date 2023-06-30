@@ -1,10 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import theme from '../../styles/theme';
 import { RiStarSFill } from 'react-icons/ri';
 
 const TitleBox = styled.div`
   padding: 1rem 0;
+
+  @media (max-width: 925px), ${theme.mobile} {
+    text-align: center;
+  }
 `;
 
 const DetailTitle = styled.div`
@@ -20,6 +25,10 @@ const TitleCollection = styled.div`
 
   > p {
     margin: 0 0.5rem;
+  }
+
+  @media (max-width: 925px), ${theme.mobile} {
+    justify-content: center;
   }
 `;
 
