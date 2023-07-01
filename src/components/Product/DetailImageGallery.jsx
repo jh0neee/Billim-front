@@ -17,6 +17,10 @@ const DetailImage = styled.div`
   grid-template-columns: repeat(2, 1fr);
   column-gap: 10px;
   overflow: hidden;
+
+  > img {
+    border-radius: 20px;
+  }
 `;
 
 const SubImageBox = styled.div`
@@ -31,12 +35,12 @@ const MainImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: fill;
-  border-radius: 20px;
-  @media (max-width: 1129px) {
+
+  @media (max-width: 1110px) {
     object-fit: contain;
   }
-  @media (max-width: 925px), ${theme.mobile} {
-    object-fit: contain;
+  @media ${theme.mobile} {
+    object-fit: fill;
   }
 `;
 const SubImage = styled.img`
@@ -44,7 +48,6 @@ const SubImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 20px;
   @media (max-width: 1129px) {
     object-fit: contain;
   }
@@ -80,12 +83,24 @@ const StyledSlider = styled(Slider)`
     bottom: 2px;
   }
 
-  @media (max-width: 1129px) {
+  @media (max-width: 1110px) {
     max-width: 100%;
-  }
-  @media (max-width: 925px), ${theme.mobile} {
     .slick-list {
-      width: 100% !important;
+      width: 70%;
+    }
+  }
+  @media (max-width: 925px) {
+    .slick-list {
+      height: 100%;
+      margin: 0 auto;
+      overflow-x: hidden;
+    }
+  }
+  @media ${theme.mobile} {
+    margin: 1rem 0;
+
+    .slick-list {
+      width: 80%;
       height: 100%;
       margin: 0 auto;
       overflow-x: hidden;
@@ -130,7 +145,7 @@ const DetailImageGallery = ({ images }) => {
     slidesToShow: 1,
     slidesToScroll: 1,
     centerMode: true,
-    centerPadding: '0px',
+    centerPadding: '-5px',
     nextArrow: (
       <Next>
         <HiChevronRight size="60px" />

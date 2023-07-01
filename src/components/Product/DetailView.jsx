@@ -17,10 +17,12 @@ const DetailLayout = styled.div`
   margin: 120px auto 0;
   font-family: 'SCDream';
 
-  @media (max-width: 925px), ${theme.mobile} {
+  @media (max-width: 925px) {
     width: 100%;
-    margin: 150px auto 0;
     overflow-x: hidden;
+  }
+  @media ${theme.tablet}, ${theme.mobile} {
+    margin: 150px auto 0;
   }
 `;
 
