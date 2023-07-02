@@ -65,9 +65,12 @@ const ProductList = () => {
 
   const handlePageChange = pageNumber => {
     setCurrentPage(pageNumber);
-    const firstItemIndex = (pageNumber - 1) * perPage;
+  };
+
+  const getCurrentItems = () => {
+    const firstItemIndex = (currentPage - 1) * perPage;
     const lastItemIndex = firstItemIndex + perPage;
-    setItems(items.slice(firstItemIndex, lastItemIndex));
+    return items.slice(firstItemIndex, lastItemIndex);
   };
 
   let requestUrl = `${url}/product/list/search?page=${currentPage}`;
@@ -106,14 +109,14 @@ const ProductList = () => {
           <ProductCategory />
         </CategoryLayout>
         <ProductItemLayout>
-          <ProductListItem items={items} />
+          <ProductListItem items={getCurrentItems()} />
         </ProductItemLayout>
         {items.length > 0 && (
           <Paginate
             activePage={currentPage}
             itemsCountPerPage={perPage}
-            totalItemsCount={items.length}
-            pageRangeDisplayed={Math.ceil(count / perPage)}
+            totalItemsCount={count}
+            pageRangeDisplayed={5}
             onChange={handlePageChange}
           />
         )}
