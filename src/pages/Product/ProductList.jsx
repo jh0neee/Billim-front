@@ -54,7 +54,7 @@ const ProductItemLayout = styled.div`
 const ProductList = () => {
   const url = process.env.REACT_APP_URL;
   const category = useLocation().pathname.slice(9);
-  const { searchItems, isSearching } = useSelector(state => state.search);
+  const { searchValue } = useSelector(state => state.search);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
@@ -62,37 +62,31 @@ const ProductList = () => {
   const [items, setItems] = useState([]);
   const [count, setCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentItems, setCurrentItems] = useState([]);
 
   const handlePageChange = pageNumber => {
     setCurrentPage(pageNumber);
     const firstItemIndex = (pageNumber - 1) * perPage;
     const lastItemIndex = firstItemIndex + perPage;
-    setCurrentItems(items.slice(firstItemIndex, lastItemIndex));
+    setItems(items.slice(firstItemIndex, lastItemIndex));
   };
+
+  let requestUrl = `${url}/product/list/search?page=${currentPage}`;
+
+  if (searchValue) {
+    requestUrl += `&category&keyword=${searchValue}`;
+  } else {
+    requestUrl += `&category=${category}&keyword`;
+  }
 
   useEffect(() => {
     onLoading(true);
     axios
-      .get(`${url}/product/list`)
+      .get(requestUrl)
       .then(response => {
         if (response.status === 200) {
-          console.log(response.data);
-          const responseData = response.data;
-          const filteredItems =
-            category === ''
-              ? responseData.content
-              : responseData.content.filter(
-                  item => item.categoryName === category,
-                );
-
-          setItems(isSearching ? searchItems : filteredItems);
-          setCount(isSearching ? searchItems.length : filteredItems.length);
-          setCurrentItems(
-            isSearching
-              ? searchItems.slice(0, perPage)
-              : filteredItems.slice(0, perPage),
-          );
+          const responseData = response.data.content;
+          setItems(responseData);
+          setCount(responseData.length);
         } else {
           errorHandler(response);
         }
@@ -101,7 +95,7 @@ const ProductList = () => {
       .catch(err => {
         errorHandler(err);
       });
-  }, [category, searchItems, isSearching, url, currentPage, perPage]);
+  }, [requestUrl]);
 
   return (
     <>
@@ -112,9 +106,9 @@ const ProductList = () => {
           <ProductCategory />
         </CategoryLayout>
         <ProductItemLayout>
-          <ProductListItem items={currentItems} />
+          <ProductListItem items={items} />
         </ProductItemLayout>
-        {currentItems.length > 0 && (
+        {items.length > 0 && (
           <Paginate
             activePage={currentPage}
             itemsCountPerPage={perPage}

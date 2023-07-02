@@ -118,7 +118,7 @@ const SideMenu = () => {
   };
 
   const handleClearSearch = () => {
-    dispatch(searchAction.CLEAR_SEARCH(false));
+    dispatch(searchAction.CLEAR_SEARCH());
   };
 
   return (

@@ -9,7 +9,6 @@ import Input from '../../components/UI/Input';
 import { useForm } from '../../hooks/useForm';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { searchAction } from '../../store/search';
-import { productItems } from '../../data';
 import theme from '../../styles/theme';
 
 const CategoryBox = styled.div`
@@ -68,20 +67,13 @@ const ProductCategory = () => {
   const [formState, inputHandler] = useForm({}, false);
 
   const handleClearSearch = () => {
-    dispatch(searchAction.CLEAR_SEARCH(false));
+    dispatch(searchAction.CLEAR_SEARCH());
   };
 
   const searchSubmitHandler = e => {
     e.preventDefault();
-
-    dispatch(
-      searchAction.CLICK_SEARCH({
-        inputValue: formState.inputs.search?.value,
-        search: true,
-        item: productItems,
-      }),
-    );
-
+    const inputValue = formState.inputs.search?.value;
+    dispatch(searchAction.CLICK_SEARCH(inputValue));
     setResetInput(true);
   };
 
