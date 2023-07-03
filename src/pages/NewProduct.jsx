@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Input from '../components/UI/Input';
 import Radio from '../components/UI/Radio';
 import Button from '../components/UI/Button';
+import ImageUpload from '../components/UI/ImageUpload';
 import { useForm } from '../hooks/useForm';
 import { useCheckedInput } from '../hooks/useCheckedInput';
 import { VALIDATOR_REQUIRE } from '../util/validators';
@@ -98,6 +99,11 @@ const NewProduct = () => {
       <FormLayout onSubmit={submitProductHandler}>
         <p>상품 등록</p>
         <FormBox>
+          <FormItem image>
+            <p>상품 사진</p>
+            <ImageUpload id="images" onInput={inputHandler} />
+          </FormItem>
+          <hr width="80%" />
           <FormItem>
             <p>대여 상품명</p>
             <FormInput
