@@ -84,10 +84,11 @@ export const FormBtnBox = styled.div`
 const NewProduct = () => {
   const [formState, inputHandler] = useForm({}, false);
   const [checkedCategory, onCheckedCategory] = useCheckedInput(
-    '',
+    {},
     inputHandler,
   );
-  const [checkedTrade, onCheckedTrade] = useCheckedInput('', inputHandler);
+  const [checkedTrade, onCheckedTrade] = useCheckedInput({}, inputHandler);
+  const tradeKey = Object.keys(checkedTrade)[0];
 
   const submitProductHandler = e => {
     e.preventDefault();
@@ -136,7 +137,7 @@ const NewProduct = () => {
             <p>대여 요금</p>
             <ItemBox>
               <FormInput
-                id="price"
+                id="rentalFee"
                 element="input"
                 width="18.5rem"
                 height="30px"
@@ -156,11 +157,11 @@ const NewProduct = () => {
                   key={item.id}
                   item={item}
                   name="tradeMethods"
-                  checked={checkedTrade}
+                  checked={tradeKey}
                   onChecked={onCheckedTrade}
                 />
               ))}
-              {(checkedTrade === '직거래' || checkedTrade === '둘 다 가능') && (
+              {(tradeKey === '직거래' || tradeKey === '둘 다 가능') && (
                 <PlaceBox>
                   <p>
                     거래
