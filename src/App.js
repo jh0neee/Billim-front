@@ -23,8 +23,6 @@ import BlockManagement from './components/MyPage/BlockManagement.jsx';
 import EditMember from './components/MyPage/EditMember.jsx';
 import NewProduct from './pages/NewProduct.jsx';
 import MyPageCoupon from './components/MyPage/MyPageCoupon.jsx';
-import FindIdTab from './components/Auth/FindIdTab.jsx';
-import FindPwTab from './components/Auth/FindPwTab.jsx';
 import UpdateProduct from './pages/Product/UpdateProduct.jsx';
 import Chat from './pages/Chat.jsx';
 import MessageChat from './components/Chat/MessageChat.jsx';
@@ -81,10 +79,7 @@ function App() {
         </Route>
         <Route path="/:productId/detail" element={<ProductDetail />} />
         <Route path="/login" element={<SignIn />} />
-        <Route path="/finduser" element={<FindUser />}>
-          <Route path="/finduser/id" element={<FindIdTab />} />
-          <Route path="/finduser/password" element={<FindPwTab />} />
-        </Route>
+        <Route path="/finduser/password" element={<FindUser />}></Route>
         <Route path="/emailverify" element={<EmailVerification />} />
         <Route path="/emailverify/confirm" element={<EmailConfirm />} />
         <Route path="/signup" element={<SignUp />} />

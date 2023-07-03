@@ -1,139 +1,139 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Input from '../UI/Input';
-import Button from '../UI/Button';
-import useTimer from '../../hooks/useTimer';
-import { useForm } from '../../hooks/useForm';
-import {
-  VALIDATOR_EMAIL,
-  VALIDATOR_NUMBER,
-  VALIDATOR_REQUIRE,
-} from '../../util/validators';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 import theme from '../../styles/theme';
+import Input from '../UI/Input';
+import Modal from '../UI/Modal';
+import Button from '../UI/Button';
+import ErrorModal from '../../util/ErrorModal';
+import LoadingSpinner from '../UI/LoadingSpinner';
+import { useForm } from '../../hooks/useForm';
+import { useLoadingError } from '../../hooks/useLoadingError';
+import { VALIDATOR_EMAIL, VALIDATOR_REQUIRE } from '../../util/validators';
 
 const FindUserBox = styled.form`
+  width: 300px;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
+  margin: 0 auto;
+
+  > * {
+    &:nth-child(2) {
+      margin: 1.2rem auto 0;
+    }
+  }
+
+  > button {
+    margin: 1.6rem 0 0;
+  }
+
+  @media ${theme.mobile} {
+    width: 250px;
+  }
 `;
 
 const FindUserInput = styled(Input)`
   > input {
-    width: 250px;
+    width: 300px;
 
     @media ${theme.mobile} {
-      width: 200px;
+      width: 250px;
     }
   }
-`;
-
-const FindUserVerifyInput = styled(Input)`
-  > input {
-    @media ${theme.mobile} {
-      width: 170px;
-    }
-  }
-`;
-
-const TimeOut = styled.p`
-  padding: 20px 20px 15px 15px;
-`;
-
-const TimeOutMessage = styled.p`
-  font-size: 0.5rem;
-  color: red;
 `;
 
 const FindPwTab = () => {
-  // NOTE - 인증 확인되는 즉시 비밀번호 재설정 페이지로 이동
-  const [emailSent, setEmailSent] = useState(false);
+  const url = process.env.REACT_APP_URL;
+  const navigate = useNavigate();
+  const { isLoading, error, onLoading, clearError, errorHandler } =
+    useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
-  const { timer, isExpired, resetTimer } = useTimer(179);
 
-  const sendVerificationCodeHandler = e => {
-    e.preventDefault();
-
-    resetTimer();
-    setEmailSent(true);
-    toast.success('인증번호가 발송되었습니다.');
-    console.log(formState.inputs.id, formState.inputs.email);
+  const [showModal, setShowModal] = useState(false);
+  const closeModal = () => {
+    setShowModal(false);
+    navigate('/login');
   };
 
-  const handleVerifyEmail = e => {
+  const sendPasswordHandler = e => {
     e.preventDefault();
 
-    console.log(formState.inputs.code);
+    if (!formState.isValid) {
+      alert('빈칸 없이 작성해주세요.');
+      return;
+    }
+
+    onLoading(true);
+    axios
+      .post(
+        `${url}/member/email/find/password`,
+        {
+          email: formState.inputs.email.value,
+          name: formState.inputs.name.value,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .then(() => {
+        setShowModal(true);
+        onLoading(false);
+      })
+      .catch(err => {
+        errorHandler(err);
+      });
   };
 
   return (
     <>
-      <Input
-        bar
-        element="input"
-        id="id"
-        type="text"
-        label="아이디"
-        placeholder="아이디 입력해주세요"
-        validators={[VALIDATOR_REQUIRE()]}
-        errorText="아이디를 입력해주세요."
-        onInput={inputHandler}
-      />
-      <FindUserBox onSubmit={sendVerificationCodeHandler}>
+      <ErrorModal error={error} onClear={clearError} />
+      <Modal
+        show={showModal}
+        header="이메일 발송 성공!"
+        onCancel={closeModal}
+        footer={
+          <Button small width="60px" onClick={closeModal}>
+            확인
+          </Button>
+        }
+      >
+        이메일 발송이 성공적으로 이루어졌습니다. <br />
+        로그인 후 비밀번호 변경을 해주세요!
+      </Modal>
+      {isLoading && <LoadingSpinner asOverlay />}
+      <FindUserBox onSubmit={sendPasswordHandler}>
+        <FindUserInput
+          bar
+          element="input"
+          id="name"
+          type="text"
+          label="이름"
+          placeholder="이름을 입력해주세요"
+          validators={[VALIDATOR_REQUIRE()]}
+          errorText="이름을 입력해주세요."
+          onInput={inputHandler}
+        />
         <FindUserInput
           bar
           element="input"
           id="email"
+          label="email"
           type="text"
-          label="이메일"
           placeholder="이메일 입력해주세요"
           validators={[VALIDATOR_EMAIL()]}
           errorText="이메일 형식에 알맞게 입력해주세요"
           onInput={inputHandler}
         />
-        <Button type="submit" sub small width="120px">
-          인증번호 발송
-        </Button>
-        <ToastContainer
-          limit={1}
-          autoClose={3000}
-          closeButton={false}
-          closeOnClick
-        />
-      </FindUserBox>
-      <FindUserBox onSubmit={handleVerifyEmail}>
-        <FindUserVerifyInput
-          bar
-          element="input"
-          id="code"
-          type="text"
-          label="인증번호"
-          placeholder="인증번호 입력해주세요"
-          validators={[VALIDATOR_NUMBER()]}
-          errorText={null}
-          onInput={inputHandler}
-        />
-        {emailSent && <TimeOut>{timer > '00:00' ? timer : '00:00'}</TimeOut>}
-        <Button
-          type="submit"
-          sub
-          small
-          width="125px"
-          disabled={!formState.isValid || isExpired}
-        >
-          인증하기
+        <Button type="submit" small width="120px">
+          이메일 발송
         </Button>
       </FindUserBox>
-      {!formState.isValid && (
-        <TimeOutMessage>숫자만 입력해주세요.</TimeOutMessage>
-      )}
-      {isExpired && (
-        <TimeOutMessage>
-          인증 시간이 만료되었습니다. 인증번호를 재발급해주세요.
-        </TimeOutMessage>
-      )}
     </>
   );
 };

@@ -57,14 +57,17 @@ const KakaoIcon = styled(ImBubble)`
 `;
 
 const FindButtonBox = styled.div`
-  margin: 1rem 0 1rem 7.5rem;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0 0;
+  font-size: 12px;
 
   > * {
-    &:nth-child(2) {
-      margin: 0 0.3rem;
+    &:last-child {
+      margin-right: 0.3rem;
+      margin-left: 3.7rem;
+      cursor: pointer;
+      text-decoration: underline;
     }
   }
 `;
@@ -72,10 +75,10 @@ const FindButtonBox = styled.div`
 const SignUpBox = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 1.5rem;
   > * {
     &:first-child {
-      margin-right: 1.5rem;
+      font-size: 0.83rem;
+      margin-right: 3.4rem;
     }
   }
 `;
@@ -141,15 +144,14 @@ const SignIn = () => {
         <Button type="submit" disabled={!formState.isValid}>
           로그인
         </Button>
-        <FindButtonBox>
-          <Link to="/finduser/id">아이디 찾기</Link>
-          <span>|</span>
-          <Link to="/finduser/password">비밀번호 찾기</Link>
-        </FindButtonBox>
         <ButtonBox>
           <KakaoIcon />
           <Button>카카오 로그인</Button>
         </ButtonBox>
+        <FindButtonBox>
+          <p>비밀번호를 잊어버리셨나요?</p>
+          <Link to="/finduser/password">비밀번호 찾기</Link>
+        </FindButtonBox>
         <SignUpBox>
           <p>
             빌림의 회원이 되시면 <br />
