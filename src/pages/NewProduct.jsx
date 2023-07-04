@@ -1,14 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
+import axios from 'axios';
 import Input from '../components/UI/Input';
 import Radio from '../components/UI/Radio';
 import Button from '../components/UI/Button';
+import ErrorModal from '../util/ErrorModal';
 import ImageUpload from '../components/UI/ImageUpload';
+import LoadingSpinner from '../components/UI/LoadingSpinner';
+
+import { useAuth } from '../hooks/useAuth';
 import { useForm } from '../hooks/useForm';
 import { useCheckedInput } from '../hooks/useCheckedInput';
 import { VALIDATOR_REQUIRE } from '../util/validators';
 import { CategoryList, TradeMethod } from '../data';
+import { useLoadingError } from '../hooks/useLoadingError';
 
 export const FormLayout = styled.form`
   width: 60%;
@@ -82,22 +89,70 @@ export const FormBtnBox = styled.div`
 `;
 
 const NewProduct = () => {
+  const url = process.env.REACT_APP_URL;
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const { isLoading, error, onLoading, clearError, errorHandler } =
+    useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
   const [checkedCategory, onCheckedCategory] = useCheckedInput(
     {},
     inputHandler,
   );
   const [checkedTrade, onCheckedTrade] = useCheckedInput({}, inputHandler);
-  const tradeKey = Object.keys(checkedTrade)[0];
 
   const submitProductHandler = e => {
     e.preventDefault();
-    console.log(formState.inputs);
+
+    if (!formState.isValid) {
+      console.log(formState.inputs);
+      alert('빈칸 없이 작성해주세요.');
+      return;
+    }
+
+    const files = formState.inputs.images.value;
+    const formData = new FormData();
+
+    files.forEach(file => {
+      formData.append('images', file);
+    });
+    formData.append('rentalProduct', formState.inputs.rentalProduct.value);
+    formData.append('category', formState.inputs.category.value);
+    formData.append('rentalFee', Number(formState.inputs.rentalFee.value));
+    formData.append('tradeMethods', formState.inputs.tradeMethods.value);
+    formData.append('description', formState.inputs.description.value);
+    if (formState.inputs.tradeArea && formState.inputs.tradeArea.value) {
+      formData.append('tradeArea', formState.inputs.tradeArea.value);
+    }
+
+    onLoading(true);
+    axios
+      .post(`${url}/product/register`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: 'Bearer ' + auth.token,
+        },
+      })
+      .then(response => {
+        console.log(response);
+        if (response.status === 200) {
+          console.log(response);
+          navigate('/product/list');
+        } else {
+          errorHandler(response);
+        }
+        onLoading(false);
+      })
+      .catch(err => {
+        errorHandler(err);
+      });
   };
 
   return (
     <>
+      <ErrorModal error={error} onClear={clearError} />
       <FormLayout onSubmit={submitProductHandler}>
+        {isLoading && <LoadingSpinner asOverlay />}
         <p>상품 등록</p>
         <FormBox>
           <FormItem image>
@@ -157,11 +212,11 @@ const NewProduct = () => {
                   key={item.id}
                   item={item}
                   name="tradeMethods"
-                  checked={tradeKey}
+                  checked={checkedTrade}
                   onChecked={onCheckedTrade}
                 />
               ))}
-              {(tradeKey === '직거래' || tradeKey === '둘 다 가능') && (
+              {(checkedTrade === 'DIRECT' || checkedTrade === 'ALL') && (
                 <PlaceBox>
                   <p>
                     거래
