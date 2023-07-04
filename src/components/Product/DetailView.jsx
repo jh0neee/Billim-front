@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+import axios from 'axios';
+import theme from '../../styles/theme';
+import Modal from '../UI/Modal';
+import Button from '../UI/Button';
+import ErrorModal from '../../util/ErrorModal';
 import DetailHeader from './DetailHeader';
 import DetailContent from './DetailContent';
 import DetailConfirm from './DetailConfirm';
 import DetailReview from './DetailReview';
-import Modal from '../UI/Modal';
-import Button from '../UI/Button';
+import LoadingSpinner from '../UI/LoadingSpinner';
 import DetailImageGallery from './DetailImageGallery';
-import theme from '../../styles/theme';
+import { useAuth } from '../../hooks/useAuth';
+import { useLoadingError } from '../../hooks/useLoadingError';
 
 const DetailLayout = styled.div`
   max-width: 1140px;
@@ -98,9 +103,14 @@ const StyledLine = styled.hr`
   }
 `;
 
-const DetailView = ({ items }) => {
-  console.log(items);
+const DetailView = ({ items, onDeleteProduct }) => {
+  const url = process.env.REACT_URL_APP;
+  const auth = useAuth();
+  const productId = items.productId;
+  const navigate = useNavigate();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const { isLoading, error, onLoading, clearError, errorHandler } =
+    useLoadingError();
 
   const deleteWarningHandler = () => {
     setShowConfirmModal(true);
@@ -111,11 +121,26 @@ const DetailView = ({ items }) => {
 
   const confirmDeleteHandler = () => {
     setShowConfirmModal(false);
-    console.log('삭제되었습니다.');
+    onLoading(true);
+    axios
+      .delete(`${url}/product/delete?${productId}`, {
+        headers: {
+          Authorization: 'Bearer ' + auth.token,
+        },
+      })
+      .then(() => {
+        onDeleteProduct(productId);
+        navigate('/product');
+        onLoading(false);
+      })
+      .catch(err => {
+        errorHandler(err);
+      });
   };
 
   return (
     <>
+      <ErrorModal error={error} onClear={clearError} />
       <Modal
         show={showConfirmModal}
         onCancel={cancelDeleteHandler}
@@ -134,6 +159,7 @@ const DetailView = ({ items }) => {
         <p>삭제 후에는 취소할 수 없습니다.</p>
       </Modal>
       <DetailLayout key={items.productId}>
+        {isLoading && <LoadingSpinner asOverlay />}
         <ButtonLayout>
           <Link to={`/product/${items.productId}`}>수정하기</Link>
           <Link onClick={deleteWarningHandler}>삭제하기</Link>
