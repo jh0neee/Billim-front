@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { coupons } from '../../data';
+import axios from 'axios';
+import ErrorModal from '../../util/ErrorModal';
+import LoadingSpinner from '../UI/LoadingSpinner';
+import { useAuth } from '../../hooks/useAuth';
+import { useLoadingError } from '../../hooks/useLoadingError';
 
 const CouponLayout = styled.div`
   margin: 0.5rem 0;
@@ -20,6 +24,11 @@ const CouponTab = styled.div`
       font-weight: 700;
     }
   }
+`;
+
+const EmptyCouponMessage = styled.p`
+  margin: 5rem auto 0;
+  width: fit-content;
 `;
 
 const CouponItemBox = styled.div`
@@ -41,8 +50,32 @@ const CouponItemBox = styled.div`
 `;
 
 const MyPageCoupon = () => {
-  const [sortedCoupons, setSortedCoupons] = useState(coupons);
+  const url = process.env.REACT_APP_URL;
+  const auth = useAuth();
+  const [sortedCoupons, setSortedCoupons] = useState([]);
   const [activeTab, setActiveTab] = useState('newest');
+  const { isLoading, error, onLoading, clearError, errorHandler } =
+    useLoadingError();
+
+  useEffect(() => {
+    onLoading(true);
+    axios
+      .get(`${url}/coupon/list`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+        params: {
+          memberId: auth.memberId,
+        },
+      })
+      .then(response => {
+        setSortedCoupons(response.data);
+        onLoading(false);
+      })
+      .catch(err => {
+        errorHandler(err);
+      });
+  }, [setSortedCoupons]);
 
   const copyCoupons = [...sortedCoupons];
 
@@ -60,7 +93,9 @@ const MyPageCoupon = () => {
 
   return (
     <>
-      <p>보유 쿠폰 {coupons.length}</p>
+      <ErrorModal error={error} onClear={clearError} />
+      {isLoading && <LoadingSpinner asOverlay />}
+      <p>보유 쿠폰 {sortedCoupons.length}</p>
       <hr />
       <CouponTab>
         <p
@@ -78,15 +113,19 @@ const MyPageCoupon = () => {
         </p>
       </CouponTab>
       <hr />
-      <CouponLayout>
-        {sortedCoupons.map(item => (
-          <CouponItemBox key={item.id}>
-            <p>{item.discount}%</p>
-            <p>{item.item}</p>
-            <p>{item.date}까지</p>
-          </CouponItemBox>
-        ))}
-      </CouponLayout>
+      {sortedCoupons.length === 0 ? (
+        <EmptyCouponMessage>보유 쿠폰이 없습니다.</EmptyCouponMessage>
+      ) : (
+        <CouponLayout>
+          {sortedCoupons.map(item => (
+            <CouponItemBox key={item.couponIssueId}>
+              <p>{item.rate}%</p>
+              <p>{item.name}</p>
+              <p>{item.expiredAt.slice(0, 10)}까지</p>
+            </CouponItemBox>
+          ))}
+        </CouponLayout>
+      )}
     </>
   );
 };
