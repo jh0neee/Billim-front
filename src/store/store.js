@@ -4,6 +4,7 @@ import emailReducer from './signup';
 import searchReducer from './search';
 import authReducer from './auth';
 import pointReducer from './point';
+import pageReducer from './currentPage';
 
 const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ const store = configureStore({
     search: searchReducer,
     auth: authReducer,
     point: pointReducer,
+    pages: pageReducer,
   },
 });
 
