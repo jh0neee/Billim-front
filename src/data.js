@@ -2,24 +2,24 @@ import format from 'date-fns/format';
 import exampleImage from './asset/image/exampleImage.jpg';
 
 export const CategoryList = [
-  { id: 1, value: 'living' },
-  { id: 2, value: 'apparel' },
-  { id: 3, value: 'sporting' },
-  { id: 4, value: 'electronic' },
+  { id: 1, name: 'living' },
+  { id: 2, name: 'apparel' },
+  { id: 3, name: 'sporting' },
+  { id: 4, name: 'electronic' },
 ];
 
 export const TradeMethod = [
-  { id: 1, value: 'DIRECT' },
-  { id: 2, value: 'DELIVERY' },
-  { id: 3, value: 'ALL' },
+  { id: 1, name: 'DIRECT' },
+  { id: 2, name: 'DELIVERY' },
+  { id: 3, name: 'ALL' },
 ];
 
 export const Domain = [
-  { id: 1, value: 'naver.com' },
-  { id: 2, value: 'gmail.com' },
-  { id: 3, value: 'daum.net' },
-  { id: 4, value: 'nate.com' },
-  { id: 5, value: 'hanmail.net' },
+  { id: 1, name: 'naver.com' },
+  { id: 2, name: 'gmail.com' },
+  { id: 3, name: 'daum.net' },
+  { id: 4, name: 'nate.com' },
+  { id: 5, name: 'hanmail.net' },
 ];
 
 export const productItems = [

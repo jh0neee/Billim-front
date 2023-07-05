@@ -61,15 +61,15 @@ const Dropdown = ({ className, options, selectedOpt, setSelectedOpt }) => {
       </SelectButtonBox>
       {isActive && (
         <DropDown>
-          {options.map(option => (
+          {options.map((option, index) => (
             <DropDownOption
-              key={option.id}
+              key={index}
               onClick={() => {
-                setSelectedOpt(option.value);
+                setSelectedOpt(option.name);
                 setIsActive(false);
               }}
             >
-              {option.value}
+              {option.name}
             </DropDownOption>
           ))}
         </DropDown>
