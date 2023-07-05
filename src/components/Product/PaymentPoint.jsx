@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
+import axios from 'axios';
 import Input from '../../components/UI/Input';
 import Button from '../../components/UI/Button';
-import { user } from '../../data';
-import { GrPowerReset } from 'react-icons/gr';
+import { useAuth } from '../../hooks/useAuth';
 import { pointAction } from '../../store/point';
-import { useDispatch, useSelector } from 'react-redux';
-import { toast, ToastContainer } from 'react-toastify';
+import { GrPowerReset } from 'react-icons/gr';
+import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
+import { toast, ToastContainer } from 'react-toastify';
 
 const PointLayout = styled.div`
   display: grid;
@@ -24,17 +26,37 @@ const ResetButton = styled(GrPowerReset)`
 `;
 
 const PaymentPoint = ({ onInput, formState }) => {
-  const point = user[0].point;
-
+  const url = process.env.REACT_APP_URL;
+  const auth = useAuth();
   const dispatch = useDispatch();
   const remainingPoints = useSelector(state => state.point.remainingPoint);
 
+  const [point, setPoint] = useState(0);
   const [isBtnEnabled, setIsBtnEnabled] = useState(true);
   const [resetInput, setResetInput] = useState(false);
+  const { onLoading, errorHandler } = useLoadingError();
 
   useEffect(() => {
-    dispatch(pointAction.updatePoints(point));
-  }, [dispatch, point]);
+    onLoading(true);
+    axios
+      .get(`${url}/point/available`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+        params: {
+          memberId: auth.memberId,
+        },
+      })
+      .then(response => {
+        const pointData = response.data;
+        setPoint(pointData);
+        dispatch(pointAction.updatePoints(pointData));
+        onLoading(false);
+      })
+      .catch(err => {
+        errorHandler(err);
+      });
+  }, [dispatch]);
 
   const applyUsageAmount = () => {
     const usageAmount = formState.inputs.use_point.value;
