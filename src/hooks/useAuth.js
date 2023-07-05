@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { authAction } from '../store/auth';
@@ -9,25 +9,27 @@ export const useAuth = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+  const memberId = useSelector(state => state.auth.memberId);
   const token = useSelector(state => state.auth.token);
 
   // 로그인 처리 함수
-  const handleLogin = (accessToken, refreshToken) => {
+  const handleLogin = useCallback((accessToken, refreshToken, memberId) => {
     localStorage.setItem(
       'userData',
       JSON.stringify({
+        memberId,
         accessToken,
         refreshToken,
       }),
     );
-    dispatch(authAction.LOGIN(accessToken));
-  };
+    dispatch(authAction.LOGIN({ token: accessToken, memberId }));
+  }, []);
 
   // 로그아웃 처리 함수
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     localStorage.removeItem('userData');
     dispatch(authAction.LOGOUT());
-  };
+  }, []);
 
   // 엑세스 토큰 갱신 함수
   const refreshAccessToken = () => {
@@ -41,8 +43,8 @@ export const useAuth = () => {
           { headers: { 'Content-Type': 'application/json' } },
         )
         .then(response => {
-          const { newAccessToken, refreshToken } = response.data;
-          handleLogin(newAccessToken, refreshToken);
+          const { newAccessToken, refreshToken, memberId } = response.data;
+          handleLogin(newAccessToken, refreshToken, memberId);
         })
         .catch(err => {
           console.error('error', err);
@@ -58,7 +60,11 @@ export const useAuth = () => {
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('userData'));
     if (storedData && storedData.accessToken) {
-      handleLogin(storedData.accessToken, storedData.refreshToken);
+      handleLogin(
+        storedData.accessToken,
+        storedData.refreshToken,
+        storedData.memberId,
+      );
     }
   }, [handleLogin]);
 
@@ -76,6 +82,7 @@ export const useAuth = () => {
   return {
     isLoggedIn,
     token,
+    memberId,
     login: handleLogin,
     logout: handleLogout,
   };

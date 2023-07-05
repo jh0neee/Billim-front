@@ -104,8 +104,8 @@ const SignIn = () => {
       )
       .then(response => {
         if (response.status === 200) {
-          const { accessToken, refreshToken } = response.data;
-          auth.login(accessToken, refreshToken);
+          const { accessToken, refreshToken, memberId } = response.data;
+          auth.login(accessToken, refreshToken, memberId);
         } else {
           errorHandler(response);
         }
