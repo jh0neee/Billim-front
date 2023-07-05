@@ -161,10 +161,10 @@ const DetailView = ({ items, onDeleteProduct }) => {
       <DetailLayout key={items.productId}>
         {isLoading && <LoadingSpinner asOverlay />}
         <ButtonLayout>
-          {auth.memberId === items.memberId && (
+          {auth.memberId === items.sellerMemberId && (
             <Link to={`/product/${items.productId}`}>수정하기</Link>
           )}
-          {auth.memberId === items.memberId && (
+          {auth.memberId === items.sellerMemberId && (
             <Link onClick={deleteWarningHandler}>삭제하기</Link>
           )}
         </ButtonLayout>
