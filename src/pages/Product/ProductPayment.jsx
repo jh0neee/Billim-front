@@ -49,7 +49,7 @@ const ProductPayment = () => {
     tradeMethod,
     name,
     category,
-    total,
+    price,
     seller,
   } = location.state;
 
@@ -122,7 +122,7 @@ const ProductPayment = () => {
             <PaymentConfirm
               coupon={coupon}
               imageUrl={image}
-              amount={total}
+              amount={price}
               tradeMethod={tradeMethod}
               category={category}
               name={name}

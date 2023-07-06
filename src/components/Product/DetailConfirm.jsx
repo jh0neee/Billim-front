@@ -105,7 +105,7 @@ const DetailConfirm = ({
         tradeMethod,
         name,
         category,
-        total: amount * days,
+        price: amount,
         seller,
       },
     });
