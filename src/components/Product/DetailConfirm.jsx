@@ -50,7 +50,7 @@ const PaymentBox = styled.div`
 
 const DetailConfirm = ({ amount, name, alreadyDates }) => {
   const navigate = useNavigate();
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const days = differenceInDays(endDate, startDate) + 1;
   const total = (amount * days).toLocaleString('ko-KR');
@@ -75,9 +75,17 @@ const DetailConfirm = ({ amount, name, alreadyDates }) => {
 
   const disabledDates = alreadyDates.map(dateString => new Date(dateString));
 
-  const rentalDate = `${dateToString(startDate)}  ~  ${dateToString(endDate)}`;
+  const rentalDate =
+    startDate || endDate
+      ? `${dateToString(startDate)}  ~  ${dateToString(endDate)}`
+      : null;
 
   const handlePayment = () => {
+    if (startDate === null || endDate === null) {
+      alert('날짜를 선택해주세요');
+      return;
+    }
+
     const paymentUrl = `/${name}/payment`;
 
     navigate(paymentUrl, { state: { rentalDate, days } });
