@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
 
 import Button from '../../components/UI/Button';
-import { coupons } from '../../data';
-import { useSelector } from 'react-redux';
 
 const ConfirmBox = styled.div`
   position: sticky;
@@ -31,6 +30,11 @@ const ConfirmBox = styled.div`
 
 const ConfirmTop = styled.div`
   column-count: 2;
+
+  > img {
+    width: 100px;
+    height: 100px;
+  }
 
   > * {
     &:last-child {
@@ -81,43 +85,53 @@ const ParagraphBox = styled.div`
 `;
 
 const PaymentConfirm = ({
-  items,
+  coupon,
+  imageUrl,
+  amount,
+  tradeMethod,
+  category,
+  name,
+  seller,
   days,
   tradeSelectedOpt,
   couponSelectedOpt,
   onInput,
 }) => {
-  const discountItem = coupons.find(item => item.value === couponSelectedOpt);
-  const discount = discountItem?.discount || 0;
+  const discountItem = coupon.find(item => item.name === couponSelectedOpt);
+  const discount = discountItem?.rate || 0;
 
   const courierFee =
-    tradeSelectedOpt === '택배' || items.trade === '택배' ? 3000 : 0;
+    tradeSelectedOpt === 'DELIVERY' || tradeMethod === 'DELIVERY' ? 3000 : 0;
 
   const point = useSelector(state => state.point.usagePoint);
-  const discounted = Math.round(items.amount * (discount / 100));
+  const discounted = Math.round(amount * (discount / 100));
   const numberOfDays = days;
-  const total = items.amount * numberOfDays + courierFee - discounted - point;
+  const total = amount * numberOfDays + courierFee - discounted - point;
 
   useEffect(() => {
+    const couponIssueId = discountItem?.couponIssueId;
+
     onInput('total', total, true);
-  }, [onInput, total]);
+    onInput('couponIssueId', couponIssueId, true);
+    onInput('usedPoint', Number(point), true);
+  }, [onInput, point, total, discountItem?.couponIssueId]);
 
   return (
     <ConfirmBox>
       <ConfirmTop>
-        <img src="https://via.placeholder.com/100x100" alt="상품예시이미지" />
+        <img src={imageUrl} alt="상품예시이미지" />
         <div>
-          <p>[ {items.category} ]</p>
-          <p>{items.name}</p>
-          <p className="name">판매자명</p>
+          <p>[ {category} ]</p>
+          <p>{name}</p>
+          <p className="name">{seller}</p>
         </div>
       </ConfirmTop>
       <hr />
       <ConfirmBottom>
         <p>요금세부정보</p>
         <ParagraphBox>
-          <p className="left">\ {items.amount.toLocaleString('ko-KR')} / 일</p>
-          <p className="right">\ {items.amount.toLocaleString('ko-KR')}</p>
+          <p className="left">\ {amount.toLocaleString('ko-KR')} / 일</p>
+          <p className="right">\ {amount.toLocaleString('ko-KR')}</p>
         </ParagraphBox>
         <ParagraphBox>
           <p className="left">대여일</p>

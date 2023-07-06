@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import Dropdown from '../../components/UI/DropDown';
@@ -8,7 +8,7 @@ import PaymentPoint from './PaymentPoint';
 import usePostalCode from '../../hooks/usePostalCode';
 import { BsCheck2Circle } from 'react-icons/bs';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
-import { TradeMethod, coupons } from '../../data';
+import { TradeMethod } from '../../data';
 
 const PayInformation = styled.div`
   padding: 0.5rem;
@@ -80,8 +80,9 @@ const TradeMethodOption = styled.p`
 `;
 
 const ProductInformation = ({
-  items,
+  tradeMethod,
   rentalDate,
+  coupon,
   tradeSelectedOpt,
   setTradeSelectedOpt,
   couponSelectedOpt,
@@ -91,6 +92,24 @@ const ProductInformation = ({
 }) => {
   const [postCode, address, legal, postCodeOpenHandler] =
     usePostalCode(onInput);
+  const [isDeliveryTrade, setIsDeliveryTrade] = useState(false);
+
+  useEffect(() => {
+    if (tradeMethod.length === 2) {
+      tradeSelectedOpt === 'DELIVERY'
+        ? setIsDeliveryTrade(true)
+        : setIsDeliveryTrade(false);
+    } else {
+      tradeMethod.includes('DELIVERY')
+        ? setIsDeliveryTrade(true)
+        : setIsDeliveryTrade(false);
+    }
+  }, [tradeMethod, tradeSelectedOpt]);
+
+  useEffect(() => {
+    const selectedTradeMethod = tradeSelectedOpt || tradeMethod[0];
+    onInput('tradeMethod', selectedTradeMethod, true);
+  }, [tradeMethod, tradeSelectedOpt]);
 
   return (
     <PayInformation>
@@ -107,13 +126,13 @@ const ProductInformation = ({
           <BsCheck2Circle size="25px" />
           <p>거래방법</p>
         </PayTitle>
-        {items.trade === '직거래' ? (
+        {tradeMethod.length === 1 && tradeMethod.includes('DIRECT') ? (
           <TradeMethodOption>직거래</TradeMethodOption>
-        ) : items.trade === '택배' ? (
+        ) : tradeMethod.length === 1 && tradeMethod.includes('DELIVERY') ? (
           <TradeMethodOption>택배</TradeMethodOption>
         ) : (
           <TradeDropDown
-            options={TradeMethod.filter(opt => opt.value !== '둘 다 가능')}
+            options={TradeMethod.filter(opt => opt.name !== 'ALL')}
             selectedOpt={tradeSelectedOpt}
             setSelectedOpt={setTradeSelectedOpt}
           />
@@ -133,13 +152,13 @@ const ProductInformation = ({
           <p>쿠폰</p>
         </PayTitle>
         <TradeDropDown
-          options={coupons}
+          options={coupon}
           selectedOpt={couponSelectedOpt}
           setSelectedOpt={setCouponSelectedOpt}
         />
       </InformationBox>
       <hr />
-      {(items.trade === '택배' || tradeSelectedOpt === '택배') && (
+      {isDeliveryTrade && (
         <PayDelivery>
           <DeliveryItems>
             <PayTitle>이름</PayTitle>
@@ -168,7 +187,13 @@ const ProductInformation = ({
               onInput={onInput}
               disabled={true}
             />
-            <Button sub small width="120px" onClick={postCodeOpenHandler}>
+            <Button
+              type="button"
+              sub
+              small
+              width="120px"
+              onClick={postCodeOpenHandler}
+            >
               우편번호 찾기
             </Button>
           </DeliveryItems>

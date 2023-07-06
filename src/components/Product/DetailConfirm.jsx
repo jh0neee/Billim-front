@@ -48,7 +48,16 @@ const PaymentBox = styled.div`
   }
 `;
 
-const DetailConfirm = ({ amount, name, alreadyDates }) => {
+const DetailConfirm = ({
+  image,
+  tradeMethod,
+  name,
+  seller,
+  category,
+  amount,
+  productId,
+  alreadyDates,
+}) => {
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -86,9 +95,20 @@ const DetailConfirm = ({ amount, name, alreadyDates }) => {
       return;
     }
 
-    const paymentUrl = `/${name}/payment`;
+    const paymentUrl = `/${productId}/payment`;
 
-    navigate(paymentUrl, { state: { rentalDate, days } });
+    navigate(paymentUrl, {
+      state: {
+        rentalDate,
+        days,
+        image,
+        tradeMethod,
+        name,
+        category,
+        total: amount * days,
+        seller,
+      },
+    });
   };
 
   return (

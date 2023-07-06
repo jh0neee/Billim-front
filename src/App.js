@@ -62,7 +62,7 @@ function App() {
           <Route path="electronic" element={<ProductList />} />
         </Route>
         <Route path="/:productId/detail" element={<ProductDetail />} />
-        <Route path="/:itemName/payment" element={<ProductPayment />} />
+        <Route path="/:productId/payment" element={<ProductPayment />} />
         <Route path="/product/new" element={<NewProduct />} />
         <Route path="/product/:productId" element={<UpdateProduct />} />
         <Route path="/mypage" element={<MyPage />}>

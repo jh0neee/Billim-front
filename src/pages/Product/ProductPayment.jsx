@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+/* eslint-disable camelcase */
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import PaymentInformation from '../../components/Product/PaymentInformation';
+import axios from 'axios';
+import ErrorModal from '../../util/ErrorModal';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import PaymentConfirm from '../../components/Product/PaymentConfirm';
-import { HiChevronLeft } from 'react-icons/hi';
-import { productItems } from '../../data';
+import PaymentInformation from '../../components/Product/PaymentInformation';
 import { useForm } from '../../hooks/useForm';
+import { useAuth } from '../../hooks/useAuth';
+import { HiChevronLeft } from 'react-icons/hi';
+import { useLoadingError } from '../../hooks/useLoadingError';
 
 const PaymentLayout = styled.form`
   width: 80%;
@@ -33,17 +38,59 @@ const PaymentBox = styled.div`
 `;
 
 const ProductPayment = () => {
+  const url = process.env.REACT_APP_URL;
+  const auth = useAuth();
   const location = useLocation();
-  const { rentalDate, days } = location.state;
-
-  const itemName = useParams().itemName;
-  const loadedContents = productItems.find(item => item.name === itemName);
-  const [formState, inputHandler] = useForm({}, false);
-
   const navigate = useNavigate();
+  const {
+    rentalDate,
+    days,
+    image,
+    tradeMethod,
+    name,
+    category,
+    total,
+    seller,
+  } = location.state;
 
+  const [coupon, setCoupon] = useState([]);
   const [tradeSelectedOpt, setTradeSelectedOpt] = useState('');
   const [couponSelectedOpt, setCouponSelectedOpt] = useState('');
+  const [formState, inputHandler] = useForm({}, false);
+  const { isLoading, error, onLoading, clearError, errorHandler } =
+    useLoadingError();
+
+  useEffect(() => {
+    onLoading(true);
+    axios
+      .get(`${url}/coupon/list`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+        params: {
+          memberId: auth.memberId,
+        },
+      })
+      .then(response => {
+        const responseData = response.data;
+
+        const coupons = responseData.map(coupon => ({
+          ...coupon,
+          name: `${coupon.name} (${coupon.rate}%)`,
+        }));
+
+        const couponList =
+          coupons.length === 0
+            ? [{ name: '사용가능한 쿠폰이 없습니다' }]
+            : [{ name: '선택하세요' }, ...coupons];
+
+        setCoupon(couponList);
+        onLoading(false);
+      })
+      .catch(err => {
+        errorHandler(err);
+      });
+  }, [setCoupon]);
 
   const onSubmit = e => {
     e.preventDefault();
@@ -51,33 +98,44 @@ const ProductPayment = () => {
   };
 
   return (
-    <PaymentLayout onSubmit={onSubmit}>
-      <PaymentTitle>
-        <GoBack size="45px" onClick={() => navigate(-1)} />
-        확인 및 결제
-      </PaymentTitle>
-      <PaymentBox>
-        <PaymentInformation
-          items={loadedContents}
-          rentalDate={rentalDate}
-          tradeSelectedOpt={tradeSelectedOpt}
-          setTradeSelectedOpt={setTradeSelectedOpt}
-          couponSelectedOpt={couponSelectedOpt}
-          setCouponSelectedOpt={setCouponSelectedOpt}
-          onInput={inputHandler}
-          formState={formState}
-        />
-        <div>
-          <PaymentConfirm
-            items={loadedContents}
-            days={days}
+    <>
+      <ErrorModal error={error} onClear={clearError} />
+      <PaymentLayout onSubmit={onSubmit}>
+        {isLoading && <LoadingSpinner asOverlay />}
+        <PaymentTitle>
+          <GoBack size="45px" onClick={() => navigate(-1)} />
+          확인 및 결제
+        </PaymentTitle>
+        <PaymentBox>
+          <PaymentInformation
+            tradeMethod={tradeMethod}
+            rentalDate={rentalDate}
+            coupon={coupon}
             tradeSelectedOpt={tradeSelectedOpt}
+            setTradeSelectedOpt={setTradeSelectedOpt}
             couponSelectedOpt={couponSelectedOpt}
+            setCouponSelectedOpt={setCouponSelectedOpt}
             onInput={inputHandler}
+            formState={formState}
           />
-        </div>
-      </PaymentBox>
-    </PaymentLayout>
+          <div>
+            <PaymentConfirm
+              coupon={coupon}
+              imageUrl={image}
+              amount={total}
+              tradeMethod={tradeMethod}
+              category={category}
+              name={name}
+              seller={seller}
+              days={days}
+              tradeSelectedOpt={tradeSelectedOpt}
+              couponSelectedOpt={couponSelectedOpt}
+              onInput={inputHandler}
+            />
+          </div>
+        </PaymentBox>
+      </PaymentLayout>
+    </>
   );
 };
 

@@ -185,8 +185,13 @@ const DetailView = ({ items, onDeleteProduct }) => {
             grade={items.sellerGrade}
           />
           <DetailConfirm
-            amount={items.price}
+            image={items.imageUrls[0]}
+            tradeMethod={items.tradeMethods}
             name={items.productName}
+            seller={items.sellerNickname}
+            category={items.category}
+            amount={items.price}
+            productId={items.productId}
             alreadyDates={items.alreadyDates}
           />
         </DetailBox>

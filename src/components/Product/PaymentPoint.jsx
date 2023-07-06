@@ -59,7 +59,7 @@ const PaymentPoint = ({ onInput, formState }) => {
   }, [dispatch]);
 
   const applyUsageAmount = () => {
-    const usageAmount = formState.inputs.use_point.value;
+    const usageAmount = formState.inputs.usedPoint.value;
 
     if (usageAmount <= remainingPoints) {
       dispatch(pointAction.usePoints(usageAmount));
@@ -86,7 +86,7 @@ const PaymentPoint = ({ onInput, formState }) => {
         <p>사용</p>
         <Input
           bar
-          id="use_point"
+          id="usedPoint"
           element="input"
           width="8.5rem"
           height="20px"
