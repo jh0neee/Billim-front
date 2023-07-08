@@ -104,7 +104,7 @@ const StyledLine = styled.hr`
 `;
 
 const DetailView = ({ items, onDeleteProduct }) => {
-  const url = process.env.REACT_URL_APP;
+  const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const productId = items.productId;
   const navigate = useNavigate();
@@ -123,7 +123,7 @@ const DetailView = ({ items, onDeleteProduct }) => {
     setShowConfirmModal(false);
     onLoading(true);
     axios
-      .delete(`${url}/product/delete?${productId}`, {
+      .delete(`${url}/product/delete/${productId}`, {
         headers: {
           Authorization: 'Bearer ' + auth.token,
         },
