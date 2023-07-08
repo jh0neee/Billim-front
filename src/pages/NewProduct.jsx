@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 import Input from '../components/UI/Input';
 import Radio from '../components/UI/Radio';
+import Modal from '../components/UI/Modal';
 import Button from '../components/UI/Button';
 import ErrorModal from '../util/ErrorModal';
 import ImageUpload from '../components/UI/ImageUpload';
@@ -92,6 +93,7 @@ const NewProduct = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const navigate = useNavigate();
+  const [registerModal, setRegisterModal] = useState(false);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
@@ -100,6 +102,11 @@ const NewProduct = () => {
     inputHandler,
   );
   const [checkedTrade, onCheckedTrade] = useCheckedInput({}, inputHandler);
+
+  const closeRegister = () => {
+    setRegisterModal(false);
+    navigate('/product');
+  };
 
   const submitProductHandler = e => {
     e.preventDefault();
@@ -133,14 +140,8 @@ const NewProduct = () => {
           Authorization: 'Bearer ' + auth.token,
         },
       })
-      .then(response => {
-        console.log(response);
-        if (response.status === 200) {
-          console.log(response);
-          navigate('/product');
-        } else {
-          errorHandler(response);
-        }
+      .then(() => {
+        setRegisterModal(true);
         onLoading(false);
       })
       .catch(err => {
@@ -151,6 +152,18 @@ const NewProduct = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      <Modal
+        show={registerModal}
+        header="등록 완료!"
+        onCancel={closeRegister}
+        footer={
+          <Button small width="60px" onClick={closeRegister}>
+            확인
+          </Button>
+        }
+      >
+        상품이 등록되었습니다!
+      </Modal>
       <FormLayout onSubmit={submitProductHandler}>
         {isLoading && <LoadingSpinner asOverlay />}
         <p>상품 등록</p>
