@@ -48,9 +48,7 @@ const SubImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  @media (max-width: 1129px) {
-    object-fit: contain;
-  }
+  border-radius: 20px;
 `;
 
 const StyledSlider = styled(Slider)`
