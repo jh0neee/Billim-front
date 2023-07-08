@@ -24,13 +24,13 @@ const Radio = ({ item, name, checked, onChecked }) => {
     <>
       <StyledInput
         type="radio"
-        id={`radio-${item.value}`}
+        id={`radio-${item.name}`}
         name={name}
-        value={item.value}
-        checked={checked === item.value}
+        value={item.name}
+        checked={checked === item.name}
         onChange={onChecked}
       />
-      <label htmlFor={`radio-${item.value}`}>{item.value}</label>
+      <label htmlFor={`radio-${item.name}`}>{item.name}</label>
     </>
   );
 };
