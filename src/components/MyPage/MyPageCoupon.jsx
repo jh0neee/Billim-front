@@ -75,7 +75,7 @@ const MyPageCoupon = () => {
       .catch(err => {
         errorHandler(err);
       });
-  }, [setSortedCoupons]);
+  }, [auth.token]);
 
   const copyCoupons = [...sortedCoupons];
 

@@ -56,7 +56,7 @@ const PaymentPoint = ({ onInput, formState }) => {
       .catch(err => {
         errorHandler(err);
       });
-  }, [dispatch]);
+  }, [dispatch, auth.token]);
 
   const applyUsageAmount = () => {
     const usageAmount = formState.inputs.usedPoint.value;

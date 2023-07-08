@@ -26,7 +26,7 @@ const ProductDetail = () => {
       .catch(err => {
         errorHandler(err);
       });
-  }, [productId, url]);
+  }, [productId]);
 
   const productDeleteHandler = deletedProductId => {
     setLoadedConntents(prev => {

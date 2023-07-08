@@ -68,7 +68,7 @@ const UpdateProduct = () => {
         prdt.tradeMethods.length === 2 ? 'ALL' : prdt.tradeMethods[0],
       );
     });
-  }, [productId, setFormData, url]);
+  }, [productId, setFormData]);
 
   const [checkedCategory, onCheckedCategory] = useCheckedInput(
     initialCategory,
