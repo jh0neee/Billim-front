@@ -76,14 +76,7 @@ const GradeSpan = styled.span`
   font-weight: 700;
 `;
 
-const DetailContent = ({
-  name,
-  tradeMethod,
-  detail,
-  image,
-  grade,
-  tradeArea,
-}) => {
+const DetailContent = ({ name, tradeMethod, detail, image, grade, place }) => {
   const { resize } = useResize(925, '<');
 
   const getGradeIconColor = () => {
@@ -110,7 +103,7 @@ const DetailContent = ({
             <FaWalking size="26px" />
             {tradeMethod.includes('DIRECT') ? (
               <p>
-                직거래 » <span>{tradeArea}</span>
+                직거래 » <span>{place}</span>
               </p>
             ) : (
               <p>직거래</p>

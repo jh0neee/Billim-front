@@ -179,7 +179,7 @@ const DetailView = ({ items, onDeleteProduct }) => {
           <DetailContent
             name={items.sellerNickname}
             tradeMethod={items.tradeMethods}
-            tradeArea={items.tradeArea}
+            place={items.place}
             detail={items.detail}
             image={items.sellerProfileImage}
             grade={items.sellerGrade}

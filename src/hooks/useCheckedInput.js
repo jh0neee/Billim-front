@@ -13,7 +13,7 @@ export const useCheckedInput = (initialValue, inputHandler, id) => {
     setCheckedValue(selectedValue);
 
     if (id.includes('update') && selectedValue === 'DELIVERY') {
-      inputHandler('tradeArea', null, true);
+      inputHandler('place', null, true);
       return;
     }
 
