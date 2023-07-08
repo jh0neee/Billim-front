@@ -113,12 +113,12 @@ const NewProduct = () => {
     const files = formState.inputs.images.value;
     const formData = new FormData();
 
-    files.forEach(file => {
-      formData.append('images', file);
+    files.forEach((file, index) => {
+      formData.append(`image${index}`, file);
     });
     formData.append('rentalProduct', formState.inputs.rentalProduct.value);
     formData.append('category', formState.inputs.category.value);
-    formData.append('rentalFee', Number(formState.inputs.rentalFee.value));
+    formData.append('rentalFee', formState.inputs.rentalFee.value);
     formData.append('tradeMethods', formState.inputs.tradeMethods.value);
     formData.append('description', formState.inputs.description.value);
     if (formState.inputs.tradeArea && formState.inputs.tradeArea.value) {
@@ -137,7 +137,7 @@ const NewProduct = () => {
         console.log(response);
         if (response.status === 200) {
           console.log(response);
-          navigate('/product/list');
+          navigate('/product');
         } else {
           errorHandler(response);
         }
