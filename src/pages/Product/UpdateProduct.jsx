@@ -1,13 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import axios from 'axios';
 import Button from '../../components/UI/Button';
 import Radio from '../../components/UI/Radio';
 import Input from '../../components/UI/Input';
 import { useForm } from '../../hooks/useForm';
 import { useCheckedInput } from '../../hooks/useCheckedInput';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
-import { CategoryList, TradeMethod, productItems } from '../../data';
+import { CategoryList, TradeMethod } from '../../data';
 import {
   FormLayout,
   FormBox,
@@ -20,52 +21,69 @@ import {
 } from '../NewProduct';
 
 const UpdateProduct = () => {
+  const url = process.env.REACT_APP_URL;
   const productId = useParams().productId;
-  const identifiedProduct = productItems.find(item => item.id === productId);
-  const initialCategory = identifiedProduct ? identifiedProduct.category : '';
-  const initialTradeMethod = identifiedProduct ? identifiedProduct.trade : '';
-  const [formState, inputHandler] = useForm(
-    {
-      rental_product: {
-        value: identifiedProduct.name,
-        isValid: true,
-      },
-      category: {
-        value: identifiedProduct.category,
-        isValid: true,
-      },
-      rental_fee: {
-        value: identifiedProduct.amount,
-        isValid: true,
-      },
-      trade_method: {
-        value: identifiedProduct.trade,
-        isValid: true,
-      },
-      place: {
-        value: identifiedProduct.place,
-        isValid: true,
-      },
-      description: {
-        value: identifiedProduct.description,
-        isValid: true,
-      },
-    },
-    true,
-  );
+  const [loadedProduct, setLoadedProduct] = useState();
+  const [initialCategory, setInitialCategory] = useState('');
+  const [initialTradeMethod, setInitialTradeMethod] = useState('');
+  const [formState, inputHandler, setFormData] = useForm({}, true);
+
+  useEffect(() => {
+    axios.get(`${url}/product/detail/${productId}`).then(response => {
+      const prdt = response.data;
+      setLoadedProduct(prdt);
+      setFormData(
+        {
+          rentalProduct: {
+            value: prdt.productName,
+            isValid: true,
+          },
+          category: {
+            value: prdt.category,
+            isValid: true,
+          },
+          rentalFee: {
+            value: prdt.price,
+            isValid: true,
+          },
+          tradeMethod: {
+            value:
+              prdt.tradeMethods.length === 2 ? 'ALL' : prdt.tradeMethods[0],
+            isValid: true,
+          },
+          place: {
+            value: prdt.place,
+            isValid: true,
+          },
+          description: {
+            value: prdt.detail,
+            isValid: true,
+          },
+        },
+        true,
+      );
+
+      setInitialCategory(prdt.category);
+      setInitialTradeMethod(
+        prdt.tradeMethods.length === 2 ? 'ALL' : prdt.tradeMethods[0],
+      );
+    });
+  }, [productId, setFormData, url]);
 
   const [checkedCategory, onCheckedCategory] = useCheckedInput(
     initialCategory,
     inputHandler,
+    'updateCategory',
   );
 
   const [checkedTrade, onCheckedTrade] = useCheckedInput(
     initialTradeMethod,
     inputHandler,
+    'updateTrade',
   );
 
   useEffect(() => {
-    if (checkedTrade === '택배') {
+    if (checkedTrade === 'DELIVERY') {
       inputHandler('place', '', true);
     }
   }, [checkedTrade, inputHandler]);
@@ -75,8 +93,12 @@ const UpdateProduct = () => {
     console.log(formState.inputs);
   };
 
-  if (!identifiedProduct) {
-    return <h1>상품을 찾을 수 없어요</h1>;
+  if (!loadedProduct) {
+    return (
+      <FormLayout>
+        <p>상품을 찾을 수 없어요!</p>
+      </FormLayout>
+    );
   }
 
   return (
@@ -87,14 +109,14 @@ const UpdateProduct = () => {
           <FormItem>
             <p>대여 상품명</p>
             <FormInput
-              id="rental_product"
+              id="rentalProduct"
               element="input"
               width="22rem"
               height="30px"
               validators={[VALIDATOR_REQUIRE()]}
               errorText="대여할 상품명을 입력해주세요."
-              initialValue={formState.inputs.rental_product.value}
-              initialValid={formState.inputs.rental_product.isValid}
+              initialValue={formState.inputs.rentalProduct.value}
+              initialValid={formState.inputs.rentalProduct.isValid}
               onInput={inputHandler}
             />
           </FormItem>
@@ -118,14 +140,14 @@ const UpdateProduct = () => {
             <p>대여 요금</p>
             <ItemBox>
               <FormInput
-                id="rental_fee"
+                id="rentalFee"
                 element="input"
                 width="18.5rem"
                 height="30px"
                 validators={[VALIDATOR_REQUIRE()]}
                 errorText="대여할 상품의 일일 대여 요금을 입력해주세요."
-                initialValue={formState.inputs.rental_fee.value}
-                initialValid={formState.inputs.rental_fee.isValid}
+                initialValue={formState.inputs.rentalFee.value}
+                initialValid={formState.inputs.rentalFee.isValid}
                 onInput={inputHandler}
               />
               <p>원/[일]</p>
@@ -139,12 +161,12 @@ const UpdateProduct = () => {
                 <Radio
                   key={item.id}
                   item={item}
-                  name="trade_method"
+                  name="tradeMethod"
                   checked={checkedTrade}
                   onChecked={onCheckedTrade}
                 />
               ))}
-              {(checkedTrade === '직거래' || checkedTrade === '둘 다 가능') && (
+              {(checkedTrade === 'DIRECT' || checkedTrade === 'ALL') && (
                 <PlaceBox>
                   <p>
                     거래

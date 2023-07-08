@@ -98,10 +98,15 @@ const NewProduct = () => {
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
   const [checkedCategory, onCheckedCategory] = useCheckedInput(
-    {},
+    null,
     inputHandler,
+    'registerCategory',
   );
-  const [checkedTrade, onCheckedTrade] = useCheckedInput({}, inputHandler);
+  const [checkedTrade, onCheckedTrade] = useCheckedInput(
+    null,
+    inputHandler,
+    'registerTrade',
+  );
 
   const closeRegister = () => {
     setRegisterModal(false);
@@ -128,8 +133,8 @@ const NewProduct = () => {
     formData.append('rentalFee', formState.inputs.rentalFee.value);
     formData.append('tradeMethods', formState.inputs.tradeMethods.value);
     formData.append('description', formState.inputs.description.value);
-    if (formState.inputs.tradeArea && formState.inputs.tradeArea.value) {
-      formData.append('tradeArea', formState.inputs.tradeArea.value);
+    if (formState.inputs.place && formState.inputs.place.value) {
+      formData.append('place', formState.inputs.place.value);
     }
 
     onLoading(true);
@@ -237,7 +242,7 @@ const NewProduct = () => {
                     희망지역
                   </p>
                   <Input
-                    id="tradeArea"
+                    id="place"
                     element="input"
                     width="5rem"
                     height="23px"
