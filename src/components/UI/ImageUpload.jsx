@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FaPlus, FaTimes } from 'react-icons/fa';
 import styled from 'styled-components';
+import { FaPlus, FaTimes } from 'react-icons/fa';
 
 const ProfileUploadLayout = styled.div`
   display: grid;
@@ -33,8 +33,28 @@ const ProfileUploadLayout = styled.div`
   }
 `;
 
+const ImageLayout = styled.div`
+  margin-left: 1rem;
+`;
+
 const ImageInput = styled.input`
   display: none;
+`;
+
+const ImagesBox = styled.div`
+  display: flex;
+  margin-top: ${({ imageLength }) => (imageLength === 0 ? '0' : '1rem')};
+`;
+
+const ImageContent = styled.div`
+  position: relative;
+  margin-right: 1rem;
+`;
+
+const DeleteIcon = styled(FaTimes)`
+  position: absolute;
+  right: 0;
+  top: 0;
 `;
 
 const ImageBox = styled.div`
@@ -46,9 +66,9 @@ const ImageBox = styled.div`
 
 const ImageFile = styled.img`
   width: ${({ imageSize, profile }) =>
-    profile ? '100%' : imageSize || '80px'};
+    profile ? '100%' : imageSize || '58px'};
   height: ${({ imageSize, profile }) =>
-    profile ? '100%' : imageSize || '80px'};
+    profile ? '100%' : imageSize || '58px'};
   object-fit: ${({ profile }) => (profile ? 'cover' : null)};
 `;
 
@@ -59,7 +79,9 @@ const ImageFileButton = styled.div`
 
 const ImageUpload = props => {
   const fileInputRef = useRef(null);
-  const [showImages, setShowImages] = useState([]);
+  const [preview, setPreview] = useState();
+  const [showImages, setShowImages] = useState();
+  const [isValid, setIsValid] = useState(false);
   const defaultProfileImageUrl =
     'https://billim.s3.ap-northeast-2.amazonaws.com/profile/profile-default.png';
 
@@ -68,34 +90,71 @@ const ImageUpload = props => {
   };
 
   useEffect(() => {
-    if (props.id === 'profile') {
-      setShowImages([defaultProfileImageUrl]);
-    }
-  }, [props.id]);
-
-  // 이미지 상대경로 저장
-  const handleAddImages = event => {
-    const imageLists = event.target.files;
-    let imageUrlLists = [...showImages];
-
-    for (let i = 0; i < imageLists.length; i++) {
-      const currentImageUrl = URL.createObjectURL(imageLists[i]);
-      imageUrlLists.push(currentImageUrl);
+    if (!showImages || showImages.length === 0) {
+      return;
     }
 
-    if (props.id === 'profile') {
-      imageUrlLists = imageUrlLists.slice(-1);
-    } else if (imageUrlLists.length > 5) {
-      imageUrlLists = imageUrlLists.slice(0, 5);
+    if (props.id === 'profile' && showImages.length === 1) {
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        setPreview(fileReader.result);
+      };
+      fileReader.readAsDataURL(showImages[0]);
+      return;
     }
 
-    setShowImages(imageUrlLists);
-    props.onInput(props.id, imageUrlLists, true);
+    const fileReaderPromises = [];
+    const previewResults = [];
+
+    for (let i = 0; i < showImages.length; i++) {
+      const file = showImages[i];
+      const fileReader = new FileReader();
+
+      const fileReaderPromise = new Promise(resolve => {
+        fileReader.onload = () => {
+          previewResults[i] = fileReader.result;
+          resolve();
+        };
+      });
+
+      fileReader.readAsDataURL(file);
+      fileReaderPromises.push(fileReaderPromise);
+    }
+
+    Promise.all(fileReaderPromises).then(() => {
+      setPreview(previewResults);
+    });
+  }, [showImages, props.id]);
+
+  const handleDeleteImage = id => {
+    setShowImages(prevImages => {
+      const newImages = prevImages.filter((_, index) => index !== id);
+      setPreview(prevPreview => {
+        const newPreview = [...prevPreview];
+        newPreview.splice(id, 1);
+        return newPreview;
+      });
+      return newImages;
+    });
   };
 
-  // X버튼 클릭 시 이미지 삭제
-  const handleDeleteImage = id => {
-    setShowImages(showImages.filter((_, index) => index !== id));
+  const handleAddImages = e => {
+    const imageLists = e.target.files;
+
+    let pickedFile = [];
+    let fileIsValid = isValid;
+    if (imageLists && imageLists.length < 6) {
+      pickedFile = Array.from(imageLists);
+      setShowImages(pickedFile);
+      setIsValid(true);
+      fileIsValid = true;
+    } else {
+      setIsValid(false);
+      fileIsValid = false;
+      alert('파일은 최대 5개까지 선택할 수 있습니다.');
+    }
+
+    props.onInput(props.id, pickedFile, fileIsValid);
   };
 
   return props.id === 'profile' ? (
@@ -105,13 +164,19 @@ const ImageUpload = props => {
         <label htmlFor={props.id} onChange={handleAddImages}>
           <ImageInput type="file" id={props.id} ref={fileInputRef} />
         </label>
-        <ImageBox size={props.size}>
+        {!showImages ? (
           <ImageFile
-            profile
-            src={showImages || defaultProfileImageUrl}
-            alt="profileImage"
+            src={defaultProfileImageUrl}
+            alt="기본 이미지"
+            imageSize="50px"
           />
-        </ImageBox>
+        ) : (
+          <>
+            <ImageBox size={props.size}>
+              <ImageFile profile src={preview} alt="profileImage" />
+            </ImageBox>
+          </>
+        )}
         <p>
           회원님을 알릴 수 있는 사진을 등록해주세요. <br />
           등록된 사진은 회원님의 게시물이나 댓글에 사용됩니다.
@@ -123,7 +188,7 @@ const ImageUpload = props => {
       </ImageFileButton>
     </ProfileUploadLayout>
   ) : (
-    <div>
+    <ImageLayout>
       <label htmlFor={props.id} onChange={handleAddImages}>
         <ImageInput
           type="file"
@@ -133,15 +198,16 @@ const ImageUpload = props => {
         <FaPlus fill="#646F7C" />
         <span>사진추가</span>
       </label>
-      <div>
-        {showImages.map((image, id) => (
-          <div key={id}>
-            <ImageFile src={image} alt={`${image}-${id}`} />
-            <FaTimes onClick={() => handleDeleteImage(id)} />
-          </div>
-        ))}
-      </div>
-    </div>
+      <ImagesBox imageLength={preview.length}>
+        {preview &&
+          preview.map((image, id) => (
+            <ImageContent key={id}>
+              <ImageFile src={image} alt={`${image}-${id}`} />
+              <DeleteIcon onClick={() => handleDeleteImage(id)} />
+            </ImageContent>
+          ))}
+      </ImagesBox>
+    </ImageLayout>
   );
 };
 
