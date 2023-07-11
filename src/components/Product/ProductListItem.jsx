@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import axios from 'axios';
 import Card from '../UI/Card';
 import ErrorModal from '../../util/ErrorModal';
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { RiHeart3Fill, RiHeart3Line, RiStarSFill } from 'react-icons/ri';
+import { useSelector } from 'react-redux';
 const ProductCard = styled(Card)`
   width: 100%;
   border: none;
@@ -67,54 +67,91 @@ const ProductParagraph = styled.p`
 
 const ProductListItem = ({ items }) => {
   const url = process.env.REACT_APP_URL;
-  const navigate = useNavigate();
   const auth = useAuth();
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const [interestList, setInterestList] = useState([]);
-  const { isLoading, error, onLoading, clearError, errorHandler } =
-    useLoadingError();
+  const { error, clearError, errorHandler } = useLoadingError();
 
-  const handleInterestToggle = item => {
-    const interestedProductId = item.productId;
-    const isInterested = interestList.includes(interestedProductId);
+  useEffect(() => {
+    if (isLoggedIn) {
+      getInterestList();
+    }
+  }, [isLoggedIn]);
 
-    onLoading(true);
+  const getInterestList = () => {
     axios
-      .post(
-        `${url}/product/interest`,
-        {
-          interest: !isInterested,
-          productId: interestedProductId,
+      .get(`${url}/product/my/interestList`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
         },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${auth.token}`,
-          },
+        params: {
+          memberId: auth.memberId,
         },
-      )
-      .then(() => {
-        setInterestList(prevItem => {
-          if (isInterested) {
-            return prevItem.filter(id => id !== interestedProductId);
-          } else {
-            return [...prevItem, interestedProductId];
-          }
-        });
-        onLoading(false);
+      })
+      .then(response => {
+        const responseData = response.data.myInterestProductList;
+        setInterestList(responseData);
       })
       .catch(err => {
-        if (err.response.status === 401) {
-          navigate('/login');
-          return;
-        }
         errorHandler(err);
       });
+  };
+
+  const handleInterestToggle = selectItem => {
+    const correctItem = interestList.find(
+      item => item.productId === selectItem.productId,
+    );
+
+    if (interestList.includes(correctItem)) {
+      axios
+        .post(
+          `${url}/product/interest`,
+          {
+            interest: false,
+            productId: selectItem.productId,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${auth.token}`,
+            },
+          },
+        )
+        .then(() => {
+          setInterestList(prevItem =>
+            prevItem.filter(item => item.productId !== selectItem.productId),
+          );
+        })
+        .catch(err => {
+          errorHandler(err);
+        });
+    } else {
+      axios
+        .post(
+          `${url}/product/interest`,
+          {
+            interest: true,
+            productId: selectItem.productId,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${auth.token}`,
+            },
+          },
+        )
+        .then(() => {
+          setInterestList(prevItem => [...prevItem, selectItem]);
+        })
+        .catch(err => {
+          errorHandler(err);
+        });
+    }
   };
 
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {isLoading && <LoadingSpinner asOverlay />}
       {items.length === 0 ? (
         <span>검색결과가 없습니다.</span>
       ) : (
@@ -126,7 +163,9 @@ const ProductListItem = ({ items }) => {
               </ImageBox>
             </Link>
             <LikeIcon onClick={() => handleInterestToggle(item)}>
-              {interestList.includes(item.productId) ? (
+              {!interestList && <RiHeart3Line color="grey" />}
+              {interestList &&
+              interestList.find(obj => obj.productId === item.productId) ? (
                 <RiHeart3Fill color="red" />
               ) : (
                 <RiHeart3Line color="grey" />
