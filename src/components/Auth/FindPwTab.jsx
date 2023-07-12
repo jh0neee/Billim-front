@@ -70,7 +70,7 @@ const FindPwTab = () => {
     onLoading(true);
     axios
       .post(
-        `${url}/member/email/find/password`,
+        `${url}/member/find/password`,
         {
           email: formState.inputs.email.value,
           name: formState.inputs.name.value,

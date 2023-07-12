@@ -61,7 +61,7 @@ const EmailConfirm = () => {
 
       axios
         .post(
-          `${url}/member/email/confirm`,
+          `${url}/email/confirm`,
           { email, authToken },
           {
             headers: { 'Content-Type': 'application/json' },

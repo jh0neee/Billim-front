@@ -122,7 +122,7 @@ const EmailVerification = () => {
 
     axios
       .post(
-        `${url}/member/email/send`,
+        `${url}/email/send`,
         { email: userEmail },
         {
           headers: { 'Content-Type': 'application/json' },
