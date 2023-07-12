@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import axios from 'axios';
 import Button from '../../components/UI/Button';
 import Radio from '../../components/UI/Radio';
 import Input from '../../components/UI/Input';
+import Modal from '../../components/UI/Modal';
+import ErrorModal from '../../util/ErrorModal';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import UpdateImageUpload from '../../components/UI/UpdateImageUpload';
 import { useForm } from '../../hooks/useForm';
+import { useAuth } from '../../hooks/useAuth';
 import { useCheckedInput } from '../../hooks/useCheckedInput';
+import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { CategoryList, TradeMethod } from '../../data';
 import {
@@ -22,59 +28,83 @@ import {
 
 const UpdateProduct = () => {
   const url = process.env.REACT_APP_URL;
+  const auth = useAuth();
+  const navigate = useNavigate();
   const productId = useParams().productId;
   const [loadedProduct, setLoadedProduct] = useState();
+  const [updateModal, setUpdateModal] = useState(false);
   const [initialCategory, setInitialCategory] = useState('');
   const [initialTradeMethod, setInitialTradeMethod] = useState('');
+  const [deleteImages, setDeleteImages] = useState([]);
+  const { isLoading, error, onLoading, clearError, errorHandler } =
+    useLoadingError();
   const [formState, inputHandler, setFormData] = useForm({}, true);
 
+  const closeUpdate = () => {
+    setUpdateModal(false);
+    navigate(`/${productId}/detail`);
+  };
+
   useEffect(() => {
-    axios.get(`${url}/product/detail/${productId}`).then(response => {
-      const prdt = response.data;
-      setLoadedProduct(prdt);
-      setFormData(
-        {
-          rentalProduct: {
-            value: prdt.productName,
-            isValid: true,
-          },
-          category: {
-            value: prdt.category,
-            isValid: true,
-          },
-          rentalFee: {
-            value: prdt.price,
-            isValid: true,
-          },
-          tradeMethod: {
-            value:
-              prdt.tradeMethods.length === 2 ? 'ALL' : prdt.tradeMethods[0],
-            isValid: true,
-          },
-          place: {
-            value: prdt.place,
-            isValid: true,
-          },
-          description: {
-            value: prdt.detail,
-            isValid: true,
-          },
+    onLoading(true);
+    axios
+      .get(`${url}/product/update/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
         },
-        true,
-      );
+      })
+      .then(response => {
+        const responseData = response.data;
+        setLoadedProduct(responseData);
+        setFormData(
+          {
+            imageUrls: {
+              value: responseData.imageUrls,
+              isValid: true,
+            },
+            category: {
+              value: responseData.category,
+              isValid: true,
+            },
+            rentalProduct: {
+              value: responseData.rentalProduct,
+              isValid: true,
+            },
+            rentalFee: {
+              value: responseData.rentalFee,
+              isValid: true,
+            },
+            tradeMethods: {
+              value:
+                responseData.tradeMethods.length === 2
+                  ? 'ALL'
+                  : responseData.tradeMethods[0],
+              isValid: true,
+            },
+            place: {
+              value: responseData.place,
+              isValid: true,
+            },
+            description: {
+              value: responseData.description,
+              isValid: true,
+            },
+          },
+          true,
+        );
 
-      setInitialCategory(prdt.category);
-      setInitialTradeMethod(
-        prdt.tradeMethods.length === 2 ? 'ALL' : prdt.tradeMethods[0],
-      );
-    });
+        setInitialCategory(responseData.category);
+        setInitialTradeMethod(
+          responseData.tradeMethods.length === 2
+            ? 'ALL'
+            : responseData.tradeMethods[0],
+        );
+        onLoading(false);
+      })
+      .catch(err => {
+        errorHandler(err);
+      });
   }, [productId, setFormData]);
-
-  const [checkedCategory, onCheckedCategory] = useCheckedInput(
-    initialCategory,
-    inputHandler,
-    'updateCategory',
-  );
 
   const [checkedTrade, onCheckedTrade] = useCheckedInput(
     initialTradeMethod,
@@ -90,7 +120,51 @@ const UpdateProduct = () => {
 
   const updateSubmitHandler = e => {
     e.preventDefault();
-    console.log(formState.inputs);
+
+    if (!formState.isValid) {
+      alert('빈칸 없이 작성해주세요.');
+      return;
+    }
+
+    const formData = new FormData();
+
+    if (formState.inputs.images) {
+      const files = formState.inputs.images.value;
+      files.forEach((file, index) => {
+        formData.append(`image${index}`, file);
+      });
+    }
+    formData.append('deleteImages', deleteImages);
+    formData.append('productId', productId);
+    formData.append('rentalProduct', formState.inputs.rentalProduct.value);
+    formData.append('category', initialCategory);
+    formData.append('rentalFee', formState.inputs.rentalFee.value);
+    formData.append(
+      'tradeMethods',
+      formState.inputs.tradeMethods.value === 'ALL'
+        ? 'DIRECT, DELIVERY'
+        : formState.inputs.tradeMethods.value,
+    );
+    formData.append('description', formState.inputs.description.value);
+    if (formState.inputs.place && formState.inputs.place.value) {
+      formData.append('place', formState.inputs.place.value);
+    }
+
+    onLoading(true);
+    axios
+      .put(`${url}/product/update`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: 'Bearer ' + auth.token,
+        },
+      })
+      .then(() => {
+        setUpdateModal(true);
+        onLoading(false);
+      })
+      .catch(err => {
+        errorHandler(err);
+      });
   };
 
   if (!loadedProduct) {
@@ -103,9 +177,33 @@ const UpdateProduct = () => {
 
   return (
     <>
+      <ErrorModal error={error} onClear={clearError} />
+      <Modal
+        show={updateModal}
+        header="수정 완료!"
+        onCancel={closeUpdate}
+        footer={
+          <Button small width="60px" onClick={closeUpdate}>
+            확인
+          </Button>
+        }
+      >
+        성공적으로 수정되었습니다!
+      </Modal>
       <FormLayout onSubmit={updateSubmitHandler}>
+        {isLoading && <LoadingSpinner asOverlay />}
         <p>상품 등록</p>
         <FormBox>
+          <FormItem image>
+            <p>상품 사진</p>
+            <UpdateImageUpload
+              id="images"
+              imageUrls={formState.inputs.imageUrls.value}
+              setDeleteImages={setDeleteImages}
+              onInput={inputHandler}
+            />
+          </FormItem>
+          <hr width="80%" />
           <FormItem>
             <p>대여 상품명</p>
             <FormInput
@@ -115,8 +213,8 @@ const UpdateProduct = () => {
               height="30px"
               validators={[VALIDATOR_REQUIRE()]}
               errorText="대여할 상품명을 입력해주세요."
-              initialValue={formState.inputs.rentalProduct.value}
-              initialValid={formState.inputs.rentalProduct.isValid}
+              initialValue={loadedProduct.rentalProduct}
+              initialValid={true}
               onInput={inputHandler}
             />
           </FormItem>
@@ -129,8 +227,8 @@ const UpdateProduct = () => {
                   key={item.id}
                   item={item}
                   name="category"
-                  checked={checkedCategory}
-                  onChecked={onCheckedCategory}
+                  checked={initialCategory}
+                  disabled={true}
                 />
               ))}
             </div>
@@ -146,8 +244,8 @@ const UpdateProduct = () => {
                 height="30px"
                 validators={[VALIDATOR_REQUIRE()]}
                 errorText="대여할 상품의 일일 대여 요금을 입력해주세요."
-                initialValue={formState.inputs.rentalFee.value}
-                initialValid={formState.inputs.rentalFee.isValid}
+                initialValue={loadedProduct.rentalFee}
+                initialValid={true}
                 onInput={inputHandler}
               />
               <p>원/[일]</p>
@@ -161,7 +259,7 @@ const UpdateProduct = () => {
                 <Radio
                   key={item.id}
                   item={item}
-                  name="tradeMethod"
+                  name="tradeMethods"
                   checked={checkedTrade}
                   onChecked={onCheckedTrade}
                 />
@@ -180,8 +278,8 @@ const UpdateProduct = () => {
                     height="23px"
                     validators={[VALIDATOR_REQUIRE()]}
                     errorText={null}
-                    initialValue={formState.inputs.place.value}
-                    initialValid={formState.inputs.place.isValid}
+                    initialValue={loadedProduct.place}
+                    initialValid={true}
                     onInput={inputHandler}
                   />
                 </PlaceBox>
@@ -198,8 +296,8 @@ const UpdateProduct = () => {
               height="30px"
               validators={[VALIDATOR_REQUIRE()]}
               errorText="대여할 상품에 대한 설명을 입력해주세요."
-              initialValue={formState.inputs.description.value}
-              initialValid={formState.inputs.description.isValid}
+              initialValue={loadedProduct.description}
+              initialValid={true}
               onInput={inputHandler}
             />
           </FormItem>

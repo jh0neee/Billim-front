@@ -15,11 +15,11 @@ const StyledInput = styled.input`
     background-size: 100% 100%;
     background-position: 50%;
     background-repeat: no-repeat;
-    background-color: #fcd34d;
+    background-color: ${({ disabled }) => (disabled ? '#ced4da' : '#fcd34d')};
   }
 `;
 
-const Radio = ({ item, name, checked, onChecked }) => {
+const Radio = ({ item, name, checked, onChecked, disabled }) => {
   return (
     <>
       <StyledInput
@@ -29,6 +29,7 @@ const Radio = ({ item, name, checked, onChecked }) => {
         value={item.name}
         checked={checked === item.name}
         onChange={onChecked}
+        disabled={disabled}
       />
       <label htmlFor={`radio-${item.name}`}>{item.name}</label>
     </>

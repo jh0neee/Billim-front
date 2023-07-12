@@ -33,20 +33,20 @@ const ProfileUploadLayout = styled.div`
   }
 `;
 
-const ImageLayout = styled.div`
+export const ImageLayout = styled.div`
   margin-left: 1rem;
 `;
 
-const ImageInput = styled.input`
+export const ImageInput = styled.input`
   display: none;
 `;
 
-const ImagesBox = styled.div`
+export const ImagesBox = styled.div`
   display: flex;
   margin-top: ${({ imageLength }) => (imageLength === 0 ? '0' : '1rem')};
 `;
 
-const ImageContent = styled.div`
+export const ImageContent = styled.div`
   position: relative;
   margin-right: 1rem;
 `;
@@ -64,7 +64,7 @@ const ImageBox = styled.div`
   overflow: hidden;
 `;
 
-const ImageFile = styled.img`
+export const ImageFile = styled.img`
   width: ${({ imageSize, profile }) =>
     profile ? '100%' : imageSize || '58px'};
   height: ${({ imageSize, profile }) =>
