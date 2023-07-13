@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from 'axios';
@@ -42,6 +42,7 @@ const ProductPayment = () => {
   const auth = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const productId = useParams().productId;
   const {
     rentalDate,
     days,
@@ -57,10 +58,12 @@ const ProductPayment = () => {
   const [tradeSelectedOpt, setTradeSelectedOpt] = useState('');
   const [couponSelectedOpt, setCouponSelectedOpt] = useState('');
   const [formState, inputHandler] = useForm({}, false);
+  const { address, address_detail, address_legal } = formState.inputs;
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
   useEffect(() => {
+    // couponList GET 요청
     onLoading(true);
     axios
       .get(`${url}/coupon/list`, {
@@ -90,11 +93,95 @@ const ProductPayment = () => {
       .catch(err => {
         errorHandler(err);
       });
-  }, [setCoupon]);
+  }, [auth.token]);
 
   const onSubmit = e => {
+    // 결제 버튼 눌렸을 때 실행되는 함수
     e.preventDefault();
-    console.log(formState.inputs);
+    const combinedAddress = `${address?.value} ${address_detail?.value} ${address_legal?.value}`; // 전체 주소
+    const startAt = rentalDate.slice(0, 10);
+    const endAt = rentalDate.slice(15);
+
+    const requestData = {
+      couponIssueId: formState.inputs.couponIssueId.value,
+      startAt,
+      endAt,
+      productId: Number(productId),
+      usedPoint: formState.inputs.usedPoint.value,
+      tradeMethod: formState.inputs.tradeMethod.value,
+    };
+
+    if (formState.inputs.tradeMethod.value === 'DELIVERY') {
+      // tradeMethod가 DELIVERY일 때 name, phone, address 추가
+      requestData.name = formState.inputs.name.value;
+      requestData.phone = formState.inputs.phone.value;
+      requestData.address = combinedAddress;
+    }
+
+    onLoading(true);
+    axios
+      .post(`${url}/order`, requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth.token}`,
+        },
+      })
+      .then(response => {
+        // 요청 성공 시 결제창 불러옴
+        console.log(response.data); // {"amount": 0, "merchantUid": "string", "name": "string"}
+        const paymentData = response.data;
+
+        const IMP = window.IMP;
+        IMP.init('imp71210173');
+
+        const data = {
+          pg: 'kcp.{imp71210173}',
+          pay_method: 'card',
+          merchant_uid: paymentData.merchantUid,
+          name: paymentData.name,
+          amount: paymentData.amount,
+        };
+
+        IMP.request_pay(data, async response => {
+          console.log(response);
+          if (response.success) {
+            try {
+              const result = await axios.get(`${url}/payment/complete`, {
+                headers: {
+                  Authorization: `Bearer ${auth.token}`,
+                },
+                params: {
+                  imp_uid: response.imp_uid,
+                  merchant_uid: response.merchant_uid,
+                },
+              });
+              console.log('성공 : ', result);
+            } catch (err) {
+              console.error('complete 실패: ', err);
+            }
+          } else {
+            try {
+              const result = await axios.get(`${url}/payment/failure`, {
+                headers: {
+                  Authorization: `Bearer ${auth.token}`,
+                },
+                params: {
+                  merchant_uid: response.merchant_uid,
+                },
+              });
+              console.log('결제실패: ', result);
+            } catch (err) {
+              console.error('failure 실패: ', err);
+            }
+          }
+        });
+
+        navigate('/product'); // 결제 성공하면 productList 페이지로 이동
+        onLoading(false);
+      })
+      .catch(err => {
+        errorHandler(err);
+      });
   };
 
   return (
