@@ -95,6 +95,17 @@ const DetailConfirm = ({
       return;
     }
 
+    const disabledDateExists = disabledDates.some(date => {
+      return startDate <= date && endDate >= date;
+    });
+
+    if (disabledDateExists) {
+      alert(
+        '예약할 수 없는 날짜가 선택되었습니다.\n확인 후 다시 선택해주세요.',
+      );
+      return;
+    }
+
     const paymentUrl = `/${productId}/payment`;
 
     navigate(paymentUrl, {
