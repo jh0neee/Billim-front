@@ -21,7 +21,7 @@ export const Profile = props => {
 
   return (
     <>
-      <Box size={size}>
+      <Box className={props.className} size={size}>
         <Image src={props.src || defaultProfileImage} alt="프로필이미지" />
       </Box>
     </>
