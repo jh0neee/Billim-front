@@ -35,19 +35,27 @@ export const useAuth = () => {
   const refreshAccessToken = () => {
     const refreshTokenData = localStorage.getItem('userData');
     if (refreshTokenData) {
-      const { refreshToken } = JSON.parse(refreshTokenData);
+      const { accessToken, refreshToken } = JSON.parse(refreshTokenData);
+
+      console.log('accessToken', accessToken, 'refreshToken', refreshToken);
       axios
         .post(
           `${url}/auth/reIssue/token`,
-          { refreshToken },
-          { headers: { 'Content-Type': 'application/json' } },
+          { accessToken, refreshToken },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
         )
         .then(response => {
-          const { newAccessToken, refreshToken, memberId } = response.data;
-          handleLogin(newAccessToken, refreshToken, memberId);
+          console.log('재발급 성공', response.data.accessToken);
+          const { accessToken, refreshToken } = response.data;
+          handleLogin(accessToken, refreshToken, 7);
         })
-        .catch(err => {
-          console.error('error', err);
+        .catch(() => {
+          console.log('재발급 실패');
           handleLogout();
           navigate('/login');
         });
@@ -72,7 +80,7 @@ export const useAuth = () => {
   axios.interceptors.response.use(
     response => response,
     error => {
-      if (error.response && error.response.status === 401) {
+      if (error.response.data.error === 'EXPIRED_TOKEN') {
         refreshAccessToken();
       }
       return Promise.reject(error);
