@@ -51,8 +51,8 @@ export const useAuth = () => {
         )
         .then(response => {
           console.log('재발급 성공', response.data.accessToken);
-          const { accessToken, refreshToken } = response.data;
-          handleLogin(accessToken, refreshToken, 7);
+          const { accessToken, refreshToken, memberId } = response.data;
+          handleLogin(accessToken, refreshToken, memberId);
         })
         .catch(() => {
           console.log('재발급 실패');
@@ -80,6 +80,7 @@ export const useAuth = () => {
   axios.interceptors.response.use(
     response => response,
     error => {
+      console.log(error);
       if (error.response.data.error === 'EXPIRED_TOKEN') {
         refreshAccessToken();
       }
