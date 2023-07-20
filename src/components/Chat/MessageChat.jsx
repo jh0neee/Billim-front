@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Input from '../UI/Input';
+
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
+
+// import Input from '../UI/Input';
 import Button from '../UI/Button';
+import { format } from 'date-fns';
+import { useAuth } from '../../hooks/useAuth';
 
 const MessageChatLayout = styled.div`
   height: 84vh;
@@ -37,21 +43,79 @@ const MessageButton = styled(Button)`
 `;
 
 const MessageChat = () => {
+  // const url = process.env.REACT_APP_URL;
+  const auth = useAuth();
+  const roomId = auth.memberId;
+  const today = format(new Date(), 'yyyy년 MM월 dd일');
+  const [messages, setMessages] = useState([]);
+  const [inputText, setInputText] = useState('');
+  const [stompClient, setStompClient] = useState(null);
+
+  useEffect(() => {
+    if (roomId) {
+      const socket = new SockJS(`http://localhost:8080/stomp/chat`);
+      const client = Stomp.over(socket);
+      client.debug = null;
+
+      client.connect({}, () => {
+        setStompClient(client);
+        client.subscribe(`/subscribe/chat/${roomId}`, onMessageRecieved);
+      });
+
+      return () => {
+        if (client) {
+          client.disconnect();
+        }
+      };
+    }
+  }, [roomId]);
+
+  const onMessageRecieved = message => {
+    console.log(message);
+    const messageBody = JSON.parse(message.body);
+    setMessages(prevMsg => [...prevMsg, messageBody]);
+  };
+
+  const sendMessage = () => {
+    let count = 0;
+    if (inputText.trim() !== '') {
+      const messageData = {
+        chatRoomId: roomId,
+        senderId: count++,
+        message: inputText,
+      };
+
+      const headers = { Authorization: `Bearer ${auth.token}` };
+
+      stompClient.send(`send/text`, headers, JSON.stringify(messageData));
+    }
+  };
+
   return (
     <MessageChatLayout>
       <MessageBox>
-        <MessageDate>2023년 06월 11일</MessageDate>
+        <MessageDate>{today}</MessageDate>
+        <div>
+          {messages.map((msg, index) => (
+            <div key={index}>{msg}</div>
+          ))}
+        </div>
       </MessageBox>
       <MessageInputBox>
-        <Input
+        {/* <Input
           element="textarea"
           id="chatMessage"
           width="55rem"
           validators={[]}
           errorText={null}
           onInput={() => {}}
+        /> */}
+        <input
+          type="text"
+          value={inputText}
+          onChange={e => setInputText(e.target.value)}
         />
-        <MessageButton type="submit">전송</MessageButton>
+        <MessageButton onClick={sendMessage}>전송</MessageButton>
       </MessageInputBox>
     </MessageChatLayout>
   );
