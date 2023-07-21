@@ -4,12 +4,16 @@ import styled from 'styled-components';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 
-// import Input from '../UI/Input';
+import axios from 'axios';
+import Input from '../UI/Input';
 import Button from '../UI/Button';
 import { format } from 'date-fns';
 import { useAuth } from '../../hooks/useAuth';
+import { useLocation } from 'react-router-dom';
+import { useForm } from '../../hooks/useForm';
+import { VALIDATOR_REQUIRE } from '../../util/validators';
 
-const MessageChatLayout = styled.div`
+const MessageChatLayout = styled.form`
   height: 84vh;
 `;
 
@@ -43,23 +47,32 @@ const MessageButton = styled(Button)`
 `;
 
 const MessageChat = () => {
-  // const url = process.env.REACT_APP_URL;
+  const url = process.env.REACT_APP_URL;
   const auth = useAuth();
-  const roomId = auth.memberId;
+  const chatRoomId = useLocation().pathname.slice(15);
   const today = format(new Date(), 'yyyy년 MM월 dd일');
   const [messages, setMessages] = useState([]);
-  const [inputText, setInputText] = useState('');
   const [stompClient, setStompClient] = useState(null);
+  const [formState, inputHandler] = useForm({}, false);
 
   useEffect(() => {
-    if (roomId) {
+    axios
+      .get(`${url}/api/chat/messages/${chatRoomId}`, {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(err => console.log(err));
+
+    if (chatRoomId) {
       const socket = new SockJS(`http://localhost:8080/stomp/chat`);
       const client = Stomp.over(socket);
       client.debug = null;
 
       client.connect({}, () => {
         setStompClient(client);
-        client.subscribe(`/subscribe/chat/${roomId}`, onMessageRecieved);
+        client.subscribe(`/subscribe/chat/${chatRoomId}`, onMessageRecieved);
       });
 
       return () => {
@@ -68,7 +81,7 @@ const MessageChat = () => {
         }
       };
     }
-  }, [roomId]);
+  }, [chatRoomId]);
 
   const onMessageRecieved = message => {
     console.log(message);
@@ -76,23 +89,25 @@ const MessageChat = () => {
     setMessages(prevMsg => [...prevMsg, messageBody]);
   };
 
+  let count = 0;
   const sendMessage = () => {
-    let count = 0;
-    if (inputText.trim() !== '') {
-      const messageData = {
-        chatRoomId: roomId,
-        senderId: count++,
-        message: inputText,
-      };
+    const messageData = {
+      chatRoomId,
+      senderId: count++,
+      message: formState.inputs.message.value,
+    };
+    console.log(messageData);
+    const headers = { Authorization: `Bearer ${auth.token}` };
+    stompClient.send(`send/text`, headers, JSON.stringify(messageData));
+  };
 
-      const headers = { Authorization: `Bearer ${auth.token}` };
-
-      stompClient.send(`send/text`, headers, JSON.stringify(messageData));
-    }
+  const submitHandler = e => {
+    e.preventDefault();
+    sendMessage();
   };
 
   return (
-    <MessageChatLayout>
+    <MessageChatLayout onSubmit={submitHandler}>
       <MessageBox>
         <MessageDate>{today}</MessageDate>
         <div>
@@ -102,20 +117,15 @@ const MessageChat = () => {
         </div>
       </MessageBox>
       <MessageInputBox>
-        {/* <Input
+        <Input
           element="textarea"
-          id="chatMessage"
+          id="message"
           width="55rem"
-          validators={[]}
+          validators={[VALIDATOR_REQUIRE()]}
           errorText={null}
-          onInput={() => {}}
-        /> */}
-        <input
-          type="text"
-          value={inputText}
-          onChange={e => setInputText(e.target.value)}
+          onInput={inputHandler}
         />
-        <MessageButton onClick={sendMessage}>전송</MessageButton>
+        <MessageButton type="submit">전송</MessageButton>
       </MessageInputBox>
     </MessageChatLayout>
   );
