@@ -105,7 +105,7 @@ const EditMember = () => {
   useEffect(() => {
     onLoading(true);
     axios
-      .get(`${url}/member/my/info`, {
+      .get(`${url}/member/info`, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },

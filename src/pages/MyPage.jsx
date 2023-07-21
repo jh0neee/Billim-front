@@ -109,7 +109,7 @@ const MyPage = () => {
   useEffect(() => {
     onLoading(true);
     axios
-      .get(`${url}/member/my/page`, {
+      .get(`${url}/member/my-page`, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
