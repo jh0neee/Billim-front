@@ -129,9 +129,9 @@ const MyPage = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      {isLoading && <LoadingSpinner asOverlay />}
       <MyPageContainer>
         <MyPageLayout>
-          {isLoading && <LoadingSpinner asOverlay />}
           <MyPageUserBox>
             <MyPageUser user={loadedUser} />
             <MyPageUserReward user={loadedUser} />

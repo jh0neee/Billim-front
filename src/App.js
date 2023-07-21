@@ -29,6 +29,7 @@ import MessageChat from './components/Chat/MessageChat.jsx';
 import BlockChat from './components/Chat/BlockChat.jsx';
 import EmailConfirm from './pages/Auth/EmailConfirm.jsx';
 import { pageAction } from './store/currentPage.js';
+import { TokenRefresher } from './util/TokenRefresher.js';
 
 function App() {
   const dispatch = useDispatch();
@@ -106,6 +107,7 @@ function App() {
     <React.Fragment>
       <Reset />
       <BrowserRouter>
+        <TokenRefresher />
         <ScrollToTop />
         <Header />
         <main>{routes}</main>
