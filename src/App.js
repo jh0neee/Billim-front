@@ -53,7 +53,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/chat" element={<Chat />}>
           <Route path="/chat" element={<BlockChat />} />
-          <Route path="/chat/messages" element={<MessageChat />} />
+          <Route path="/chat/messages/:chatRoomId" element={<MessageChat />} />
         </Route>
         <Route path="/product" element={<ProductList />}>
           <Route path="living" element={<ProductList />} />
