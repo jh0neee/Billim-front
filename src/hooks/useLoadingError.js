@@ -15,16 +15,21 @@ export const useLoadingError = () => {
   const errorHandler = err => {
     let errorMessage;
 
-    if (err.data) {
-      errorMessage = err.data.message || '잠시 후 다시 시도해주세요';
-    } else {
-      if (err.response && err.response.data && err.response.data.message) {
-        errorMessage = err.response.data.message;
+    if (err.response.data.error !== 'EXPIRED_TOKEN') {
+      if (err.data) {
+        errorMessage = err.data.message || '잠시 후 다시 시도해주세요';
       } else {
-        errorMessage = err.message;
-      }
+        if (err.response && err.response.data && err.response.data.message) {
+          errorMessage = err.response.data.message;
+        } else {
+          errorMessage = err.message;
+        }
 
-      setError(errorMessage);
+        setError(errorMessage);
+        setIsLoading(false);
+        throw err;
+      }
+    } else {
       setIsLoading(false);
       throw err;
     }
