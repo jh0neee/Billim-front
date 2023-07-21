@@ -109,7 +109,7 @@ const MyPage = () => {
   useEffect(() => {
     onLoading(true);
     axios
-      .get(`${url}/member/my/page`, {
+      .get(`${url}/member/my-page`, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
@@ -129,9 +129,9 @@ const MyPage = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      {isLoading && <LoadingSpinner asOverlay />}
       <MyPageContainer>
         <MyPageLayout>
-          {isLoading && <LoadingSpinner asOverlay />}
           <MyPageUserBox>
             <MyPageUser user={loadedUser} />
             <MyPageUserReward user={loadedUser} />
