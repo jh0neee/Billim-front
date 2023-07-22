@@ -135,7 +135,7 @@ const ProductPayment = () => {
         IMP.init('imp71210173');
 
         const data = {
-          pg: 'kcp',
+          pg: 'kakaopay.TC0ONETIME',
           pay_method: 'card',
           merchant_uid: paymentData.merchantUid,
           name: paymentData.name,
