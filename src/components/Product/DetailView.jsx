@@ -15,6 +15,7 @@ import LoadingSpinner from '../UI/LoadingSpinner';
 import DetailImageGallery from './DetailImageGallery';
 import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
+import { PiWechatLogoDuotone as ChatIcon } from 'react-icons/pi';
 
 const DetailLayout = styled.div`
   max-width: 1140px;
@@ -103,12 +104,33 @@ const StyledLine = styled.hr`
   }
 `;
 
+const ChatLink = styled(Link)`
+  display: flex;
+  align-items: center;
+
+  > svg {
+    color: darkgrey;
+    height: 15px;
+    width: 18px;
+    margin: 0 0 0.1rem 0.05rem;
+  }
+
+  &:hover > svg {
+    color: #ffc300;
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+`;
+
 const DetailView = ({ items, onDeleteProduct }) => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const productId = items.productId;
   const navigate = useNavigate();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [chatRoomId, setChatRoomId] = useState(0);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
@@ -166,6 +188,12 @@ const DetailView = ({ items, onDeleteProduct }) => {
           )}
           {auth.memberId === items.sellerMemberId && (
             <Link onClick={deleteWarningHandler}>삭제하기</Link>
+          )}
+          {auth.memberId !== items.sellerMemberId && (
+            <ChatLink to={`/chat/messages/${chatRoomId}`}>
+              <ChatIcon />
+              <p>채팅하기</p>
+            </ChatLink>
           )}
         </ButtonLayout>
         <DetailHeader
