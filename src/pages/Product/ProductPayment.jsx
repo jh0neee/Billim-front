@@ -4,6 +4,8 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from 'axios';
+import Modal from '../../components/UI/Modal';
+import Button from '../../components/UI/Button';
 import ErrorModal from '../../util/ErrorModal';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import PaymentConfirm from '../../components/Product/PaymentConfirm';
@@ -62,8 +64,13 @@ const ProductPayment = () => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const closeCancelModal = () => {
+    setShowCancelModal(false);
+    navigate(`/${productId}/detail`);
+  };
+
   useEffect(() => {
-    // couponList GET 요청
     onLoading(true);
     axios
       .get(`${url}/coupon/list`, {
@@ -96,7 +103,6 @@ const ProductPayment = () => {
   }, [auth.token]);
 
   const onSubmit = e => {
-    // 결제 버튼 눌렸을 때 실행되는 함수
     e.preventDefault();
     const combinedAddress = `${address?.value} ${address_detail?.value} ${address_legal?.value}`; // 전체 주소
     const startAt = rentalDate.slice(0, 10);
@@ -112,7 +118,6 @@ const ProductPayment = () => {
     };
 
     if (formState.inputs.tradeMethod.value === 'DELIVERY') {
-      // tradeMethod가 DELIVERY일 때 name, phone, address 추가
       requestData.name = formState.inputs.name.value;
       requestData.phone = formState.inputs.phone.value;
       requestData.address = combinedAddress;
@@ -127,15 +132,13 @@ const ProductPayment = () => {
         },
       })
       .then(response => {
-        // 요청 성공 시 결제창 불러옴
-        console.log(response.data); // {"amount": 0, "merchantUid": "string", "name": "string"}
         const paymentData = response.data;
 
         const IMP = window.IMP;
         IMP.init('imp71210173');
 
         const data = {
-          pg: 'kcp.{imp71210173}',
+          pg: 'kakaopay.TC0ONETIME',
           pay_method: 'card',
           merchant_uid: paymentData.merchantUid,
           name: paymentData.name,
@@ -143,10 +146,9 @@ const ProductPayment = () => {
         };
 
         IMP.request_pay(data, async response => {
-          console.log(response);
           if (response.success) {
             try {
-              const result = await axios.get(`${url}/payment/complete`, {
+              await axios.get(`${url}/payment/complete`, {
                 headers: {
                   Authorization: `Bearer ${auth.token}`,
                 },
@@ -155,13 +157,13 @@ const ProductPayment = () => {
                   merchant_uid: response.merchant_uid,
                 },
               });
-              console.log('성공 : ', result);
+              navigate('/mypage/purchase');
             } catch (err) {
-              console.error('complete 실패: ', err);
+              errorHandler(err);
             }
           } else {
             try {
-              const result = await axios.get(`${url}/payment/failure`, {
+              await axios.get(`${url}/payment/failure`, {
                 headers: {
                   Authorization: `Bearer ${auth.token}`,
                 },
@@ -169,14 +171,13 @@ const ProductPayment = () => {
                   merchant_uid: response.merchant_uid,
                 },
               });
-              console.log('결제실패: ', result);
+              setShowCancelModal(true);
+              onLoading(false);
             } catch (err) {
-              console.error('failure 실패: ', err);
+              errorHandler(err);
             }
           }
         });
-
-        navigate('/product'); // 결제 성공하면 productList 페이지로 이동
         onLoading(false);
       })
       .catch(err => {
@@ -187,6 +188,18 @@ const ProductPayment = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      <Modal
+        show={showCancelModal}
+        header="결제 취소"
+        onCancel={closeCancelModal}
+        footer={
+          <Button small width="60px" onClick={closeCancelModal}>
+            확인
+          </Button>
+        }
+      >
+        결제가 취소되었습니다.
+      </Modal>
       <PaymentLayout onSubmit={onSubmit}>
         {isLoading && <LoadingSpinner asOverlay />}
         <PaymentTitle>
