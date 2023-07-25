@@ -2,7 +2,10 @@ import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { authAction } from '../store/auth';
 
+import axios from 'axios';
+
 export const useAuth = () => {
+  const url = process.env.REACT_APP_URL;
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const memberId = useSelector(state => state.auth.memberId);
@@ -23,12 +26,30 @@ export const useAuth = () => {
 
   // 로그아웃 처리 함수
   const handleLogout = useCallback(() => {
-    localStorage.removeItem('userData');
-    dispatch(authAction.LOGOUT());
+    const userToken = localStorage.getItem('userData');
+    const { accessToken } = JSON.parse(userToken);
+    console.log(accessToken);
+
+    axios
+      .post(`${url}/auth/logout`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then(response => {
+        console.log(response);
+        localStorage.removeItem('userData');
+        dispatch(authAction.LOGOUT());
+        // navigate('/login');
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }, []);
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('userData'));
+    // if (storedData && storedData.accessToken && !isLoggedIn) {
     if (storedData && storedData.accessToken) {
       handleLogin(
         storedData.accessToken,
@@ -36,6 +57,7 @@ export const useAuth = () => {
         storedData.memberId,
       );
     }
+    // }, [handleLogin, isLoggedIn]);
   }, [handleLogin]);
 
   return {
