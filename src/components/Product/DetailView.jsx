@@ -130,7 +130,6 @@ const DetailView = ({ items, onDeleteProduct }) => {
   const productId = items.productId;
   const navigate = useNavigate();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [chatRoomId, setChatRoomId] = useState(0);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
@@ -147,13 +146,36 @@ const DetailView = ({ items, onDeleteProduct }) => {
     axios
       .delete(`${url}/product/delete/${productId}`, {
         headers: {
-          Authorization: 'Bearer ' + auth.token,
+          Authorization: `Bearer ${auth.token}`,
         },
       })
       .then(() => {
         onDeleteProduct(productId);
         navigate('/product');
         onLoading(false);
+      })
+      .catch(err => {
+        errorHandler(err);
+      });
+  };
+
+  const EnterChatRoom = () => {
+    axios
+      .post(`${url}/chat/room/product/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+        params: {
+          memberId: auth.memberId,
+        },
+      })
+      .then(response => {
+        const { chatRoomId } = response.data;
+        if (chatRoomId) {
+          navigate(`/chat/messages/${chatRoomId}`);
+        } else {
+          console.log(chatRoomId);
+        }
       })
       .catch(err => {
         errorHandler(err);
@@ -190,7 +212,7 @@ const DetailView = ({ items, onDeleteProduct }) => {
             <Link onClick={deleteWarningHandler}>삭제하기</Link>
           )}
           {auth.memberId !== items.sellerMemberId && (
-            <ChatLink to={`/chat/messages/${chatRoomId}`}>
+            <ChatLink onClick={EnterChatRoom}>
               <ChatIcon />
               <p>채팅하기</p>
             </ChatLink>
