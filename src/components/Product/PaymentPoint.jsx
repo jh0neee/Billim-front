@@ -25,7 +25,7 @@ const ResetButton = styled(GrPowerReset)`
   cursor: pointer;
 `;
 
-const PaymentPoint = ({ onInput, formState }) => {
+const PaymentPoint = ({ onInput, formState, total, discount }) => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const dispatch = useDispatch();
@@ -35,6 +35,11 @@ const PaymentPoint = ({ onInput, formState }) => {
   const [isBtnEnabled, setIsBtnEnabled] = useState(true);
   const [resetInput, setResetInput] = useState(false);
   const { onLoading, errorHandler } = useLoadingError();
+
+  useEffect(() => {
+    // 페이지 벗어나면 적립금 초기화
+    dispatch(pointAction.usePoints(0));
+  }, [dispatch]);
 
   useEffect(() => {
     onLoading(true);
@@ -60,10 +65,15 @@ const PaymentPoint = ({ onInput, formState }) => {
 
   const applyUsageAmount = () => {
     const usageAmount = formState.inputs.usedPoint.value;
+    const totalAmount = total - discount;
 
     if (usageAmount <= remainingPoints) {
-      dispatch(pointAction.usePoints(usageAmount));
-      setIsBtnEnabled(false);
+      if (usageAmount > totalAmount) {
+        toast.error(`최대 ${totalAmount}적립금까지 사용가능합니다.`);
+      } else {
+        dispatch(pointAction.usePoints(usageAmount));
+        setIsBtnEnabled(false);
+      }
     } else {
       toast.error('사용가능 적립금보다 많습니다.');
     }

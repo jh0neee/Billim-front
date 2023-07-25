@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import axios from 'axios';
@@ -56,6 +57,8 @@ const ProductPayment = () => {
     seller,
   } = location.state;
 
+  const productPrice = price * days;
+  const usagePoint = useSelector(state => state.point.usagePoint);
   const [coupon, setCoupon] = useState([]);
   const [tradeSelectedOpt, setTradeSelectedOpt] = useState('');
   const [couponSelectedOpt, setCouponSelectedOpt] = useState('');
@@ -90,7 +93,7 @@ const ProductPayment = () => {
         }));
 
         const couponList =
-          coupons.length === 0
+          coupons.length === 0 || Number(usagePoint) === productPrice
             ? [{ name: '사용가능한 쿠폰이 없습니다' }]
             : [{ name: '선택하세요' }, ...coupons];
 
@@ -100,7 +103,11 @@ const ProductPayment = () => {
       .catch(err => {
         errorHandler(err);
       });
-  }, [auth.token]);
+  }, [auth.token, usagePoint, productPrice]);
+
+  const discountItem = coupon.find(item => item.name === couponSelectedOpt);
+  const discount = discountItem?.rate || 0;
+  const discounted = Math.round(price * (discount / 100));
 
   const onSubmit = e => {
     e.preventDefault();
@@ -211,6 +218,9 @@ const ProductPayment = () => {
             tradeMethod={tradeMethod}
             rentalDate={rentalDate}
             coupon={coupon}
+            discount={discounted}
+            amount={price}
+            days={days}
             tradeSelectedOpt={tradeSelectedOpt}
             setTradeSelectedOpt={setTradeSelectedOpt}
             couponSelectedOpt={couponSelectedOpt}
@@ -221,6 +231,7 @@ const ProductPayment = () => {
           <div>
             <PaymentConfirm
               coupon={coupon}
+              discount={discounted}
               imageUrl={image}
               amount={price}
               tradeMethod={tradeMethod}
