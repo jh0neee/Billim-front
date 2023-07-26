@@ -83,6 +83,9 @@ const ProductInformation = ({
   tradeMethod,
   rentalDate,
   coupon,
+  discount,
+  amount,
+  days,
   tradeSelectedOpt,
   setTradeSelectedOpt,
   couponSelectedOpt,
@@ -90,6 +93,7 @@ const ProductInformation = ({
   onInput,
   formState,
 }) => {
+  const totalPrice = amount * days;
   const [postCode, address, legal, postCodeOpenHandler] =
     usePostalCode(onInput);
   const [isDeliveryTrade, setIsDeliveryTrade] = useState(false);
@@ -144,7 +148,12 @@ const ProductInformation = ({
           <BsCheck2Circle size="25px" />
           <p>적립금</p>
         </PayTitle>
-        <PaymentPoint onInput={onInput} formState={formState} />
+        <PaymentPoint
+          onInput={onInput}
+          formState={formState}
+          total={totalPrice}
+          discount={discount}
+        />
       </InformationBox>
       <InformationBox>
         <PayTitle>

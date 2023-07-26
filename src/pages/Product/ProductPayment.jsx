@@ -1,9 +1,12 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import axios from 'axios';
+import Modal from '../../components/UI/Modal';
+import Button from '../../components/UI/Button';
 import ErrorModal from '../../util/ErrorModal';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import PaymentConfirm from '../../components/Product/PaymentConfirm';
@@ -12,6 +15,7 @@ import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../hooks/useAuth';
 import { HiChevronLeft } from 'react-icons/hi';
 import { useLoadingError } from '../../hooks/useLoadingError';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
 const PaymentLayout = styled.form`
   width: 80%;
@@ -54,16 +58,24 @@ const ProductPayment = () => {
     seller,
   } = location.state;
 
+  const productPrice = price * days;
+  const usagePoint = useSelector(state => state.point.usagePoint);
   const [coupon, setCoupon] = useState([]);
   const [tradeSelectedOpt, setTradeSelectedOpt] = useState('');
   const [couponSelectedOpt, setCouponSelectedOpt] = useState('');
   const [formState, inputHandler] = useForm({}, false);
   const { address, address_detail, address_legal } = formState.inputs;
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const closeCancelModal = () => {
+    setShowCancelModal(false);
+    navigate(`/${productId}/detail`);
+  };
+
   useEffect(() => {
-    // couponList GET 요청
     onLoading(true);
     axios
       .get(`${url}/coupon/list`, {
@@ -83,7 +95,7 @@ const ProductPayment = () => {
         }));
 
         const couponList =
-          coupons.length === 0
+          coupons.length === 0 || Number(usagePoint) === productPrice
             ? [{ name: '사용가능한 쿠폰이 없습니다' }]
             : [{ name: '선택하세요' }, ...coupons];
 
@@ -91,12 +103,23 @@ const ProductPayment = () => {
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
-  }, [auth.token]);
+  }, [auth.token, usagePoint, productPrice]);
+
+  const discountItem = coupon.find(item => item.name === couponSelectedOpt);
+  const discount = discountItem?.rate || 0;
+  const discounted = Math.round(price * (discount / 100));
 
   const onSubmit = e => {
-    // 결제 버튼 눌렸을 때 실행되는 함수
     e.preventDefault();
     const combinedAddress = `${address?.value} ${address_detail?.value} ${address_legal?.value}`; // 전체 주소
     const startAt = rentalDate.slice(0, 10);
@@ -112,7 +135,6 @@ const ProductPayment = () => {
     };
 
     if (formState.inputs.tradeMethod.value === 'DELIVERY') {
-      // tradeMethod가 DELIVERY일 때 name, phone, address 추가
       requestData.name = formState.inputs.name.value;
       requestData.phone = formState.inputs.phone.value;
       requestData.address = combinedAddress;
@@ -127,15 +149,13 @@ const ProductPayment = () => {
         },
       })
       .then(response => {
-        // 요청 성공 시 결제창 불러옴
-        console.log(response.data); // {"amount": 0, "merchantUid": "string", "name": "string"}
         const paymentData = response.data;
 
         const IMP = window.IMP;
         IMP.init('imp71210173');
 
         const data = {
-          pg: 'kcp.{imp71210173}',
+          pg: 'kakaopay.TC0ONETIME',
           pay_method: 'card',
           merchant_uid: paymentData.merchantUid,
           name: paymentData.name,
@@ -143,10 +163,9 @@ const ProductPayment = () => {
         };
 
         IMP.request_pay(data, async response => {
-          console.log(response);
           if (response.success) {
             try {
-              const result = await axios.get(`${url}/payment/complete`, {
+              await axios.get(`${url}/payment/complete`, {
                 headers: {
                   Authorization: `Bearer ${auth.token}`,
                 },
@@ -155,13 +174,21 @@ const ProductPayment = () => {
                   merchant_uid: response.merchant_uid,
                 },
               });
-              console.log('성공 : ', result);
+              navigate('/mypage/purchase');
             } catch (err) {
-              console.error('complete 실패: ', err);
+              if (
+                err.response.status === 401 &&
+                err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+              ) {
+                tokenErrorHandler(err);
+                onLoading(false);
+              } else {
+                errorHandler(err);
+              }
             }
           } else {
             try {
-              const result = await axios.get(`${url}/payment/failure`, {
+              await axios.get(`${url}/payment/failure`, {
                 headers: {
                   Authorization: `Bearer ${auth.token}`,
                 },
@@ -169,24 +196,51 @@ const ProductPayment = () => {
                   merchant_uid: response.merchant_uid,
                 },
               });
-              console.log('결제실패: ', result);
+              setShowCancelModal(true);
+              onLoading(false);
             } catch (err) {
-              console.error('failure 실패: ', err);
+              if (
+                err.response.status === 401 &&
+                err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+              ) {
+                tokenErrorHandler(err);
+                onLoading(false);
+              } else {
+                errorHandler(err);
+              }
             }
           }
         });
-
-        navigate('/product'); // 결제 성공하면 productList 페이지로 이동
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   };
 
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      <Modal
+        show={showCancelModal}
+        header="결제 취소"
+        onCancel={closeCancelModal}
+        footer={
+          <Button small width="60px" onClick={closeCancelModal}>
+            확인
+          </Button>
+        }
+      >
+        결제가 취소되었습니다.
+      </Modal>
       <PaymentLayout onSubmit={onSubmit}>
         {isLoading && <LoadingSpinner asOverlay />}
         <PaymentTitle>
@@ -198,6 +252,9 @@ const ProductPayment = () => {
             tradeMethod={tradeMethod}
             rentalDate={rentalDate}
             coupon={coupon}
+            discount={discounted}
+            amount={price}
+            days={days}
             tradeSelectedOpt={tradeSelectedOpt}
             setTradeSelectedOpt={setTradeSelectedOpt}
             couponSelectedOpt={couponSelectedOpt}
@@ -208,6 +265,7 @@ const ProductPayment = () => {
           <div>
             <PaymentConfirm
               coupon={coupon}
+              discount={discounted}
               imageUrl={image}
               amount={price}
               tradeMethod={tradeMethod}

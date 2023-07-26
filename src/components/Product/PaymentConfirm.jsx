@@ -86,6 +86,7 @@ const ParagraphBox = styled.div`
 
 const PaymentConfirm = ({
   coupon,
+  discount,
   imageUrl,
   amount,
   tradeMethod,
@@ -98,15 +99,11 @@ const PaymentConfirm = ({
   onInput,
 }) => {
   const discountItem = coupon.find(item => item.name === couponSelectedOpt);
-  const discount = discountItem?.rate || 0;
-
   const courierFee =
     tradeSelectedOpt === 'DELIVERY' || tradeMethod === 'DELIVERY' ? 3000 : 0;
-
   const point = useSelector(state => state.point.usagePoint);
-  const discounted = Math.round(amount * (discount / 100));
   const numberOfDays = days;
-  const total = amount * numberOfDays + courierFee - discounted - point;
+  const total = amount * numberOfDays + courierFee - discount - point;
 
   useEffect(() => {
     const couponIssueId = discountItem?.couponIssueId;
@@ -143,7 +140,7 @@ const PaymentConfirm = ({
         </ParagraphBox>
         <ParagraphBox>
           <p className="left">쿠폰적용</p>
-          <p className="right">- \ {discounted.toLocaleString('ko-KR')}</p>
+          <p className="right">- \ {discount.toLocaleString('ko-KR')}</p>
         </ParagraphBox>
         <ParagraphBox>
           <p className="left">적립금적용</p>

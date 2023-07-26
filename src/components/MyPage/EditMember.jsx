@@ -18,6 +18,7 @@ import { ToastContainer } from 'react-toastify';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useAddressSplitter } from '../../hooks/useAddressSplitter';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
 const EditMemberLayout = styled.form`
   margin: 0 0 3rem;
@@ -84,6 +85,7 @@ const EditMember = () => {
   const auth = useAuth();
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const [isCheckNickname, setIsCheckNickname] = useState(true);
   const [passwordChanged, setPasswordChanged] = useState(false);
   const [loadedMember, setLoadedMember] = useState();
@@ -145,7 +147,15 @@ const EditMember = () => {
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   }, [setFormData, auth.token]);
 
@@ -180,7 +190,7 @@ const EditMember = () => {
       </Modal>
       <EditPassword
         url={url}
-        token={auth.token}
+        auth={auth}
         setPasswordChanged={setPasswordChanged}
         showModal={editPasswordModal}
         closeModal={closeEditPasswordModal}

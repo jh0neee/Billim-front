@@ -10,6 +10,7 @@ import { pointAction } from '../../store/point';
 import { GrPowerReset } from 'react-icons/gr';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { toast, ToastContainer } from 'react-toastify';
 
 const PointLayout = styled.div`
@@ -25,7 +26,7 @@ const ResetButton = styled(GrPowerReset)`
   cursor: pointer;
 `;
 
-const PaymentPoint = ({ onInput, formState }) => {
+const PaymentPoint = ({ onInput, formState, total, discount }) => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const dispatch = useDispatch();
@@ -35,6 +36,12 @@ const PaymentPoint = ({ onInput, formState }) => {
   const [isBtnEnabled, setIsBtnEnabled] = useState(true);
   const [resetInput, setResetInput] = useState(false);
   const { onLoading, errorHandler } = useLoadingError();
+  const { tokenErrorHandler } = useTokenRefresher(auth);
+
+  useEffect(() => {
+    // 페이지 벗어나면 적립금 초기화
+    dispatch(pointAction.usePoints(0));
+  }, [dispatch]);
 
   useEffect(() => {
     onLoading(true);
@@ -54,16 +61,29 @@ const PaymentPoint = ({ onInput, formState }) => {
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   }, [dispatch, auth.token]);
 
   const applyUsageAmount = () => {
     const usageAmount = formState.inputs.usedPoint.value;
+    const totalAmount = total - discount;
 
     if (usageAmount <= remainingPoints) {
-      dispatch(pointAction.usePoints(usageAmount));
-      setIsBtnEnabled(false);
+      if (usageAmount > totalAmount) {
+        toast.error(`최대 ${totalAmount}적립금까지 사용가능합니다.`);
+      } else {
+        dispatch(pointAction.usePoints(usageAmount));
+        setIsBtnEnabled(false);
+      }
     } else {
       toast.error('사용가능 적립금보다 많습니다.');
     }

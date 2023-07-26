@@ -6,9 +6,11 @@ import axios from 'axios';
 import Card from '../UI/Card';
 import ErrorModal from '../../util/ErrorModal';
 import { useAuth } from '../../hooks/useAuth';
-import { useLoadingError } from '../../hooks/useLoadingError';
-import { RiHeart3Fill, RiHeart3Line, RiStarSFill } from 'react-icons/ri';
 import { useSelector } from 'react-redux';
+import { useLoadingError } from '../../hooks/useLoadingError';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
+import { RiHeart3Fill, RiHeart3Line, RiStarSFill } from 'react-icons/ri';
+
 const ProductCard = styled(Card)`
   width: 100%;
   border: none;
@@ -71,6 +73,7 @@ const ProductListItem = ({ items }) => {
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const [interestList, setInterestList] = useState([]);
   const { error, clearError, errorHandler } = useLoadingError();
+  const { tokenErrorHandler } = useTokenRefresher(auth);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -80,7 +83,7 @@ const ProductListItem = ({ items }) => {
 
   const getInterestList = () => {
     axios
-      .get(`${url}/product/my/interestList`, {
+      .get(`${url}/product/my/interest`, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
@@ -93,7 +96,14 @@ const ProductListItem = ({ items }) => {
         setInterestList(responseData);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+        } else {
+          errorHandler(err);
+        }
       });
   };
 
@@ -123,7 +133,14 @@ const ProductListItem = ({ items }) => {
           );
         })
         .catch(err => {
-          errorHandler(err);
+          if (
+            err.response.status === 401 &&
+            err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+          ) {
+            tokenErrorHandler(err);
+          } else {
+            errorHandler(err);
+          }
         });
     } else {
       axios
@@ -144,7 +161,14 @@ const ProductListItem = ({ items }) => {
           setInterestList(prevItem => [...prevItem, selectItem]);
         })
         .catch(err => {
-          errorHandler(err);
+          if (
+            err.response.status === 401 &&
+            err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+          ) {
+            tokenErrorHandler(err);
+          } else {
+            errorHandler(err);
+          }
         });
     }
   };

@@ -14,6 +14,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useCheckedInput } from '../../hooks/useCheckedInput';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { CategoryList, TradeMethod } from '../../data';
 import {
   FormLayout,
@@ -38,6 +39,7 @@ const UpdateProduct = () => {
   const [deleteImages, setDeleteImages] = useState([]);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const [formState, inputHandler, setFormData] = useForm({}, true);
 
   const closeUpdate = () => {
@@ -102,9 +104,17 @@ const UpdateProduct = () => {
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
-  }, [productId, setFormData]);
+  }, [productId, setFormData, auth.token]);
 
   const [checkedTrade, onCheckedTrade] = useCheckedInput(
     initialTradeMethod,
@@ -163,7 +173,15 @@ const UpdateProduct = () => {
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   };
 

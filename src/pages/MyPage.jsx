@@ -11,6 +11,7 @@ import LoadingSpinner from '../components/UI/LoadingSpinner';
 import MyPageUserReward from '../components/MyPage/MyPageUserReward';
 import { useAuth } from '../hooks/useAuth';
 import { useLoadingError } from '../hooks/useLoadingError';
+import { useTokenRefresher } from '../hooks/useTokenRefresher';
 
 const MyPageContainer = styled.div`
   max-width: 1440px;
@@ -101,6 +102,7 @@ const MyPageContent = styled.div`
 const MyPage = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, onLoading, error, errorHandler, clearError } =
     useLoadingError();
 
@@ -122,9 +124,17 @@ const MyPage = () => {
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
-  }, []);
+  }, [auth.token]);
 
   return (
     <>
