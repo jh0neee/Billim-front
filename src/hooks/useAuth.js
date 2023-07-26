@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { authAction } from '../store/auth';
@@ -31,7 +32,7 @@ export const useAuth = () => {
     console.log(accessToken);
 
     axios
-      .post(`${url}/auth/logout`, {
+      .delete(`${url}/auth/logout`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -68,3 +69,5 @@ export const useAuth = () => {
     logout: handleLogout,
   };
 };
+
+
