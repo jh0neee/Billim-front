@@ -43,9 +43,6 @@ export const useTokenRefresher = auth => {
           return response;
         })
         .catch(err => {
-          console.log('비동기 처리 로직에서 에러 발생', err);
-          console.log(err);
-
           if (
             err.response.data.code === 'MISMATCH_REFRESH_TOKEN' ||
             err.response.data.code === 'EXPIRED_REFRESH_TOKEN' ||
