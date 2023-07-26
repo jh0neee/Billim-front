@@ -10,6 +10,7 @@ import { pointAction } from '../../store/point';
 import { GrPowerReset } from 'react-icons/gr';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { toast, ToastContainer } from 'react-toastify';
 
 const PointLayout = styled.div`
@@ -35,6 +36,7 @@ const PaymentPoint = ({ onInput, formState, total, discount }) => {
   const [isBtnEnabled, setIsBtnEnabled] = useState(true);
   const [resetInput, setResetInput] = useState(false);
   const { onLoading, errorHandler } = useLoadingError();
+  const { tokenErrorHandler } = useTokenRefresher(auth);
 
   useEffect(() => {
     // 페이지 벗어나면 적립금 초기화
@@ -59,7 +61,15 @@ const PaymentPoint = ({ onInput, formState, total, discount }) => {
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   }, [dispatch, auth.token]);
 

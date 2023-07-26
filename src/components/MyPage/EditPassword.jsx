@@ -8,6 +8,7 @@ import Button from '../UI/Button';
 import ErrorModal from '../../util/ErrorModal';
 import { useForm } from '../../hooks/useForm';
 import { useLoadingError } from '../../hooks/useLoadingError';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import {
   VALIDATOR_MATCH_PASSWORD,
   VALIDATOR_PASSWORD,
@@ -47,12 +48,13 @@ const ModalLayout = styled(Modal)`
 
 const EditPassword = ({
   url,
-  token,
+  auth,
   showModal,
   closeModal,
   setPasswordChanged,
 }) => {
   const { error, clearError, errorHandler } = useLoadingError();
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const [formState, inputHandler] = useForm({}, false);
 
   const closeEditPasswordModal = () => {
@@ -71,7 +73,7 @@ const EditPassword = ({
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${auth.token}`,
           },
         },
       )
@@ -81,7 +83,14 @@ const EditPassword = ({
       })
       .catch(err => {
         closeModal();
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+        } else {
+          errorHandler(err);
+        }
       });
   };
 

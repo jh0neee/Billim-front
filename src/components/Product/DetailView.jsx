@@ -15,6 +15,7 @@ import LoadingSpinner from '../UI/LoadingSpinner';
 import DetailImageGallery from './DetailImageGallery';
 import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
 const DetailLayout = styled.div`
   max-width: 1140px;
@@ -109,6 +110,7 @@ const DetailView = ({ items, onDeleteProduct }) => {
   const productId = items.productId;
   const navigate = useNavigate();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
@@ -125,7 +127,7 @@ const DetailView = ({ items, onDeleteProduct }) => {
     axios
       .delete(`${url}/product/delete/${productId}`, {
         headers: {
-          Authorization: 'Bearer ' + auth.token,
+          Authorization: `Bearer ${auth.token}`,
         },
       })
       .then(() => {
@@ -134,7 +136,15 @@ const DetailView = ({ items, onDeleteProduct }) => {
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   };
 

@@ -17,6 +17,7 @@ import { useCheckedInput } from '../hooks/useCheckedInput';
 import { VALIDATOR_REQUIRE } from '../util/validators';
 import { CategoryList, TradeMethod } from '../data';
 import { useLoadingError } from '../hooks/useLoadingError';
+import { useTokenRefresher } from '../hooks/useTokenRefresher';
 
 export const FormLayout = styled.form`
   width: 60%;
@@ -94,6 +95,7 @@ const NewProduct = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [registerModal, setRegisterModal] = useState(false);
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
@@ -150,7 +152,15 @@ const NewProduct = () => {
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   };
 

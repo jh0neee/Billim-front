@@ -6,6 +6,7 @@ import ErrorModal from '../../util/ErrorModal';
 import LoadingSpinner from '../UI/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
 const CouponLayout = styled.div`
   margin: 0.5rem 0;
@@ -54,6 +55,7 @@ const MyPageCoupon = () => {
   const auth = useAuth();
   const [sortedCoupons, setSortedCoupons] = useState([]);
   const [activeTab, setActiveTab] = useState('newest');
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
@@ -73,7 +75,15 @@ const MyPageCoupon = () => {
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   }, [auth.token]);
 

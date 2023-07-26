@@ -15,6 +15,7 @@ import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../hooks/useAuth';
 import { HiChevronLeft } from 'react-icons/hi';
 import { useLoadingError } from '../../hooks/useLoadingError';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
 const PaymentLayout = styled.form`
   width: 80%;
@@ -64,6 +65,7 @@ const ProductPayment = () => {
   const [couponSelectedOpt, setCouponSelectedOpt] = useState('');
   const [formState, inputHandler] = useForm({}, false);
   const { address, address_detail, address_legal } = formState.inputs;
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
@@ -101,7 +103,15 @@ const ProductPayment = () => {
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   }, [auth.token, usagePoint, productPrice]);
 
@@ -166,7 +176,15 @@ const ProductPayment = () => {
               });
               navigate('/mypage/purchase');
             } catch (err) {
-              errorHandler(err);
+              if (
+                err.response.status === 401 &&
+                err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+              ) {
+                tokenErrorHandler(err);
+                onLoading(false);
+              } else {
+                errorHandler(err);
+              }
             }
           } else {
             try {
@@ -181,14 +199,30 @@ const ProductPayment = () => {
               setShowCancelModal(true);
               onLoading(false);
             } catch (err) {
-              errorHandler(err);
+              if (
+                err.response.status === 401 &&
+                err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+              ) {
+                tokenErrorHandler(err);
+                onLoading(false);
+              } else {
+                errorHandler(err);
+              }
             }
           }
         });
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   };
 

@@ -3,12 +3,13 @@ import styled from 'styled-components';
 import { Link, Outlet } from 'react-router-dom';
 
 import axios from 'axios';
+import ErrorModal from '../util/ErrorModal';
 import exampleImage from '../asset/image/exampleImage.jpg';
+import LoadingSpinner from '../components/UI/LoadingSpinner';
 import { Profile } from '../components/UI/Profile';
 import { useAuth } from '../hooks/useAuth';
 import { useLoadingError } from '../hooks/useLoadingError';
-import ErrorModal from '../util/ErrorModal';
-import LoadingSpinner from '../components/UI/LoadingSpinner';
+import { useTokenRefresher } from '../hooks/useTokenRefresher';
 
 const ChatLayout = styled.div`
   margin-top: 85px;
@@ -80,6 +81,7 @@ const ChatContent = styled.div`
 const Chat = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const [chatList, setChatList] = useState([
@@ -133,7 +135,15 @@ const Chat = () => {
         });
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   }, []);
 
