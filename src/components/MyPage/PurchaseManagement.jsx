@@ -1,10 +1,18 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import styled, { css } from 'styled-components';
 
-import Button from '../UI/Button';
+import axios from 'axios';
 import Modal from '../UI/Modal';
-import { purchasedProduct } from '../../data';
+import Button from '../UI/Button';
+import ErrorModal from '../../util/ErrorModal';
+import LoadingSpinner from '../UI/LoadingSpinner';
+import { useAuth } from '../../hooks/useAuth';
+import { useLoadingError } from '../../hooks/useLoadingError';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { useCancelReservation } from '../../hooks/useCancelReservation';
+import theme from '../../styles/theme';
+import { useContentResize } from '../../hooks/useContentResize';
 
 const ContentBox = styled.div`
   background-color: #ededed;
@@ -14,6 +22,7 @@ const ContentBox = styled.div`
     &:first-child {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       padding: 1rem;
     }
   }
@@ -21,6 +30,11 @@ const ContentBox = styled.div`
 
 const ProductBox = styled.div`
   display: flex;
+  width: 100%;
+
+  @media (max-width: 530px) {
+    align-self: flex-start;
+  }
 `;
 
 const ParagraphBox = styled.div`
@@ -29,9 +43,46 @@ const ParagraphBox = styled.div`
   margin: 0.5rem 1.5rem;
   font-size: 0.9rem;
 
+  > a:hover {
+    text-decoration: underline;
+  }
+
   > * {
-    &:first-child {
-      padding-bottom: 0.5rem;
+    &:nth-child(2) {
+      padding: 0.5rem 0 1rem;
+    }
+  }
+
+  @media ${theme.mobile} {
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+
+    > * {
+      &:nth-child(2) {
+        padding: 0.5rem 0 0.7rem;
+      }
+
+      &:last-child {
+        font-size: 0.8rem;
+        margin-top: 0.7rem;
+      }
+    }
+  }
+`;
+
+const DateBox = styled.div`
+  > * {
+    line-height: 1.3;
+    font-size: 0.8rem;
+  }
+
+  > p > span {
+    font-weight: 600;
+  }
+
+  @media ${theme.mobile} {
+    > * {
+      font-size: 0.7rem;
     }
   }
 `;
@@ -40,12 +91,21 @@ const InformBox = styled.div`
   column-count: 2;
   padding: 0 1rem 1rem;
   display: flex;
+  flex-direction: ${props => (props.informResize ? 'column' : 'row')};
   align-items: flex-end;
   justify-content: space-between;
+
+  > * {
+    &:last-child {
+      margin-top: ${props => (props.informResize ? '0.5rem' : '0')};
+    }
+  }
 `;
 
 const SellerBox = styled.div`
-  margin-top: 1.3rem;
+  display: flex;
+  margin-top: 1rem;
+  align-items: center;
 
   > * {
     margin-left: 1rem;
@@ -61,10 +121,31 @@ const PurchaseState = styled.p`
 
 const PurchaseDate = styled.p`
   font-size: 0.8rem;
+
+  @media ${theme.mobile} {
+    font-size: 0.5rem;
+  }
+`;
+
+const PurchaseImage = styled.img`
+  width: ${props => (props.dateResize ? '150px' : '120px')};
+  height: ${props => (props.dateResize ? '170px' : '140px')};
+
+  @media ${theme.mobile} {
+    width: 115px;
+    height: 135px;
+  }
 `;
 
 const ExtraButton = styled(Button)`
-  margin: ${props => (props.cancel ? '0 0 1.3rem 0' : '0.5rem 0 0 1rem')};
+  margin: ${props =>
+    props.informResize
+      ? css`
+          ${props.cancel ? '0 0 0 0.3rem' : '0 0 0 1rem'};
+        `
+      : css`
+          ${props.cancel ? '0 0 0.5rem 0' : '0 0 0 1rem'};
+        `};
   width: 60px;
   height: 27px;
   font-size: 10px;
@@ -72,16 +153,80 @@ const ExtraButton = styled(Button)`
 `;
 
 const PurchaseManagement = () => {
+  const url = process.env.REACT_APP_URL;
+  const auth = useAuth();
+  const contentRef = useRef(null);
+  const { contentResize: InformResize } = useContentResize(531, contentRef);
+  const { contentResize: DateResize } = useContentResize(500, contentRef);
+  const { isLoading, onLoading, error, errorHandler, clearError } =
+    useLoadingError();
+  const { tokenErrorHandler } = useTokenRefresher(auth);
+  const [purchaseProduct, setPurchaseProduct] = useState([]);
   const {
     updatedItem,
     showReservaionModal,
     cancelCancellationHandler,
     cancelConfirmHandler,
     cancelReservationHandler,
-  } = useCancelReservation(purchasedProduct);
+  } = useCancelReservation(purchaseProduct);
+
+  console.log(DateResize);
+
+  useEffect(() => {
+    onLoading(true);
+    axios
+      .get(`${url}/order/my/purchase`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+        params: {
+          memberId: auth.memberId,
+        },
+      })
+      .then(response => {
+        console.log(response.data.productOrders);
+        setPurchaseProduct(response.data.productOrders);
+        onLoading(false);
+      })
+      .catch(err => {
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
+      });
+  }, [auth.token]);
+
+  let currentStatus;
+  const StatusHandler = (status, start, end) => {
+    if (status === 'DONE') {
+      const currentDate = new Date();
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+
+      if (currentDate < startDate) {
+        currentStatus = '예약완료';
+      } else if (currentDate > endDate) {
+        currentStatus = '사용완료';
+      } else {
+        currentStatus = '사용중';
+      }
+    } else {
+      if (status === 'CANCELED') {
+        currentStatus = '취소';
+      }
+    }
+    return currentStatus;
+  };
 
   return (
     <>
+      <ErrorModal error={error} onClear={clearError} />
+      {isLoading && <LoadingSpinner asOverlay />}
       <Modal
         show={showReservaionModal}
         onCancel={cancelCancellationHandler}
@@ -103,39 +248,81 @@ const PurchaseManagement = () => {
         </p>
       </Modal>
       <p>구매관리</p>
+      {purchaseProduct.length === 0 && (
+        <ContentBox>
+          <p>구매한 상품이 없습니다.</p>
+        </ContentBox>
+      )}
       {updatedItem.map(item => (
-        <ContentBox key={item.id}>
+        <ContentBox key={item.orderId} ref={contentRef}>
           <div>
-            <PurchaseState>{item.status}</PurchaseState>
-            <PurchaseDate>주문일시 : {item.date}</PurchaseDate>
+            <PurchaseState>
+              {StatusHandler(item.status, item.orderStartAt, item.orderEndAt)}
+            </PurchaseState>
+            <PurchaseDate>주문일자 : {item.orderDate}</PurchaseDate>
           </div>
-          <InformBox>
+          <InformBox informResize={InformResize}>
             <ProductBox>
-              <img
-                src="https://via.placeholder.com/100x120"
-                alt="상품예시이미지"
+              <PurchaseImage
+                src={item.imageUrl}
+                alt="구매상품이미지"
+                dateResize={DateResize}
               />
               <ParagraphBox>
-                <p>{item.name}</p>
-                <p>\ {item.amount.toLocaleString('ko-KR')}</p>
+                <Link to={`/${item.productId}/detail`}>{item.productName}</Link>
+                <p>\ {item.price.toLocaleString('ko-KR')}</p>
+                <DateBox>
+                  {DateResize ? (
+                    <>
+                      <p>
+                        {`대여시작일 |`} <br />
+                        <span>{`${item.orderStartAt}`}</span>
+                      </p>
+
+                      <p>
+                        {`대여종료일 |`} <br />
+                        <span> {`${item.orderEndAt}`}</span>
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p>
+                        대여시작일 | <span>{`${item.orderStartAt}`}</span>
+                      </p>
+                      <p>
+                        대여종료일 | <span>{`${item.orderEndAt}`}</span>
+                      </p>
+                    </>
+                  )}
+                </DateBox>
                 <SellerBox>
-                  {item.seller}
-                  <ExtraButton small width="70px">
-                    문의하기
-                  </ExtraButton>
+                  {item.sellerNickname}
+                  {!InformResize && (
+                    <ExtraButton small width="70px">
+                      문의하기
+                    </ExtraButton>
+                  )}
                 </SellerBox>
               </ParagraphBox>
             </ProductBox>
-            {item.status === '예약완료' && (
-              <ExtraButton
-                cancel
-                small
-                width="70px"
-                onClick={() => cancelConfirmHandler(item.id)}
-              >
-                예약취소
-              </ExtraButton>
-            )}
+            <div>
+              {InformResize && (
+                <ExtraButton small width="70px">
+                  문의하기
+                </ExtraButton>
+              )}
+              {currentStatus === '예약완료' && (
+                <ExtraButton
+                  cancel
+                  small
+                  informResize={InformResize}
+                  width="70px"
+                  onClick={() => cancelConfirmHandler(item.orderId)}
+                >
+                  예약취소
+                </ExtraButton>
+              )}
+            </div>
           </InformBox>
         </ContentBox>
       ))}
