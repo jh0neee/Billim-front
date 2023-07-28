@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import axios from 'axios';
 import ErrorModal from '../../util/ErrorModal';
-import LoadingSpinner from '../UI/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
+import { useContentResize } from '../../hooks/useContentResize';
 
 const CouponLayout = styled.div`
   margin: 0.5rem 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: ${props => (props.coupon ? '1fr' : '1fr 1fr')};
 `;
 
 const CouponTab = styled.div`
@@ -19,6 +19,7 @@ const CouponTab = styled.div`
   display: flex;
 
   > p {
+    cursor: pointer;
     margin: 0 0.5rem;
     font-weight: ${props => (props.active ? '700' : 'normal')};
     &.active {
@@ -33,8 +34,8 @@ const EmptyCouponMessage = styled.p`
 `;
 
 const CouponItemBox = styled.div`
-  margin: 1rem;
-  padding: 1rem;
+  margin: ${props => (props.coupon ? '1rem 2rem' : '1rem')};
+  padding: 1rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -47,22 +48,42 @@ const CouponItemBox = styled.div`
       font-size: 2rem;
       font-weight: 700;
     }
+
+    &:last-child {
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (max-width: 450px) {
+    margin: 1rem;
   }
 `;
 
 const MyPageCoupon = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
+  const couponRef = useRef(null);
   const [sortedCoupons, setSortedCoupons] = useState([]);
   const [activeTab, setActiveTab] = useState('newest');
   const { tokenErrorHandler } = useTokenRefresher(auth);
-  const { isLoading, error, onLoading, clearError, errorHandler } =
-    useLoadingError();
+  const { error, clearError, errorHandler } = useLoadingError();
+  const { contentResize } = useContentResize(400, couponRef);
 
   useEffect(() => {
-    onLoading(true);
+    fetchCoupons();
+  }, [auth.token]);
+
+  const fetchCoupons = () => {
+    let urlToFetch;
+
+    if (activeTab === 'newest') {
+      urlToFetch = `${url}/coupon/list`;
+    } else if (activeTab === 'byDiscount') {
+      urlToFetch = `${url}/coupon/list/rate`;
+    }
+
     axios
-      .get(`${url}/coupon/list`, {
+      .get(urlToFetch, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
@@ -72,7 +93,6 @@ const MyPageCoupon = () => {
       })
       .then(response => {
         setSortedCoupons(response.data);
-        onLoading(false);
       })
       .catch(err => {
         if (
@@ -80,31 +100,25 @@ const MyPageCoupon = () => {
           err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
         ) {
           tokenErrorHandler(err);
-          onLoading(false);
         } else {
           errorHandler(err);
         }
       });
-  }, [auth.token]);
-
-  const copyCoupons = [...sortedCoupons];
+  };
 
   const newestHandler = () => {
     setActiveTab('newest');
-    setSortedCoupons(
-      copyCoupons.sort((a, b) => new Date(a.date) - new Date(b.date)),
-    );
+    fetchCoupons();
   };
 
   const byDiscountHandler = () => {
     setActiveTab('byDiscount');
-    setSortedCoupons(copyCoupons.sort((a, b) => b.discount - a.discount));
+    fetchCoupons();
   };
 
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {isLoading && <LoadingSpinner asOverlay />}
       <p>보유 쿠폰 {sortedCoupons.length}</p>
       <hr />
       <CouponTab>
@@ -126,9 +140,9 @@ const MyPageCoupon = () => {
       {sortedCoupons.length === 0 ? (
         <EmptyCouponMessage>보유 쿠폰이 없습니다.</EmptyCouponMessage>
       ) : (
-        <CouponLayout>
+        <CouponLayout ref={couponRef} coupon={contentResize}>
           {sortedCoupons.map(item => (
-            <CouponItemBox key={item.couponIssueId}>
+            <CouponItemBox key={item.couponIssueId} coupon={contentResize}>
               <p>{item.rate}%</p>
               <p>{item.name}</p>
               <p>{item.expiredAt.slice(0, 10)}까지</p>
