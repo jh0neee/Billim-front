@@ -118,7 +118,7 @@ const NavLinks = () => {
                 <Link to="/mypage/purchase">마이페이지</Link>
               </li>
               <li>
-                <Link to="/" onClick={auth.logout}>
+                <Link to="/" onClick={() => auth.logout(false)}>
                   로그아웃
                 </Link>
               </li>

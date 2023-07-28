@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { debounce } from 'lodash';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const refreshAPI = axios.create({
   baseURL: process.env.REACT_APP_URL,
@@ -12,7 +11,6 @@ const refreshAPI = axios.create({
 
 export const useTokenRefresher = auth => {
   const url = process.env.REACT_APP_URL;
-  const navigate = useNavigate();
   const [isRefresh, setIsRefresh] = useState(false);
 
   const refreshTokenHandler = debounce(() => {
@@ -48,8 +46,7 @@ export const useTokenRefresher = auth => {
             err.response.data.code === 'EXPIRED_REFRESH_TOKEN' ||
             err.response.data.code === 'INVALID_REFRESH_TOKEN'
           ) {
-            auth.logout();
-            navigate('/login');
+            auth.logout(true);
           }
           setIsRefresh(false);
         });
@@ -60,8 +57,7 @@ export const useTokenRefresher = auth => {
     if (err.response.data.error === 'EXPIRED_TOKEN') {
       refreshTokenHandler();
     } else {
-      auth.logout();
-      navigate('/login');
+      auth.logout(true);
     }
   };
 
