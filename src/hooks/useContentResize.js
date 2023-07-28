@@ -9,7 +9,6 @@ export const useContentResize = (width, contentRef) => {
         return;
       }
       const contentBoxWidth = contentRef.current.clientWidth;
-      console.log(contentBoxWidth, width);
       setResize(contentBoxWidth < width);
     };
 

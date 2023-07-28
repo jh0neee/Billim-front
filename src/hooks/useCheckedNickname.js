@@ -10,7 +10,6 @@ export const useCheckNickname = (nickname, setIsCheck) => {
         params: { nickname: nickname.value },
       })
       .then(response => {
-        console.log(response.data);
         if (nickname?.value === '') {
           toast.warning('닉네임을 입력해주세요');
           setIsCheck(false);

@@ -101,7 +101,6 @@ const SignUp = () => {
           },
         )
         .then(response => {
-          console.log(response);
           if (response.status === 200) {
             setSignUpModal(true);
           } else {

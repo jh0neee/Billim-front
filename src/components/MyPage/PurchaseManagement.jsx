@@ -170,8 +170,6 @@ const PurchaseManagement = () => {
     cancelReservationHandler,
   } = useCancelReservation(purchaseProduct);
 
-  console.log(DateResize);
-
   useEffect(() => {
     onLoading(true);
     axios
@@ -184,7 +182,6 @@ const PurchaseManagement = () => {
         },
       })
       .then(response => {
-        console.log(response.data.productOrders);
         setPurchaseProduct(response.data.productOrders);
         onLoading(false);
       })

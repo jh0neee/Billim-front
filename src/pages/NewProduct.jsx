@@ -119,7 +119,6 @@ const NewProduct = () => {
     e.preventDefault();
 
     if (!formState.isValid) {
-      console.log(formState.inputs);
       alert('빈칸 없이 작성해주세요.');
       return;
     }
