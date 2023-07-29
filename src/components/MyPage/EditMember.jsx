@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -21,7 +22,14 @@ import { useAddressSplitter } from '../../hooks/useAddressSplitter';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
 const EditMemberLayout = styled.form`
-  margin: 0 0 3rem;
+  margin: 0 auto 3rem;
+
+  @media (min-width: 1280px) {
+    max-width: 603px;
+  }
+  @media (min-width: 964px) and (max-width: 1279px) {
+    max-width: 450px;
+  }
 `;
 
 const EditMemberBox = styled.div`
@@ -54,6 +62,15 @@ const EditMemberBox = styled.div`
       margin-left: 0.5rem;
       font-weight: 600;
     }
+  }
+
+  @media (min-width: 964px) and (max-width: 1279px) {
+    grid-template-columns: 0.6fr 0.8fr 0.7fr;
+    ${props =>
+      props.password &&
+      css`
+        grid-template-columns: 0.55fr 0.9fr 0.4fr;
+      `}
   }
 `;
 
@@ -104,6 +121,12 @@ const EditMember = () => {
   const [editPasswordModal, setEditPasswordModal] = useState(false);
   const closeEditPasswordModal = () => setEditPasswordModal(false);
 
+  const [updateModal, setUpdateModal] = useState(false);
+  const closeUpdate = () => {
+    setUpdateModal(false);
+    window.location.reload();
+  };
+
   useEffect(() => {
     onLoading(true);
     axios
@@ -125,6 +148,10 @@ const EditMember = () => {
 
         setFormData(
           {
+            profile: {
+              value: responseData.profileImageUrl,
+              isValid: true,
+            },
             nickname: {
               value: responseData.nickname,
               isValid: true,
@@ -162,8 +189,49 @@ const EditMember = () => {
   const EditSubmitHandler = e => {
     e.preventDefault();
 
+    const { address, address_detail, address_legal } = formState.inputs;
+    const combinedAddress = `${address.value} ${address_detail.value} ${address_legal.value}`;
+    const formData = new FormData();
+
+    const file = formState.inputs.profile.value;
+    let updateFile;
+    if (typeof file === 'object') {
+      updateFile = formState.inputs.profile.value[0];
+    } else if (typeof file === 'string') {
+      updateFile = formState.inputs.profile.value;
+    }
+
+    formData.append('newProfileImage', updateFile);
+    formData.append('nickname', formState.inputs.nickname.value);
+    formData.append('address', combinedAddress);
+
     if (isCheckNickname) {
-      console.log(formState.inputs);
+      onLoading(true);
+      axios
+        .put(`${url}/member/info`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + auth.token,
+          },
+          params: {
+            memberId: auth.memberId,
+          },
+        })
+        .then(() => {
+          setUpdateModal(true);
+          onLoading(false);
+        })
+        .catch(err => {
+          if (
+            err.response.status === 401 &&
+            err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+          ) {
+            tokenErrorHandler(err);
+            onLoading(false);
+          } else {
+            errorHandler(err);
+          }
+        });
     } else {
       setShowModal(true);
     }
@@ -176,6 +244,18 @@ const EditMember = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      <Modal
+        show={updateModal}
+        header="수정 완료!"
+        onCancel={closeUpdate}
+        footer={
+          <Button small width="60px" onClick={closeUpdate}>
+            확인
+          </Button>
+        }
+      >
+        성공적으로 수정되었습니다!
+      </Modal>
       <Modal
         show={showModal}
         header="중복 확인"
@@ -199,7 +279,12 @@ const EditMember = () => {
       <hr />
       {!isLoading && loadedMember && (
         <EditMemberLayout onSubmit={EditSubmitHandler}>
-          <ImageUpload id="profile" onInput={inputHandler} size="50px" />
+          <ImageUpload
+            id="profile"
+            onInput={inputHandler}
+            size="50px"
+            src={loadedMember.profileImageUrl}
+          />
           <hr />
           <EditMemberBox>
             <p>닉네임</p>
@@ -226,7 +311,7 @@ const EditMember = () => {
             />
           </EditMemberBox>
           <hr />
-          <EditMemberBox>
+          <EditMemberBox password>
             <p>비밀번호 변경</p>
             {passwordChanged && <span>비밀번호가 변경되었습니다.</span>}
             {!passwordChanged && (
@@ -255,7 +340,7 @@ const EditMember = () => {
               onInput={inputHandler}
               disabled={true}
             />
-            <ExtraButton sub onClick={postCodeOpenHandler}>
+            <ExtraButton type="button" sub onClick={postCodeOpenHandler}>
               주소 변경
             </ExtraButton>
           </EditMemberBox>
@@ -309,7 +394,9 @@ const EditMember = () => {
           <hr />
           <EditMemberBox>
             <p>소셜연동</p>
-            <ExtraButton kakao>K</ExtraButton>
+            <ExtraButton type="button" kakao>
+              K
+            </ExtraButton>
           </EditMemberBox>
           <hr />
           <FormBtnBox>
