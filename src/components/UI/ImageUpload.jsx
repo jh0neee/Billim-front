@@ -6,8 +6,6 @@ const ProfileUploadLayout = styled.div`
   display: grid;
   grid-template-columns: 0.45fr 1fr 0.3fr;
   align-items: flex-start;
-  margin: 2rem 0;
-  margin-bottom: 2rem;
   margin-top: 2rem;
 
   > * {
@@ -18,6 +16,7 @@ const ProfileUploadLayout = styled.div`
   }
 
   span {
+    font-size: 0.9rem;
     margin-left: 0.3rem;
   }
 
@@ -25,12 +24,25 @@ const ProfileUploadLayout = styled.div`
     margin-top: 1rem;
   }
 
-  div {
-    p {
-      font-size: 0.65rem;
-      margin-top: 0.5rem;
-    }
+  @media (min-width: 964px) and (max-width: 1279px) {
+    grid-template-columns: 0.5fr 0.9fr 0.3fr;
+    margin-bottom: 0;
   }
+`;
+const ProfileTextBox = styled.div`
+  display: grid;
+  grid-template-columns: 0.45fr 1fr 0.3fr;
+  margin-bottom: 2rem;
+
+  @media (min-width: 964px) and (max-width: 1279px) {
+    grid-template-columns: 0.45fr 1fr 0.1fr;
+  }
+`;
+
+const ProfileText = styled.p`
+  grid-area: 1 / 2 / 2 / 3;
+  font-size: 0.65rem;
+  margin-top: 0.5rem;
 `;
 
 export const ImageLayout = styled.div`
@@ -73,6 +85,8 @@ export const ImageFile = styled.img`
 `;
 
 const ImageFileButton = styled.div`
+  display: flex;
+  align-items: center;
   margin-top: 1rem;
   cursor: pointer;
 `;
@@ -158,35 +172,43 @@ const ImageUpload = props => {
   };
 
   return props.id === 'profile' ? (
-    <ProfileUploadLayout>
-      <p>프로필</p>
-      <div>
-        <label htmlFor={props.id} onChange={handleAddImages}>
-          <ImageInput type="file" id={props.id} ref={fileInputRef} />
-        </label>
-        {!showImages ? (
-          <ImageFile
-            src={defaultProfileImageUrl}
-            alt="기본 이미지"
-            imageSize="50px"
-          />
-        ) : (
-          <>
-            <ImageBox size={props.size}>
-              <ImageFile profile src={preview} alt="profileImage" />
-            </ImageBox>
-          </>
-        )}
-        <p>
+    <div>
+      <ProfileUploadLayout>
+        <p>프로필</p>
+        <div>
+          <label htmlFor={props.id} onChange={handleAddImages}>
+            <ImageInput type="file" id={props.id} ref={fileInputRef} />
+          </label>
+          {!showImages ? (
+            <>
+              <ImageBox size={props.size}>
+                <ImageFile
+                  profile
+                  src={props.src || defaultProfileImageUrl}
+                  alt="기본 이미지"
+                />
+              </ImageBox>
+            </>
+          ) : (
+            <>
+              <ImageBox size={props.size}>
+                <ImageFile profile src={preview} alt="profileImage" />
+              </ImageBox>
+            </>
+          )}
+        </div>
+        <ImageFileButton>
+          <FaPlus fill="#646F7C" onClick={pickImageHandler} />
+          <span onClick={pickImageHandler}>사진변경</span>
+        </ImageFileButton>
+      </ProfileUploadLayout>
+      <ProfileTextBox>
+        <ProfileText>
           회원님을 알릴 수 있는 사진을 등록해주세요. <br />
           등록된 사진은 회원님의 게시물이나 댓글에 사용됩니다.
-        </p>
-      </div>
-      <ImageFileButton>
-        <FaPlus fill="#646F7C" onClick={pickImageHandler} />
-        <span onClick={pickImageHandler}>사진변경</span>
-      </ImageFileButton>
-    </ProfileUploadLayout>
+        </ProfileText>
+      </ProfileTextBox>
+    </div>
   ) : (
     <ImageLayout>
       <label htmlFor={props.id} onChange={handleAddImages}>
