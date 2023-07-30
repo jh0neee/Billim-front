@@ -69,7 +69,7 @@ function App() {
           <Route path="/mypage/purchase" element={<PurchaseManagement />} />
           <Route path="/mypage/sales" element={<SalesManagement />} />
           <Route
-            path="/mypage/sales/:itemName/detail"
+            path="/mypage/sales/:productId"
             element={<SalesDetailManagement />}
           />
           <Route path="/mypage/favorite" element={<WishList />} />
