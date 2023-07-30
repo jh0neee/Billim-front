@@ -55,7 +55,8 @@ export const ImageInput = styled.input`
 
 export const ImagesBox = styled.div`
   display: flex;
-  margin-top: ${({ imageLength }) => (imageLength === 0 ? '0' : '1rem')};
+  margin-top: ${({ imageLength }) =>
+    imageLength === 0 || typeof imageLength === 'undefined' ? '0' : '1rem'};
 `;
 
 export const ImageContent = styled.div`
@@ -220,7 +221,7 @@ const ImageUpload = props => {
         <FaPlus fill="#646F7C" />
         <span>사진추가</span>
       </label>
-      <ImagesBox imageLength={preview.length}>
+      <ImagesBox imageLength={preview?.length}>
         {preview &&
           preview.map((image, id) => (
             <ImageContent key={id}>
