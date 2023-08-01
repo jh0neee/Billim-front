@@ -16,6 +16,7 @@ import DetailImageGallery from './DetailImageGallery';
 import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
+import { PiWechatLogoDuotone as ChatIcon } from 'react-icons/pi';
 
 const DetailLayout = styled.div`
   max-width: 1140px;
@@ -104,6 +105,26 @@ const StyledLine = styled.hr`
   }
 `;
 
+const ChatLink = styled(Link)`
+  display: flex;
+  align-items: center;
+
+  > svg {
+    color: darkgrey;
+    height: 15px;
+    width: 18px;
+    margin: 0 0 0.1rem 0.05rem;
+  }
+
+  &:hover > svg {
+    color: #ffc300;
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+`;
+
 const DetailView = ({ items, onDeleteProduct }) => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
@@ -148,6 +169,40 @@ const DetailView = ({ items, onDeleteProduct }) => {
       });
   };
 
+  const EnterChatRoom = () => {
+    axios
+      .post(
+        `${url}/api/chat/room/product/${productId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+          params: {
+            memberId: auth.memberId,
+          },
+        },
+      )
+      .then(response => {
+        const { chatRoomId } = response.data;
+
+        if (chatRoomId) {
+          navigate(`/chat/messages/${chatRoomId}`);
+        }
+      })
+      .catch(err => {
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
+      });
+  };
+
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
@@ -176,6 +231,12 @@ const DetailView = ({ items, onDeleteProduct }) => {
           )}
           {auth.memberId === items.sellerMemberId && (
             <Link onClick={deleteWarningHandler}>삭제하기</Link>
+          )}
+          {auth.memberId !== items.sellerMemberId && (
+            <ChatLink onClick={EnterChatRoom}>
+              <ChatIcon />
+              <p>채팅하기</p>
+            </ChatLink>
           )}
         </ButtonLayout>
         <DetailHeader

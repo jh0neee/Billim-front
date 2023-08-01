@@ -64,8 +64,10 @@ const Unread = styled.div`
   margin-left: 0.2rem;
   padding: 4px;
   border-radius: 10px;
-  background-color: #ff3932;
+  background-color: ${props => (props.unread !== 0 ? '#ff3932' : 'none')};
+
   > p {
+    visibility: ${props => (props.unread !== 0 ? 'visible' : 'hidden')};
     font-family: TRoundWind;
     font-size: 0.5rem;
     color: white;
@@ -86,7 +88,7 @@ const Chat = () => {
     useLoadingError();
   const [chatList, setChatList] = useState([
     {
-      chatRoomId: 1,
+      chatRoomId: 12345,
       receiverId: 1,
       receiverNickname: '판매자',
       receiverProfileImageUrl:
@@ -96,7 +98,7 @@ const Chat = () => {
       latestMessageTime: '2023-07-21',
     },
     {
-      chatRoomId: 2,
+      chatRoomId: 56789,
       receiverId: 2,
       receiverNickname: '판매자2',
       receiverProfileImageUrl: exampleImage,
@@ -118,7 +120,6 @@ const Chat = () => {
         },
       })
       .then(response => {
-        console.log(response.data);
         const responseData = response.data;
         setChatList(prevChatList => {
           const chatRoomIds = prevChatList.map(chat => chat.chatRoomId);
@@ -147,8 +148,6 @@ const Chat = () => {
       });
   }, []);
 
-  console.log(chatList);
-
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
@@ -169,13 +168,11 @@ const Chat = () => {
                   <div>
                     <NameBox>
                       <p>{chat.receiverNickname}</p>
-                      <Unread>
-                        <p>
-                          {chat.unreadCount !== 0 ? chat.unreadCount : null}
-                        </p>
+                      <Unread unread={chat.unreadCount}>
+                        <p>{chat.unreadCount}</p>
                       </Unread>
                     </NameBox>
-                    <p>{chat.latestMessageTime}</p>
+                    <p>{chat.latestMessageTime.slice(0, 10)}</p>
                   </div>
                   <p>{chat.latestMessage}</p>
                 </DetailBox>

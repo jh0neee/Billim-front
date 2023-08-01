@@ -33,6 +33,13 @@ const MessageDate = styled.p`
   font-size: 0.85rem;
 `;
 
+const StartMessage = styled.p`
+  margin-top: 1rem;
+  text-align: center;
+  color: #343a40;
+  font-size: 0.85rem;
+`;
+
 const MessageInputBox = styled.div`
   display: flex;
   height: 20%;
@@ -51,6 +58,7 @@ const MessageChat = () => {
   const auth = useAuth();
   const chatRoomId = useLocation().pathname.slice(15);
   const today = format(new Date(), 'yyyy년 MM월 dd일');
+  const [startMessage, setStartMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [stompClient, setStompClient] = useState(null);
   const [formState, inputHandler] = useForm({}, false);
@@ -62,13 +70,13 @@ const MessageChat = () => {
       })
       .then(response => {
         console.log(response);
+        setStartMessage(response.data[0].message);
       })
       .catch(err => console.log(err));
 
     if (chatRoomId) {
       const socket = new SockJS(`http://localhost:8080/stomp/chat`);
       const client = Stomp.over(socket);
-      client.debug = null;
 
       client.connect({}, () => {
         setStompClient(client);
@@ -89,16 +97,25 @@ const MessageChat = () => {
     setMessages(prevMsg => [...prevMsg, messageBody]);
   };
 
-  let count = 0;
   const sendMessage = () => {
-    const messageData = {
-      chatRoomId,
-      senderId: count++,
-      message: formState.inputs.message.value,
-    };
-    console.log(messageData);
-    const headers = { Authorization: `Bearer ${auth.token}` };
-    stompClient.send(`send/text`, headers, JSON.stringify(messageData));
+    if (stompClient) {
+      const messageData = {
+        chatRoomId,
+        senderId: auth.memberId,
+        message: formState.inputs.message.value,
+      };
+      console.log(messageData);
+      const headers = { Authorization: `Bearer ${auth.token}` };
+      stompClient.send(
+        `/publish/send/text`,
+        headers,
+        JSON.stringify(messageData),
+      );
+    } else {
+      console.log(
+        'WebSocket 연결 실패: stompClient가 아직 설정되지 않았습니다.',
+      );
+    }
   };
 
   const submitHandler = e => {
@@ -110,6 +127,7 @@ const MessageChat = () => {
     <MessageChatLayout onSubmit={submitHandler}>
       <MessageBox>
         <MessageDate>{today}</MessageDate>
+        <StartMessage>{startMessage}</StartMessage>
         <div>
           {messages.map((msg, index) => (
             <div key={index}>{msg}</div>
