@@ -53,6 +53,8 @@ const DetailConfirm = ({
   tradeMethod,
   name,
   seller,
+  sellerId,
+  buyerId,
   category,
   amount,
   productId,
@@ -92,6 +94,11 @@ const DetailConfirm = ({
   const handlePayment = () => {
     if (startDate === null || endDate === null) {
       alert('날짜를 선택해주세요');
+      return;
+    }
+
+    if (sellerId === buyerId) {
+      alert('판매자는 구입할 수 없는 상품입니다.');
       return;
     }
 

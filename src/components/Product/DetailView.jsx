@@ -135,6 +135,8 @@ const DetailView = ({ items, onDeleteProduct }) => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
+  console.log(items);
+
   const deleteWarningHandler = () => {
     setShowConfirmModal(true);
   };
@@ -260,6 +262,8 @@ const DetailView = ({ items, onDeleteProduct }) => {
             tradeMethod={items.tradeMethods}
             name={items.productName}
             seller={items.sellerNickname}
+            sellerId={items.sellerMemberId}
+            buyerId={auth.memberId}
             category={items.category}
             amount={items.price}
             productId={items.productId}
