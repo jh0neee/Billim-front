@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled, { css, keyframes } from 'styled-components';
 
+import axios from 'axios';
 import theme from '../../styles/theme';
-import { TbMessageChatbot } from 'react-icons/tb';
+import ErrorModal from '../../util/ErrorModal';
 import { Profile } from '../UI/Profile';
 import { useAuth } from '../../hooks/useAuth';
+import { useLoadingError } from '../../hooks/useLoadingError';
+import { TbMessageChatbot } from 'react-icons/tb';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
 const NavList = styled.ul`
   margin-top: 0.5rem;
@@ -86,52 +90,85 @@ const DropMenu = styled.ul`
 `;
 
 const NavLinks = () => {
+  const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const [isSlideMenu, setIsSlideMenu] = useState(false);
+  const [profile, setProfile] = useState('');
+  const { error, clearError, errorHandler } = useLoadingError();
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const isMobile = window.innerWidth <= 480;
+
+  useEffect(() => {
+    axios
+      .get(`${url}/member/header`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+        params: {
+          memberId: auth.memberId,
+        },
+      })
+      .then(response => {
+        const userProfile = response.data.profileImageUrl;
+        setProfile(userProfile);
+      })
+      .catch(err => {
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+        } else {
+          errorHandler(err);
+        }
+      });
+  }, [auth.token, auth.memberId, profile]);
 
   const slideHandler = () => {
     setIsSlideMenu(!isSlideMenu);
   };
 
   return (
-    <NavList>
-      {!isMobile && isLoggedIn && (
-        <NavItem>
-          <StyledNavLink to="/chat">
-            <TbMessageChatbot size="38px" />
-          </StyledNavLink>
-        </NavItem>
-      )}
-      {isLoggedIn && (
-        <NavItem toggle onClick={slideHandler}>
-          <Profile size="35px" />
-          {isSlideMenu && (
-            <DropMenu show={isSlideMenu}>
-              {isMobile && (
+    <>
+      <ErrorModal error={error} onClear={clearError} />
+      <NavList>
+        {!isMobile && isLoggedIn && (
+          <NavItem>
+            <StyledNavLink to="/chat">
+              <TbMessageChatbot size="38px" />
+            </StyledNavLink>
+          </NavItem>
+        )}
+        {isLoggedIn && (
+          <NavItem toggle onClick={slideHandler}>
+            <Profile size="35px" src={profile} />
+            {isSlideMenu && (
+              <DropMenu show={isSlideMenu}>
+                {isMobile && (
+                  <li>
+                    <Link to="/chat">채팅하기</Link>
+                  </li>
+                )}
                 <li>
-                  <Link to="/chat">채팅하기</Link>
+                  <Link to="/mypage/purchase">마이페이지</Link>
                 </li>
-              )}
-              <li>
-                <Link to="/mypage/purchase">마이페이지</Link>
-              </li>
-              <li>
-                <Link to="/" onClick={() => auth.logout(false)}>
-                  로그아웃
-                </Link>
-              </li>
-            </DropMenu>
-          )}
-        </NavItem>
-      )}
-      {!isLoggedIn && (
-        <NavItem login>
-          <StyledNavLink to="/login">로그인</StyledNavLink>
-        </NavItem>
-      )}
-    </NavList>
+                <li>
+                  <Link to="/" onClick={() => auth.logout(false)}>
+                    로그아웃
+                  </Link>
+                </li>
+              </DropMenu>
+            )}
+          </NavItem>
+        )}
+        {!isLoggedIn && (
+          <NavItem login>
+            <StyledNavLink to="/login">로그인</StyledNavLink>
+          </NavItem>
+        )}
+      </NavList>
+    </>
   );
 };
 
