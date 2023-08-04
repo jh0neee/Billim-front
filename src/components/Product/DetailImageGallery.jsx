@@ -10,13 +10,11 @@ import { HiChevronRight, HiChevronLeft } from 'react-icons/hi';
 
 const DetailImage = styled.div`
   max-width: 778px;
-  max-height: 384px;
   margin: 2rem auto;
   display: grid;
   justify-items: center;
   grid-template-columns: repeat(2, 1fr);
-  column-gap: 10px;
-  overflow: hidden;
+  column-gap: 30px;
 
   > img {
     border-radius: 20px;
@@ -35,19 +33,14 @@ const MainImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: fill;
-
-  @media (max-width: 1110px) {
-    object-fit: contain;
-  }
-  @media ${theme.mobile} {
-    object-fit: fill;
-  }
 `;
+
 const SubImage = styled.img`
   display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  margin: auto;
+  width: 95%;
+  height: 95%;
+  object-fit: fill;
   border-radius: 20px;
 `;
 
