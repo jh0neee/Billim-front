@@ -47,7 +47,9 @@ const ModalFooter = styled.footer`
   display: flex;
   justify-content: flex-end;
   > * {
-    margin-left: 0.5rem;
+    &:last-child {
+      margin-left: 0.5rem;
+    }
   }
 `;
 
