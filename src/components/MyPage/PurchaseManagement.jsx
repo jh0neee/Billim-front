@@ -4,14 +4,15 @@ import styled, { css } from 'styled-components';
 
 import axios from 'axios';
 import Modal from '../UI/Modal';
+import theme from '../../styles/theme';
 import Button from '../UI/Button';
 import ErrorModal from '../../util/ErrorModal';
 import LoadingSpinner from '../UI/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
+import { NoneText } from './WishList';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { useCancelReservation } from '../../hooks/useCancelReservation';
-import theme from '../../styles/theme';
 import { useContentResize } from '../../hooks/useContentResize';
 
 const ContentBox = styled.div`
@@ -246,9 +247,7 @@ const PurchaseManagement = () => {
       </Modal>
       <p>구매관리</p>
       {purchaseProduct.length === 0 && (
-        <ContentBox>
-          <p>구매한 상품이 없습니다.</p>
-        </ContentBox>
+        <NoneText>구매한 상품이 없습니다.</NoneText>
       )}
       {updatedItem.map(item => (
         <ContentBox key={item.orderId} ref={contentRef}>
