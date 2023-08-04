@@ -36,6 +36,18 @@ const SaleLayout = styled.div`
   }
 `;
 
+const NoneText = styled.div`
+  text-align: center;
+  margin-top: 7rem;
+  line-height: 1.5;
+
+  > * {
+    &:last-child {
+      font-size: 0.8rem;
+    }
+  }
+`;
+
 const SaleBox = styled.div`
   position: relative;
   display: inline-block;
@@ -44,6 +56,8 @@ const SaleBox = styled.div`
 const SaleImage = styled.img`
   width: 180px;
   height: 180px;
+  border-radius: 10px;
+  border: 1px solid lightgray;
 
   @media (max-width: 1280px) {
     width: 140px;
@@ -66,9 +80,10 @@ const TextOverlay = styled.div`
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 98%;
   opacity: 0;
   background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
   color: white;
   font-size: 16px;
   text-align: center;
@@ -137,16 +152,23 @@ const SalesManagement = () => {
         <p>판매중인 상품</p>
         <EnrollButton to="/product/new">상품 등록</EnrollButton>
       </SaleHeader>
-      <SaleLayout>
-        {loadedData.map(item => (
-          <SaleBox key={item.productId}>
-            <Link to={`/mypage/sales/${item.productId}`}>
-              <SaleImage src={item.imageUrl} alt="상품이미지" />
-              <TextOverlay>{item.productName}</TextOverlay>
-            </Link>
-          </SaleBox>
-        ))}
-      </SaleLayout>
+      {loadedData.length === 0 ? (
+        <NoneText>
+          <p>새로운 상품을 등록해보세요! </p>
+          <p>&apos;상품 등록&apos; 버튼을 통해 당신의 물건을 공유해보세요.</p>
+        </NoneText>
+      ) : (
+        <SaleLayout>
+          {loadedData.map(item => (
+            <SaleBox key={item.productId}>
+              <Link to={`/mypage/sales/${item.productId}`}>
+                <SaleImage src={item.imageUrl} alt="상품이미지" />
+                <TextOverlay>{item.productName}</TextOverlay>
+              </Link>
+            </SaleBox>
+          ))}
+        </SaleLayout>
+      )}
     </>
   );
 };
