@@ -111,8 +111,18 @@ const ProductInformation = ({
   }, [tradeMethod, tradeSelectedOpt]);
 
   useEffect(() => {
-    const selectedTradeMethod = tradeSelectedOpt || tradeMethod[0];
-    onInput('tradeMethod', selectedTradeMethod, true);
+    const selectedTradeMethod = tradeSelectedOpt;
+    const activeTradeMethod = tradeMethod[0];
+
+    if (tradeSelectedOpt === '') {
+      if (tradeMethod.length === 1) {
+        onInput('tradeMethod', activeTradeMethod, true);
+      } else {
+        onInput('tradeMethod', selectedTradeMethod, false);
+      }
+    } else {
+      onInput('tradeMethod', selectedTradeMethod, true);
+    }
   }, [tradeMethod, tradeSelectedOpt]);
 
   return (

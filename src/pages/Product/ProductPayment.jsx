@@ -121,7 +121,13 @@ const ProductPayment = () => {
 
   const onSubmit = e => {
     e.preventDefault();
-    const combinedAddress = `${address?.value} ${address_detail?.value} ${address_legal?.value}`; // 전체 주소
+
+    if (!formState.inputs.tradeMethod.isValid) {
+      alert('거래방법을 선택해주세요');
+      return;
+    }
+
+    const combinedAddress = `${address?.value} ${address_detail?.value} ${address_legal?.value}`;
     const startAt = rentalDate.slice(0, 10);
     const endAt = rentalDate.slice(15);
 
@@ -135,9 +141,20 @@ const ProductPayment = () => {
     };
 
     if (formState.inputs.tradeMethod.value === 'DELIVERY') {
-      requestData.name = formState.inputs.name.value;
-      requestData.phone = formState.inputs.phone.value;
-      requestData.address = combinedAddress;
+      if (
+        !formState.inputs.name.isValid ||
+        !formState.inputs.phone.isValid ||
+        !address?.isValid ||
+        !address_detail?.isValid ||
+        !address_legal?.isValid
+      ) {
+        alert('배송을 위한 필수 입력란을 작성하세요.');
+        return;
+      } else {
+        requestData.name = formState.inputs.name.value;
+        requestData.phone = formState.inputs.phone.value;
+        requestData.address = combinedAddress;
+      }
     }
 
     onLoading(true);
