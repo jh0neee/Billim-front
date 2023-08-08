@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 import axios from 'axios';
@@ -49,6 +49,14 @@ const ParagraphBox = styled.div`
   }
 
   > * {
+    &:first-child {
+      cursor: pointer;
+    }
+
+    &:first-child:hover {
+      text-decoration: underline;
+    }
+
     &:nth-child(2) {
       padding: 0.5rem 0 1rem;
     }
@@ -156,6 +164,7 @@ const ExtraButton = styled(Button)`
 const PurchaseManagement = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
+  const navigate = useNavigate();
   const contentRef = useRef(null);
   const { contentResize: InformResize } = useContentResize(531, contentRef);
   const { contentResize: DateResize } = useContentResize(500, contentRef);
@@ -164,14 +173,22 @@ const PurchaseManagement = () => {
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const [purchaseProduct, setPurchaseProduct] = useState([]);
   const {
-    updatedItem,
     showReservaionModal,
     cancelCancellationHandler,
     cancelConfirmHandler,
     cancelReservationHandler,
-  } = useCancelReservation(purchaseProduct);
+  } = useCancelReservation(
+    purchaseProduct,
+    tokenErrorHandler,
+    onLoading,
+    errorHandler,
+  );
 
   useEffect(() => {
+    getPurchase();
+  }, []);
+
+  const getPurchase = () => {
     onLoading(true);
     axios
       .get(`${url}/order/my/purchase`, {
@@ -197,7 +214,7 @@ const PurchaseManagement = () => {
           errorHandler(err);
         }
       });
-  }, [auth.token]);
+  };
 
   let currentStatus;
   const StatusHandler = (status, start, end) => {
@@ -221,6 +238,53 @@ const PurchaseManagement = () => {
     return currentStatus;
   };
 
+  const toProduct = (isDeleted, id) => {
+    if (isDeleted) {
+      return alert('삭제된 상품입니다.');
+    } else {
+      return navigate(`/${id}/detail`);
+    }
+  };
+
+  const EnterChatRoom = (isDeleted, productId) => {
+    if (isDeleted) {
+      alert('삭제된 상품에 대한 문의는 할 수 없습니다.');
+      return;
+    }
+
+    axios
+      .post(
+        `${url}/api/chat/room/product/${productId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+          params: {
+            memberId: auth.memberId,
+          },
+        },
+      )
+      .then(response => {
+        const { chatRoomId } = response.data;
+
+        if (chatRoomId) {
+          navigate(`/chat/messages/${chatRoomId}`);
+        }
+      })
+      .catch(err => {
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
+      });
+  };
+
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
@@ -234,7 +298,11 @@ const PurchaseManagement = () => {
             <Button sub small width="60px" onClick={cancelCancellationHandler}>
               아니오
             </Button>
-            <Button small width="60px" onClick={cancelReservationHandler}>
+            <Button
+              small
+              width="60px"
+              onClick={() => cancelReservationHandler(getPurchase)}
+            >
               예
             </Button>
           </>
@@ -249,7 +317,7 @@ const PurchaseManagement = () => {
       {purchaseProduct.length === 0 && (
         <NoneText>구매한 상품이 없습니다.</NoneText>
       )}
-      {updatedItem.map(item => (
+      {purchaseProduct.map(item => (
         <ContentBox key={item.orderId} ref={contentRef}>
           <div>
             <PurchaseState>
@@ -265,7 +333,9 @@ const PurchaseManagement = () => {
                 dateResize={DateResize}
               />
               <ParagraphBox>
-                <Link to={`/${item.productId}/detail`}>{item.productName}</Link>
+                <div onClick={() => toProduct(item.deleted, item.productId)}>
+                  {item.productName}
+                </div>
                 <p>\ {item.price.toLocaleString('ko-KR')}</p>
                 <DateBox>
                   {DateResize ? (
@@ -294,7 +364,13 @@ const PurchaseManagement = () => {
                 <SellerBox>
                   {item.sellerNickname}
                   {!InformResize && (
-                    <ExtraButton small width="70px">
+                    <ExtraButton
+                      small
+                      width="70px"
+                      onClick={() =>
+                        EnterChatRoom(item.deleted, item.productId)
+                      }
+                    >
                       문의하기
                     </ExtraButton>
                   )}
@@ -303,7 +379,11 @@ const PurchaseManagement = () => {
             </ProductBox>
             <div>
               {InformResize && (
-                <ExtraButton small width="70px">
+                <ExtraButton
+                  small
+                  width="70px"
+                  onClick={() => EnterChatRoom(item.deleted, item.productId)}
+                >
                   문의하기
                 </ExtraButton>
               )}

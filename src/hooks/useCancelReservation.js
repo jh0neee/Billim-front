@@ -1,7 +1,15 @@
+import axios from 'axios';
 import { useState } from 'react';
+import { useAuth } from './useAuth';
 
-export const useCancelReservation = initialData => {
-  const [updatedItem, setUpdatedItem] = useState(initialData);
+export const useCancelReservation = (
+  purchaseProduct,
+  tokenErrorHandler,
+  onLoading,
+  errorHandler,
+) => {
+  const url = process.env.REACT_APP_URL;
+  const auth = useAuth();
   const [selectedId, setSelectedId] = useState('');
   const [showReservaionModal, setShowReservationModal] = useState(false);
 
@@ -13,17 +21,37 @@ export const useCancelReservation = initialData => {
     setSelectedId(id);
   };
 
-  const cancelReservationHandler = () => {
+  const cancelReservationHandler = getPurchase => {
     setShowReservationModal(false);
-    setUpdatedItem(
-      updatedItem.map(item =>
-        item.id === selectedId ? { ...item, status: '취소' } : item,
-      ),
-    );
+
+    const orderItem = purchaseProduct.find(item => item.orderId === selectedId);
+    const orderId = orderItem.orderId;
+
+    onLoading(true);
+    axios
+      .delete(`${url}/order/${orderId}`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+      })
+      .then(() => {
+        getPurchase();
+        onLoading(false);
+      })
+      .catch(err => {
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
+      });
   };
 
   return {
-    updatedItem,
     showReservaionModal,
     cancelCancellationHandler,
     cancelConfirmHandler,
