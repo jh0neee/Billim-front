@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { Link, Outlet } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import styled from 'styled-components';
 
 import axios from 'axios';
 import ErrorModal from '../util/ErrorModal';
-import exampleImage from '../asset/image/exampleImage.jpg';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import { Profile } from '../components/UI/Profile';
 import { useAuth } from '../hooks/useAuth';
@@ -83,30 +83,13 @@ const ChatContent = styled.div`
 const Chat = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
+  const updateMsgChatRoomId = useSelector(state => state.chat.chatRoomId);
+  const updateMessage = useSelector(state => state.chat.message);
+  const [chatList, setChatList] = useState([]);
+  const [showLatestMessage, setShowLatestMessage] = useState(false);
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
-  const [chatList, setChatList] = useState([
-    {
-      chatRoomId: 12345,
-      receiverId: 1,
-      receiverNickname: '판매자',
-      receiverProfileImageUrl:
-        'https://billim.s3.ap-northeast-2.amazonaws.com/profile/profile-default.png',
-      unreadCount: 25,
-      latestMessage: '마지막 메시지',
-      latestMessageTime: '2023-07-21',
-    },
-    {
-      chatRoomId: 56789,
-      receiverId: 2,
-      receiverNickname: '판매자2',
-      receiverProfileImageUrl: exampleImage,
-      unreadCount: 2,
-      latestMessage: '감사합니다',
-      latestMessageTime: '2023-07-25',
-    },
-  ]);
 
   useEffect(() => {
     onLoading(true);
@@ -148,6 +131,10 @@ const Chat = () => {
       });
   }, []);
 
+  useEffect(() => {
+    setShowLatestMessage(true);
+  }, [updateMessage]);
+
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
@@ -168,13 +155,18 @@ const Chat = () => {
                   <div>
                     <NameBox>
                       <p>{chat.receiverNickname}</p>
-                      <Unread unread={chat.unreadCount}>
-                        <p>{chat.unreadCount}</p>
+                      <Unread unread={chat.unreadCount - 1}>
+                        <p>{chat.unreadCount - 1}</p>
                       </Unread>
                     </NameBox>
                     <p>{chat.latestMessageTime.slice(0, 10)}</p>
                   </div>
-                  <p>{chat.latestMessage}</p>
+                  <p>
+                    {chat.chatRoomId === updateMsgChatRoomId &&
+                    showLatestMessage
+                      ? updateMessage
+                      : chat.latestMessage}
+                  </p>
                 </DetailBox>
               </ReceiverList>
             ))}
