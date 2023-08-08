@@ -167,32 +167,24 @@ const ProductPayment = () => {
       })
       .then(response => {
         const paymentData = response.data;
-
-        const IMP = window.IMP;
-        IMP.init('imp71210173');
-
-        const data = {
-          pg: 'kakaopay.TC0ONETIME',
-          pay_method: 'card',
-          merchant_uid: paymentData.merchantUid,
-          name: paymentData.name,
-          amount: paymentData.amount,
-        };
-
-        IMP.request_pay(data, async response => {
-          if (response.success) {
-            try {
-              await axios.get(`${url}/payment/complete`, {
+        if (paymentData.amount === 0) {
+          axios
+            .post(
+              `${url}/payment/complete/zero-amount`,
+              {},
+              {
                 headers: {
                   Authorization: `Bearer ${auth.token}`,
                 },
                 params: {
-                  imp_uid: response.imp_uid,
-                  merchant_uid: response.merchant_uid,
+                  merchant_uid: paymentData.merchantUid,
                 },
-              });
+              },
+            )
+            .then(() => {
               navigate('/mypage/purchase');
-            } catch (err) {
+            })
+            .catch(err => {
               if (
                 err.response.status === 401 &&
                 err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
@@ -202,32 +194,69 @@ const ProductPayment = () => {
               } else {
                 errorHandler(err);
               }
-            }
-          } else {
-            try {
-              await axios.get(`${url}/payment/failure`, {
-                headers: {
-                  Authorization: `Bearer ${auth.token}`,
-                },
-                params: {
-                  merchant_uid: response.merchant_uid,
-                },
-              });
-              setShowCancelModal(true);
-              onLoading(false);
-            } catch (err) {
-              if (
-                err.response.status === 401 &&
-                err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
-              ) {
-                tokenErrorHandler(err);
+            });
+        } else {
+          const IMP = window.IMP;
+          IMP.init('imp71210173');
+
+          const data = {
+            pg: 'kakaopay.TC0ONETIME',
+            pay_method: 'card',
+            merchant_uid: paymentData.merchantUid,
+            name: paymentData.name,
+            amount: paymentData.amount,
+          };
+
+          IMP.request_pay(data, async response => {
+            if (response.success) {
+              try {
+                await axios.get(`${url}/payment/complete`, {
+                  headers: {
+                    Authorization: `Bearer ${auth.token}`,
+                  },
+                  params: {
+                    imp_uid: response.imp_uid,
+                    merchant_uid: response.merchant_uid,
+                  },
+                });
+                navigate('/mypage/purchase');
+              } catch (err) {
+                if (
+                  err.response.status === 401 &&
+                  err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+                ) {
+                  tokenErrorHandler(err);
+                  onLoading(false);
+                } else {
+                  errorHandler(err);
+                }
+              }
+            } else {
+              try {
+                await axios.get(`${url}/payment/failure`, {
+                  headers: {
+                    Authorization: `Bearer ${auth.token}`,
+                  },
+                  params: {
+                    merchant_uid: response.merchant_uid,
+                  },
+                });
+                setShowCancelModal(true);
                 onLoading(false);
-              } else {
-                errorHandler(err);
+              } catch (err) {
+                if (
+                  err.response.status === 401 &&
+                  err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+                ) {
+                  tokenErrorHandler(err);
+                  onLoading(false);
+                } else {
+                  errorHandler(err);
+                }
               }
             }
-          }
-        });
+          });
+        }
         onLoading(false);
       })
       .catch(err => {
