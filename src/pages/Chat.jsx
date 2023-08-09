@@ -155,8 +155,8 @@ const Chat = () => {
                   <div>
                     <NameBox>
                       <p>{chat.receiverNickname}</p>
-                      <Unread unread={chat.unreadCount - 1}>
-                        <p>{chat.unreadCount - 1}</p>
+                      <Unread unread={chat.unreadCount}>
+                        <p>{chat.unreadCount}</p>
                       </Unread>
                     </NameBox>
                     <p>{chat.latestMessageTime.slice(0, 10)}</p>
