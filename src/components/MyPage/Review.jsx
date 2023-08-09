@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import axios from 'axios';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
-import { VALIDATOR_REQUIRE } from '../../util/validators';
-import { useForm } from '../../hooks/useForm';
-import { review } from '../../data';
 import StarRating from './StarRating';
+import ErrorModal from '../../util/ErrorModal';
+import LoadingSpinner from '../UI/LoadingSpinner';
+import { useForm } from '../../hooks/useForm';
+import { useAuth } from '../../hooks/useAuth';
+import { useLoadingError } from '../../hooks/useLoadingError';
+import { VALIDATOR_REQUIRE } from '../../util/validators';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
 const ReviewLayout = styled.div`
   background-color: #ededed;
@@ -33,12 +39,12 @@ const BottomList = styled.div`
 
   > p {
     margin-bottom: 5rem;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
   }
 `;
 
 const ReviewItemTextBox = styled.div`
-  margin: 0.5rem 0 0 1.5rem;
+  margin: auto 0 auto 1.5rem;
   font-size: 0.8rem;
 
   > * {
@@ -74,6 +80,11 @@ const WritedReview = styled.div`
   }
 `;
 
+const ProductImage = styled.img`
+  width: 100px;
+  height: 120px;
+`;
+
 const ReviewInputBox = styled.form`
   display: flex;
   flex-direction: column;
@@ -92,49 +103,133 @@ const ExtraButton = styled(Button)`
 `;
 
 const Review = () => {
+  const url = process.env.REACT_APP_URL;
+  const auth = useAuth();
   const [isOpenReview, setIsOpenReview] = useState('');
+  const [reviewList, setReviewList] = useState([]);
   const [rating, setRating] = useState(0);
   const [formState, inputHandler] = useForm({}, false);
+  const { isLoading, error, onLoading, clearError, errorHandler } =
+    useLoadingError();
+  const { tokenErrorHandler } = useTokenRefresher(auth);
+
+  useEffect(() => {
+    getReview();
+  }, []);
+
+  const getReview = () => {
+    onLoading(true);
+
+    axios
+      .get(`${url}/review/my/list`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+        params: {
+          memberId: auth.memberId,
+        },
+      })
+      .then(response => {
+        setReviewList(
+          [
+            ...response.data.writableReviewList,
+            ...response.data.writtenReviewList,
+          ].sort(
+            (a, b) => new Date(b.orderCreatedAt) - new Date(a.orderCreatedAt),
+          ),
+        );
+        onLoading(false);
+      })
+      .catch(err => {
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+        } else {
+          errorHandler(err);
+        }
+      });
+  };
 
   const toggleReview = id => {
     setIsOpenReview(prev => (prev !== id ? id : false));
   };
 
-  const reviewSubmitHandler = e => {
+  const reviewSubmitHandler = (e, id) => {
     e.preventDefault();
-    console.log(formState.inputs, rating);
+
+    if (!formState.isValid) {
+      alert('빈칸 없이 작성해주세요.');
+      return;
+    }
+
+    onLoading(true);
+
+    axios
+      .post(
+        `${url}/review/write`,
+        {
+          content: formState.inputs.review.value,
+          orderId: id,
+          StarRating: rating,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${auth.token}`,
+          },
+        },
+      )
+      .then(() => {
+        getReview();
+        onLoading(false);
+      })
+      .catch(err => {
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+        } else {
+          errorHandler(err);
+        }
+      });
   };
 
   return (
     <>
+      <ErrorModal error={error} onClear={clearError} />
       <p>구매 후기</p>
-      {review.map(item => (
-        <ReviewLayout key={item.id}>
+      {isLoading && <LoadingSpinner asOverlay />}
+      {reviewList.map(item => (
+        <ReviewLayout key={item.orderId}>
           <ReviewItemList>
             <TopList>
-              <img
-                src="https://via.placeholder.com/100x120"
-                alt="상품예시이미지"
-              />
+              <Link to={`/${item.productId}/detail`}>
+                <ProductImage src={item.productImageUrl} alt="상품이미지" />
+              </Link>
               <ReviewItemTextBox>
-                <p>{item.name}</p>
-                <p>\ {item.amount.toLocaleString('ko-KR')}</p>
-                <p>{item.username}</p>
+                <p>{item.productName}</p>
+                <p>\ {item.price.toLocaleString('kr-KR')}</p>
+                <p>{item.sellerNickname}</p>
               </ReviewItemTextBox>
             </TopList>
             <BottomList>
-              <p>주문일시 : {item.date}</p>
-              {!item.isReview && (
-                <ExtraButton onClick={() => toggleReview(item.id)}>
+              <p>{item.orderCreatedAt.slice(0, 19)}</p>
+              {item.isWritable && (
+                <ExtraButton onClick={() => toggleReview(item.orderId)}>
                   후기작성
                 </ExtraButton>
               )}
             </BottomList>
           </ReviewItemList>
-          {!item.isReview && isOpenReview === item.id && (
+          {item.isWritable && isOpenReview === item.orderId && (
             <WritedReview review>
               <p> ➤ 후기 작성하기</p>
-              <ReviewInputBox onSubmit={reviewSubmitHandler}>
+              <ReviewInputBox
+                onSubmit={e => reviewSubmitHandler(e, item.orderId)}
+              >
                 <StarRating rating={rating} setRating={setRating} />
                 <Input
                   element="textarea"
@@ -145,16 +240,14 @@ const Review = () => {
                   errorText={null}
                   onInput={inputHandler}
                 />
-                <ExtraButton type="submit" disabled={!formState.isValid}>
-                  확인
-                </ExtraButton>
+                <ExtraButton type="submit">확인</ExtraButton>
               </ReviewInputBox>
             </WritedReview>
           )}
-          {item.isReview && (
+          {!item.isWritable && (
             <WritedReview>
               <p>내가 작성한 후기</p>
-              <div>{item.review}</div>
+              <div>{item.content}</div>
             </WritedReview>
           )}
         </ReviewLayout>

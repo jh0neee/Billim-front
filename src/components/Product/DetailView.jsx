@@ -135,8 +135,6 @@ const DetailView = ({ items, onDeleteProduct }) => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
-  console.log(items);
-
   const deleteWarningHandler = () => {
     setShowConfirmModal(true);
   };
@@ -243,9 +241,9 @@ const DetailView = ({ items, onDeleteProduct }) => {
         </ButtonLayout>
         <DetailHeader
           name={items.productName}
-          scope={items.starRating}
+          scope={items.starRating.toFixed(1)}
           grade={items.sellerGrade}
-          reviewCount={items.productReviewLists.length}
+          reviewCount={items.productReviewListResponses.length}
         />
         <DetailImageGallery images={items.imageUrls} />
         <DetailBox>
@@ -273,7 +271,7 @@ const DetailView = ({ items, onDeleteProduct }) => {
         <StyledLine />
         <DetailReviewBox>
           <ReviewTitle>후기</ReviewTitle>
-          <DetailReview data={items.productReviewLists} />
+          <DetailReview data={items.productReviewListResponses} />
         </DetailReviewBox>
       </DetailLayout>
     </>

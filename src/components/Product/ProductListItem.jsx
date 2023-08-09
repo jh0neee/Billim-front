@@ -201,7 +201,7 @@ const ProductListItem = ({ items }) => {
                   <ProductParagraph>{item.productName}</ProductParagraph>
                   <ProductParagraph>
                     <RiStarSFill />
-                    {item.starRating}
+                    {item.starRating.toFixed(1)}
                   </ProductParagraph>
                 </ProductItemBox>
                 <ProductParagraph amount>
