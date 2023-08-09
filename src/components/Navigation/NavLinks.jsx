@@ -92,6 +92,7 @@ const DropMenu = styled.ul`
 const NavLinks = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
+  const token = useSelector(state => state.auth.token);
   const [isSlideMenu, setIsSlideMenu] = useState(false);
   const [profile, setProfile] = useState('');
   const { error, clearError, errorHandler } = useLoadingError();
@@ -100,30 +101,32 @@ const NavLinks = () => {
   const isMobile = window.innerWidth <= 480;
 
   useEffect(() => {
-    axios
-      .get(`${url}/member/header`, {
-        headers: {
-          Authorization: `Bearer ${auth.token}`,
-        },
-        params: {
-          memberId: auth.memberId,
-        },
-      })
-      .then(response => {
-        const userProfile = response.data.profileImageUrl;
-        setProfile(userProfile);
-      })
-      .catch(err => {
-        if (
-          err.response.status === 401 &&
-          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
-        ) {
-          tokenErrorHandler(err);
-        } else {
-          errorHandler(err);
-        }
-      });
-  }, [auth.token, auth.memberId, profile]);
+    if (token) {
+      axios
+        .get(`${url}/member/header`, {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+          params: {
+            memberId: auth.memberId,
+          },
+        })
+        .then(response => {
+          const userProfile = response.data.profileImageUrl;
+          setProfile(userProfile);
+        })
+        .catch(err => {
+          if (
+            err.response.status === 401 &&
+            err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+          ) {
+            tokenErrorHandler(err);
+          } else {
+            errorHandler(err);
+          }
+        });
+    }
+  }, [auth.token, profile]);
 
   const slideHandler = () => {
     setIsSlideMenu(!isSlideMenu);
