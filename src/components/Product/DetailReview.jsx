@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO';
 import { Profile } from '../UI/Profile';
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
+import SmallListPagination from '../UI/SmallListPagination';
 
 const ReviewLayout = styled.div`
   display: grid;
@@ -18,10 +18,6 @@ const ReviewLayout = styled.div`
   }
 `;
 
-const ReviewIconBox = styled.div`
-  margin: 2rem auto 0;
-`;
-
 const ReviewContent = styled.div`
   width: 100%;
   border-bottom: ${({ dataZero }) => (dataZero ? '0' : '1px solid #dee2e6')};
@@ -33,7 +29,7 @@ const ReviewContent = styled.div`
     }
 
     &:last-child {
-      margin: ${({ dataZero }) => (dataZero ? '0' : '2rem 1rem 1rem')};
+      margin: ${({ dataZero }) => (dataZero ? '0' : '0.5rem 1rem 0')};
     }
   }
 `;
@@ -49,12 +45,17 @@ const ReviewUserBox = styled.div`
 `;
 
 const DetailReview = ({ data }) => {
-  const [isViewMore, setIsViewMore] = useState(false);
-  const exampleReview = data.slice(0, 4);
-  const moreReview = data.slice(4);
+  const itemsPerPage = 4;
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const handleViewMore = () => {
-    setIsViewMore(!isViewMore);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = data.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+
+  const handlePageChange = newPage => {
+    setCurrentPage(newPage);
   };
 
   const dateFormat = date => {
@@ -69,7 +70,7 @@ const DetailReview = ({ data }) => {
             <p>작성된 리뷰가 없습니다.</p>
           </ReviewContent>
         )}
-        {exampleReview.map(review => (
+        {currentItems.map(review => (
           <ReviewContent key={review.reviewId}>
             <div>
               <Profile src={review.profileImageUrl} size="45px" />
@@ -81,29 +82,12 @@ const DetailReview = ({ data }) => {
             <p>{review.content}</p>
           </ReviewContent>
         ))}
-
-        {isViewMore &&
-          moreReview.map(review => (
-            <ReviewContent key={review.reviewId}>
-              <div>
-                <Profile size="45px" />
-                <ReviewUserBox>
-                  <p>{review.nickname}</p>
-                  <p>{dateFormat(review.createdDate)}</p>
-                </ReviewUserBox>
-              </div>
-              <p>{review.content}</p>
-            </ReviewContent>
-          ))}
       </ReviewLayout>
-      <ReviewIconBox>
-        {data.length > 4 &&
-          (isViewMore ? (
-            <MdKeyboardArrowUp size="35px" onClick={handleViewMore} />
-          ) : (
-            <MdKeyboardArrowDown size="35px" onClick={handleViewMore} />
-          ))}
-      </ReviewIconBox>
+      <SmallListPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handlePageChange={handlePageChange}
+      />
     </>
   );
 };
