@@ -29,6 +29,7 @@ import MessageChat from './components/Chat/MessageChat.jsx';
 import BlockChat from './components/Chat/BlockChat.jsx';
 import EmailConfirm from './pages/Auth/EmailConfirm.jsx';
 import { pageAction } from './store/currentPage.js';
+import KakaoRedirect from './pages/Auth/KakaoRedirect.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -97,6 +98,7 @@ function App() {
         <Route path="/emailverify" element={<EmailVerification />} />
         <Route path="/emailverify/confirm" element={<EmailConfirm />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/oauth/kakao" element={<KakaoRedirect />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     );

@@ -90,6 +90,14 @@ const SignIn = () => {
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
 
+  const REST_API_KEY = process.env.REACT_APP_KAKAO_REST_API;
+  const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI;
+  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+  const KakaoLoginHandler = () => {
+    window.location.href = KAKAO_AUTH_URL;
+  };
+
   const SubmitHandler = e => {
     e.preventDefault();
     onLoading(true);
@@ -146,7 +154,9 @@ const SignIn = () => {
         </Button>
         <ButtonBox>
           <KakaoIcon />
-          <Button>카카오 로그인</Button>
+          <Button type="button" onClick={KakaoLoginHandler}>
+            카카오 로그인
+          </Button>
         </ButtonBox>
         <FindButtonBox>
           <p>비밀번호를 잊어버리셨나요?</p>
