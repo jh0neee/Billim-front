@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useAuth } from './useAuth';
 
 export const useCancelReservation = (
-  purchaseProduct,
+  products,
   tokenErrorHandler,
   onLoading,
   errorHandler,
@@ -21,10 +21,9 @@ export const useCancelReservation = (
     setSelectedId(id);
   };
 
-  const cancelReservationHandler = getPurchase => {
+  const cancelReservationHandler = getList => {
     setShowReservationModal(false);
-
-    const orderItem = purchaseProduct.find(item => item.orderId === selectedId);
+    const orderItem = products.find(item => item.orderId === selectedId);
     const orderId = orderItem.orderId;
 
     onLoading(true);
@@ -35,7 +34,7 @@ export const useCancelReservation = (
         },
       })
       .then(() => {
-        getPurchase();
+        getList();
         onLoading(false);
       })
       .catch(err => {

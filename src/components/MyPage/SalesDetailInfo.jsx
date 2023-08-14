@@ -1,10 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+import axios from 'axios';
 import Button from '../UI/Button';
 import Card from '../UI/Card';
 import Modal from '../UI/Modal';
 import { Profile } from '../UI/Profile';
+import { useAuth } from '../../hooks/useAuth';
 
 const SaleInfoLayout = styled.div`
   margin: 3rem 0 0;
@@ -17,10 +20,7 @@ const SaleInfoLayout = styled.div`
 `;
 
 const SaleBottomBox = styled.div`
-  column-count: 2;
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
 
   > * {
     &:last-child {
@@ -29,23 +29,65 @@ const SaleBottomBox = styled.div`
       }
     }
   }
+
+  @media (min-width: 1101px) {
+    column-count: 2;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  @media (max-width: 500px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const BuyerInfo = styled.div`
   display: flex;
   align-items: center;
+
+  @media (min-width: 500px) and (max-width: 1100px) {
+    width: 100%;
+  }
+`;
+
+const EmptyParagraph = styled.p`
+  font-size: 0.7rem;
+
+  @media (min-width: 811px) {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 0.6rem;
+  }
 `;
 
 const BottomTextBox = styled.div`
-  margin-left: 1rem;
-  font-size: 0.8rem;
+  margin-left: 0.7rem;
+  font-size: 0.7rem;
 
   > p {
     padding-bottom: 0.25rem;
     text-decoration-line: ${props =>
-      props.status === '취소' ? 'line-through' : 'none'};
+      props.status === 'CANCELED' ? 'line-through' : 'none'};
     text-decoration-thickness: 1px;
     text-decoration-color: #ec0b0b;
+  }
+
+  > * {
+    &:last-child {
+      padding-top: 0.25rem;
+      padding-bottom: 0;
+    }
+  }
+
+  @media (min-width: 811px) {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 0.6rem;
   }
 `;
 
@@ -60,22 +102,78 @@ const ListCard = styled(Card)`
   }
 `;
 
+const ButtonBox = styled.div`
+  @media (min-width: 500px) and (max-width: 1100px) {
+    width: 71px;
+  }
+
+  @media (max-width: 500px) {
+    align-self: flex-end;
+  }
+`;
+
 const ExtraButton = styled(Button)`
   margin-left: 0.5rem;
   width: 55px;
   height: 18px;
   font-size: 10px;
   font-weight: 400;
+
+  @media (min-width: 500px) and (max-width: 1100px) {
+    margin-right: 0.5rem;
+  }
 `;
 
 const SalesDetailInfo = ({
   label,
+  items,
+  productId,
   showModal,
   onConfirm,
   onCancellation,
   onCancelHandler,
-  items,
+  onLoading,
+  errorHandler,
+  tokenErrorHandler,
 }) => {
+  const url = process.env.REACT_APP_URL;
+  const auth = useAuth();
+  const navigate = useNavigate();
+
+  const EnterChatRoom = buyerId => {
+    axios
+      .post(
+        `${url}/api/chat/room/product/${productId}/${buyerId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+          params: {
+            memberId: auth.memberId,
+          },
+        },
+      )
+      .then(response => {
+        const { chatRoomId } = response.data;
+
+        if (chatRoomId) {
+          navigate(`/chat/messages/${chatRoomId}`);
+        }
+      })
+      .catch(err => {
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
+      });
+  };
+
   return (
     <>
       <Modal
@@ -103,26 +201,28 @@ const SalesDetailInfo = ({
         <p>{label}</p>
         <ListCard width="95%">
           {items.length === 0 ? (
-            <p>{label}이 없습니다.</p>
+            <EmptyParagraph>현재 {label}이 없습니다.</EmptyParagraph>
           ) : (
             items.map(item => (
               <>
-                <SaleBottomBox key={item.id}>
+                <SaleBottomBox key={item.orderId}>
                   <BuyerInfo>
-                    <Profile size="70px" />
+                    <Profile size="45px" src={item.buyerProfileImageUrl} />
                     <BottomTextBox status={item.status}>
-                      <p>구매자: {item.customer}</p>
-                      <p>거래방법: {item.trade}</p>
-                      <p>대여기간: {item.date}</p>
+                      <p>구매자: {item.buyerNickname}</p>
+                      <p>거래방법: {item.tradeMethods}</p>
+                      <p>{`${item.startAt} ~ ${item.endAt}`}</p>
                     </BottomTextBox>
                   </BuyerInfo>
-                  {item.status === '대기중' ? (
-                    <div>
-                      <ExtraButton onClick={() => onConfirm(item.id)}>
+                  {label === '대기 내역' && item.status === 'DONE' ? (
+                    <ButtonBox>
+                      <ExtraButton onClick={() => EnterChatRoom(item.buyerId)}>
+                        채팅하기
+                      </ExtraButton>
+                      <ExtraButton onClick={() => onConfirm(item.orderId)}>
                         취소하기
                       </ExtraButton>
-                      <ExtraButton>채팅하기</ExtraButton>
-                    </div>
+                    </ButtonBox>
                   ) : null}
                 </SaleBottomBox>
                 <hr width="100%" />
