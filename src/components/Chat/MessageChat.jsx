@@ -212,7 +212,7 @@ const MessageChat = ({ stompClient }) => {
       .then(response => {
         const messageData = response.data;
         getProductInfo();
-        console.log(messageData);
+        console.log('처음 이전 메시지 요청: ', messageData);
         const firstDate = format(
           parseISO(messageData[0].sendAt),
           'yyyy년 MM월 dd일',
@@ -234,7 +234,7 @@ const MessageChat = ({ stompClient }) => {
       });
 
     if (stompClient) {
-      stompClient.subscribe(`/subscribe/chat/${chatRoomId}`, onMessageRecieved);
+      stompClient.subscribe(`/subscribe/chat/${chatRoomId}`, onMessageReceived);
 
       return () => {
         stompClient.unsubscribe(`/subscribe/chat/${chatRoomId}`);
@@ -245,7 +245,7 @@ const MessageChat = ({ stompClient }) => {
     }
   }, [chatRoomId]);
 
-  const onMessageRecieved = message => {
+  const onMessageReceived = message => {
     const messageBody = JSON.parse(message.body);
     console.log('메시지를 받았습니다:', messageBody);
     // 중복 체크
@@ -325,7 +325,7 @@ const MessageChat = ({ stompClient }) => {
   };
 
   const MessageLists = (messages, msg, index, apple) => {
-    console.log(msg);
+    // console.log(msg, apple);
     const isSentByRoom = msg.chatRoomId === Number(chatRoomId);
     const isSentByUser = msg.senderId === auth.memberId;
     const timeValue = convertToAmPmFormat(msg.sendAt);
@@ -341,42 +341,78 @@ const MessageChat = ({ stompClient }) => {
       nextMessage &&
       msg.sendAt.slice(0, 10) !== nextMessage.sendAt.slice(0, 10);
 
-    return (
-      <React.Fragment key={msg.messageId}>
-        {trueMsg && isSameDateAsNext && (
-          <MessageDate>
-            {formatDate(nextMessage.sendAt.slice(0, 10))}
-          </MessageDate>
-        )}
-        <MessageContainer isSent={isSentByUser}>
-          {trueMsg && isSentByRoom && isSentByUser && (
-            <ChatReadTime isSent={isSentByUser}>
-              <ChatRead hasTime={!isSameTimeAsNext}>
-                {!msg.read && '1'}
-              </ChatRead>
-              {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
-            </ChatReadTime>
+    if (apple === 'pastMessage' && !msg.newMessage) {
+      return (
+        <React.Fragment key={msg.messageId}>
+          {isSameDateAsNext && (
+            <MessageDate>
+              {formatDate(nextMessage.sendAt.slice(0, 10))}
+            </MessageDate>
           )}
-          {trueMsg && (
+          <MessageContainer isSent={isSentByUser}>
+            {isSentByRoom && isSentByUser && (
+              <ChatReadTime isSent={isSentByUser}>
+                <ChatRead hasTime={!isSameTimeAsNext}>
+                  {!msg.read && '1'}
+                </ChatRead>
+                {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
+              </ChatReadTime>
+            )}
+
             <ChatMessageBox isSent={isSentByUser}>
               <p>{msg.message}</p>
             </ChatMessageBox>
+
+            {isSentByRoom && !isSentByUser && (
+              <ChatReadTime isSent={isSentByUser}>
+                <ChatRead hasTime={!isSameTimeAsNext}>
+                  {!msg.read && '1'}
+                </ChatRead>
+                {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
+              </ChatReadTime>
+            )}
+          </MessageContainer>
+        </React.Fragment>
+      );
+    } else if (apple === 'currentMessage' && msg.newMessage) {
+      return (
+        <React.Fragment key={msg.messageId}>
+          {trueMsg && isSameDateAsNext && (
+            <MessageDate>
+              {formatDate(nextMessage.sendAt.slice(0, 10))}
+            </MessageDate>
           )}
-          {trueMsg && isSentByRoom && !isSentByUser && (
-            <ChatReadTime isSent={isSentByUser}>
-              <ChatRead hasTime={!isSameTimeAsNext}>
-                {!msg.read && '1'}
-              </ChatRead>
-              {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
-            </ChatReadTime>
-          )}
-        </MessageContainer>
-      </React.Fragment>
-    );
+          <MessageContainer isSent={isSentByUser}>
+            {trueMsg && isSentByRoom && isSentByUser && (
+              <ChatReadTime isSent={isSentByUser}>
+                <ChatRead hasTime={!isSameTimeAsNext}>
+                  {!msg.read && '1'}
+                </ChatRead>
+                {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
+              </ChatReadTime>
+            )}
+            {trueMsg && (
+              <ChatMessageBox isSent={isSentByUser}>
+                <p>{msg.message}</p>
+              </ChatMessageBox>
+            )}
+            {trueMsg && isSentByRoom && !isSentByUser && (
+              <ChatReadTime isSent={isSentByUser}>
+                <ChatRead hasTime={!isSameTimeAsNext}>
+                  {!msg.read && '1'}
+                </ChatRead>
+                {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
+              </ChatReadTime>
+            )}
+          </MessageContainer>
+        </React.Fragment>
+      );
+    }
   };
 
   const renderPastMessages = () => {
     // 이전 메시지 내용 불러오기
+    console.log('pastMessage: ', pastMessages);
     return pastMessages.map((msg, index) =>
       MessageLists(pastMessages, msg, index, 'pastMessage'),
     );
