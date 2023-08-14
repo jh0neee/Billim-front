@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { Link, Outlet } from 'react-router-dom';
+
+import SockJS from 'sockjs-client';
+import * as StompJS from '@stomp/stompjs';
 
 import axios from 'axios';
-import exampleImage from '../asset/image/exampleImage.jpg';
+import ErrorModal from '../util/ErrorModal';
+import LoadingSpinner from '../components/UI/LoadingSpinner';
 import { Profile } from '../components/UI/Profile';
 import { useAuth } from '../hooks/useAuth';
 import { useLoadingError } from '../hooks/useLoadingError';
-import ErrorModal from '../util/ErrorModal';
-import LoadingSpinner from '../components/UI/LoadingSpinner';
+import { useTokenRefresher } from '../hooks/useTokenRefresher';
+import MessageChat from '../components/Chat/MessageChat';
 
 const ChatLayout = styled.div`
   margin-top: 85px;
@@ -63,8 +68,10 @@ const Unread = styled.div`
   margin-left: 0.2rem;
   padding: 4px;
   border-radius: 10px;
-  background-color: #ff3932;
+  background-color: ${props => (props.unread !== 0 ? '#ff3932' : 'none')};
+
   > p {
+    visibility: ${props => (props.unread !== 0 ? 'visible' : 'hidden')};
     font-family: TRoundWind;
     font-size: 0.5rem;
     color: white;
@@ -80,29 +87,13 @@ const ChatContent = styled.div`
 const Chat = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
+  const updateMsgChatRoomId = useSelector(state => state.chat.chatRoomId);
+  const [chatList, setChatList] = useState([]);
+  const [stompClient, setStompClient] = useState(null);
+  const [showLatestMessage, setShowLatestMessage] = useState('');
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
-  const [chatList, setChatList] = useState([
-    {
-      chatRoomId: 1,
-      receiverId: 1,
-      receiverNickname: '판매자',
-      receiverProfileImageUrl:
-        'https://billim.s3.ap-northeast-2.amazonaws.com/profile/profile-default.png',
-      unreadCount: 25,
-      latestMessage: '마지막 메시지',
-      latestMessageTime: '2023-07-21',
-    },
-    {
-      chatRoomId: 2,
-      receiverId: 2,
-      receiverNickname: '판매자2',
-      receiverProfileImageUrl: exampleImage,
-      unreadCount: 2,
-      latestMessage: '감사합니다',
-      latestMessageTime: '2023-07-25',
-    },
-  ]);
 
   useEffect(() => {
     onLoading(true);
@@ -116,8 +107,8 @@ const Chat = () => {
         },
       })
       .then(response => {
-        console.log(response.data);
         const responseData = response.data;
+        console.log(responseData.map(chat => chat.chatRoomId));
         setChatList(prevChatList => {
           const chatRoomIds = prevChatList.map(chat => chat.chatRoomId);
           const newChats = responseData.filter(
@@ -128,16 +119,60 @@ const Chat = () => {
             (a, b) =>
               new Date(b.latestMessageTime) - new Date(a.latestMessageTime),
           );
-          onLoading(false);
           return updatedChatList;
         });
+        onLoading(false);
+
+        const client = new StompJS.Client({
+          brokerURL: `ws://localhost:8080/stomp/chat`,
+        });
+
+        client.webSocketFactory = function () {
+          return new SockJS('http://3.36.154.178:8080/stomp/chat');
+        };
+
+        client.onConnect = () => {
+          console.log('채팅 목록 WebSocket 연결되었습니다.');
+          setStompClient(client);
+          responseData.forEach(chat => {
+            client.subscribe(
+              `/subscribe/chat/${chat.chatRoomId}`,
+              onRoomRecieved,
+            );
+          });
+        };
+
+        client.onStompError = err => {
+          errorHandler(err);
+        };
+
+        client.activate();
+
+        return () => {
+          if (client) {
+            client.deactivate();
+            console.log('채팅 목록 WebSocket 연결이 해제되었습니다.');
+          }
+        };
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   }, []);
 
-  console.log(chatList);
+  const onRoomRecieved = message => {
+    const messageBody = JSON.parse(message.body);
+    console.log('입장했습니다: ', messageBody);
+    setShowLatestMessage(messageBody.message);
+  };
 
   return (
     <>
@@ -159,21 +194,24 @@ const Chat = () => {
                   <div>
                     <NameBox>
                       <p>{chat.receiverNickname}</p>
-                      <Unread>
-                        <p>
-                          {chat.unreadCount !== 0 ? chat.unreadCount : null}
-                        </p>
+                      <Unread unread={chat.unreadCount}>
+                        <p>{chat.unreadCount}</p>
                       </Unread>
                     </NameBox>
-                    <p>{chat.latestMessageTime}</p>
+                    <p>{chat.latestMessageTime.slice(0, 10)}</p>
                   </div>
-                  <p>{chat.latestMessage}</p>
+                  <p>
+                    {chat.chatRoomId === updateMsgChatRoomId &&
+                    showLatestMessage !== ''
+                      ? showLatestMessage
+                      : chat.latestMessage}
+                  </p>
                 </DetailBox>
               </ReceiverList>
             ))}
         </ChatList>
         <ChatContent>
-          <Outlet />
+          <MessageChat stompClient={stompClient} />
         </ChatContent>
       </ChatLayout>
     </>

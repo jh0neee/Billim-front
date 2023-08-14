@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import SockJS from 'sockjs-client';
-import * as StompJS from '@stomp/stompjs';
+// import SockJS from 'sockjs-client';
+// import * as StompJS from '@stomp/stompjs';
 
 import axios from 'axios';
 import Input from '../UI/Input';
@@ -14,21 +14,25 @@ import { useForm } from '../../hooks/useForm';
 import { chatAction } from '../../store/chat';
 import { useLocation } from 'react-router-dom';
 import { CiPaperplane } from 'react-icons/ci';
-import { FcAddImage } from 'react-icons/fc';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
-import { ImageInput } from '../UI/ImageUpload';
+import {
+  MdOutlineKeyboardArrowUp,
+  MdOutlineKeyboardArrowDown,
+} from 'react-icons/md';
 
 const MessageChatLayout = styled.form`
   height: 84vh;
 `;
 
 const MessageBox = styled.div`
+  position: relative;
   padding: 1rem;
   height: 85%;
   background-color: rgba(252, 211, 77, 0.7);
   overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const MessageDate = styled.p`
@@ -109,38 +113,105 @@ const ChatTime = styled.p`
   font-size: 10px;
 `;
 
-const MessageChat = () => {
+const ProductInfoBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: ${props => (props.isExpanded ? '0.5rem 0.5rem 0' : '0.5rem 0 0')};
+  position: sticky;
+  width: 25%;
+  height: 6.2rem;
+  top: ${props => (props.isExpanded ? '0' : '-80px')};
+  right: ${props => (props.isExpanded ? '0' : '-238px')};
+  background-color: rgba(255, 255, 255, 0.7);
+  transition: 0.5s;
+`;
+
+const RightIcon = styled(MdOutlineKeyboardArrowUp)`
+  position: sticky;
+  bottom: 0;
+  animation: moveArrowRight 0.5s ease;
+  left: 228px;
+
+  @keyframes moveArrowRight {
+    from {
+      left: 0;
+    }
+    to {
+      left: 228px;
+    }
+  }
+`;
+
+const LeftIcon = styled(MdOutlineKeyboardArrowDown)`
+  position: sticky;
+  bottom: 0;
+  animation: moveArrowLeft 0.5s ease;
+  left: 0px;
+
+  @keyframes moveArrowLeft {
+    from {
+      left: 228px;
+    }
+    to {
+      left: 0;
+    }
+  }
+`;
+
+const ProductInfo = styled.div`
+  display: flex;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1rem;
+  }
+`;
+
+const ProductInfoImage = styled.img`
+  width: 60px;
+  height: 70px;
+`;
+
+const MessageChat = ({ stompClient }) => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const dispatch = useDispatch();
   const chatRoomId = useLocation().pathname.slice(15);
-  const fileRef = useRef(null);
   const [currentDate, setCurrentDate] = useState('');
   const [resetInput, setResetInput] = useState(false);
   const [startMessage, setStartMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [pastMessages, setPastMessages] = useState([]);
-  const [stompClient, setStompClient] = useState(null);
+  // const [stompClient, setStompClient] = useState(null);
+  const [productInfo, setProductInfo] = useState({});
   const [formState, inputHandler] = useForm({}, false);
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const { onLoading, errorHandler } = useLoadingError();
 
+  const [isExpanded, setIsExpanded] = useState(true);
+  const toggleProductBox = () => setIsExpanded(!isExpanded);
+
+  // const [chatMessages, setChatMessages] = useState({});
+
   useEffect(() => {
     const messageBox = document.getElementById('message-box');
     messageBox.scrollTop = messageBox.scrollHeight;
-  }, [messages, pastMessages]);
+  }, [messages]);
 
   useEffect(() => {
     if (!chatRoomId) {
       return;
     }
 
+    console.log('요청');
     axios
       .get(`${url}/api/chat/messages/${chatRoomId}`, {
         headers: { Authorization: `Bearer ${auth.token}` },
       })
       .then(response => {
         const messageData = response.data;
+        getProductInfo();
         console.log(messageData);
         const firstDate = format(
           parseISO(messageData[0].sendAt),
@@ -162,85 +233,29 @@ const MessageChat = () => {
         }
       });
 
-    const client = new StompJS.Client({
-      brokerURL: `ws://localhost:8080/stomp/chat`,
-    });
+    if (stompClient) {
+      stompClient.subscribe(`/subscribe/chat/${chatRoomId}`, onMessageRecieved);
 
-    client.webSocketFactory = function () {
-      return new SockJS('http://3.36.154.178:8080/stomp/chat');
-    };
-
-    client.onConnect = () => {
-      console.log('WebSocket 연결되었습니다.');
-      setStompClient(client);
-      client.subscribe(`/subscribe/chat/${chatRoomId}`, onMessageRecieved);
-    };
-
-    client.onStompError = err => {
-      errorHandler(err);
-    };
-
-    client.activate();
-
-    return () => {
-      if (client) {
-        client.deactivate();
+      return () => {
+        stompClient.unsubscribe(`/subscribe/chat/${chatRoomId}`);
+        setMessages([]);
+        setPastMessages([]);
         console.log('WebSocket 연결이 해제되었습니다.');
-      }
-    };
+      };
+    }
   }, [chatRoomId]);
 
   const onMessageRecieved = message => {
     const messageBody = JSON.parse(message.body);
     console.log('메시지를 받았습니다:', messageBody);
-    setMessages(prevMsg => [...prevMsg, messageBody]);
-  };
+    // 중복 체크
+    const isMessageAlreadyReceived = messages.some(
+      msg => msg.messageId === messageBody.messageId,
+    );
 
-  const encodeFileToBase64 = image => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(image);
-      reader.onload = e => resolve(e.target.result);
-      reader.onerror = err => reject(err);
-    });
-  };
-
-  const pickImageHandler = () => {
-    fileRef.current.click();
-  };
-
-  const fileChangeHandler = e => {
-    const chatImage = e.target.files[0];
-    console.log(chatImage);
-    encodeFileToBase64(chatImage).then(data => {
-      if (stompClient) {
-        console.log('이미지 전송 중:', data);
-        const messageData = {
-          chatRoomId,
-          senderId: auth.memberId,
-          messages: data,
-        };
-
-        const headers = {
-          'content-type': 'application/octet-stream',
-          Authorization: `Bearer ${auth.token}`,
-        };
-
-        console.log('전송할 이미지 데이터:', JSON.stringify(messageData));
-        stompClient.publish({
-          destination: `/publish/send/image`,
-          body: JSON.stringify(messageData),
-          headers,
-        });
-
-        dispatch(
-          chatAction.changeMsg({
-            chatRoomId: Number(chatRoomId),
-            message: '사진을 보냈습니다.',
-          }),
-        );
-      }
-    });
+    if (!isMessageAlreadyReceived) {
+      setMessages(prevMessages => [...prevMessages, messageBody]);
+    }
   };
 
   const sendMessage = () => {
@@ -274,11 +289,25 @@ const MessageChat = () => {
     setResetInput(true);
   };
 
+  const getProductInfo = () => {
+    axios
+      .get(`${url}/api/chat/product-info/${chatRoomId}`, {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      })
+      .then(response => {
+        console.log(response);
+        setProductInfo(response.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   const convertToAmPmFormat = createdAt => {
     const date = new Date(createdAt);
     const hour = date.getHours();
     const minute = date.getMinutes();
-    const meridiem = hour >= 12 ? 'pm' : 'am';
+    const meridiem = hour >= 12 ? '오후' : '오전';
     const convertedHour = hour % 12 || 12;
 
     return `${meridiem} ${convertedHour.toString().padStart(2, '0')}:${minute
@@ -295,10 +324,14 @@ const MessageChat = () => {
     return `${year}년 ${month}월 ${day}일`;
   };
 
-  const MessageLists = (messages, msg, index) => {
+  const MessageLists = (messages, msg, index, apple) => {
+    console.log(msg);
+    const isSentByRoom = msg.chatRoomId === Number(chatRoomId);
     const isSentByUser = msg.senderId === auth.memberId;
     const timeValue = convertToAmPmFormat(msg.sendAt);
     const nextMessage = messages[index + 1];
+
+    const trueMsg = msg.newMessage === true;
 
     const isSameTimeAsNext =
       nextMessage &&
@@ -310,13 +343,13 @@ const MessageChat = () => {
 
     return (
       <React.Fragment key={msg.messageId}>
-        {isSameDateAsNext && (
+        {trueMsg && isSameDateAsNext && (
           <MessageDate>
             {formatDate(nextMessage.sendAt.slice(0, 10))}
           </MessageDate>
         )}
         <MessageContainer isSent={isSentByUser}>
-          {isSentByUser && (
+          {trueMsg && isSentByRoom && isSentByUser && (
             <ChatReadTime isSent={isSentByUser}>
               <ChatRead hasTime={!isSameTimeAsNext}>
                 {!msg.read && '1'}
@@ -324,10 +357,12 @@ const MessageChat = () => {
               {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
             </ChatReadTime>
           )}
-          <ChatMessageBox isSent={isSentByUser}>
-            <p>{msg.message}</p>
-          </ChatMessageBox>
-          {!isSentByUser && (
+          {trueMsg && (
+            <ChatMessageBox isSent={isSentByUser}>
+              <p>{msg.message}</p>
+            </ChatMessageBox>
+          )}
+          {trueMsg && isSentByRoom && !isSentByUser && (
             <ChatReadTime isSent={isSentByUser}>
               <ChatRead hasTime={!isSameTimeAsNext}>
                 {!msg.read && '1'}
@@ -341,13 +376,18 @@ const MessageChat = () => {
   };
 
   const renderPastMessages = () => {
+    // 이전 메시지 내용 불러오기
     return pastMessages.map((msg, index) =>
-      MessageLists(pastMessages, msg, index),
+      MessageLists(pastMessages, msg, index, 'pastMessage'),
     );
   };
 
   const renderMessages = () => {
-    return messages.map((msg, index) => MessageLists(messages, msg, index));
+    // 내가 보낼때 함수 실행
+    // console.log(messages);
+    return messages.map((msg, index) =>
+      MessageLists(messages, msg, index, 'currentMessage'),
+    );
   };
 
   return (
@@ -355,14 +395,30 @@ const MessageChat = () => {
       <MessageBox id="message-box">
         <MessageDate>{currentDate}</MessageDate>
         <StartMessage>{startMessage}</StartMessage>
+        <ProductInfoBox isExpanded={isExpanded}>
+          <ProductInfo>
+            <ProductInfoImage
+              src={productInfo.productImageUrl}
+              alt="상품이미지"
+            />
+            <div>
+              <p>{productInfo.productName}</p>
+              <p>{productInfo.price}원</p>
+            </div>
+          </ProductInfo>
+          {isExpanded ? (
+            <RightIcon size="20px" onClick={toggleProductBox} />
+          ) : (
+            <LeftIcon size="20px" onClick={toggleProductBox} />
+          )}
+        </ProductInfoBox>
         <ChatBoxLayout>
           {renderPastMessages()}
           {renderMessages()}
+          {/* {renderAllMessages()} */}
         </ChatBoxLayout>
       </MessageBox>
       <MessageInputBox>
-        <FcAddImage size="30px" onClick={pickImageHandler} />
-        <ImageInput type="file" ref={fileRef} onChange={fileChangeHandler} />
         <Input
           element="textarea"
           type="text"
