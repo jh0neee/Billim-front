@@ -14,6 +14,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useLoadingError } from '../hooks/useLoadingError';
 import { useTokenRefresher } from '../hooks/useTokenRefresher';
 import MessageChat from '../components/Chat/MessageChat';
+// import BlockChat from '../components/Chat/BlockChat';
 
 const ChatLayout = styled.div`
   margin-top: 85px;
@@ -134,11 +135,14 @@ const Chat = () => {
         client.onConnect = () => {
           console.log('채팅 목록 WebSocket 연결되었습니다.');
           setStompClient(client);
+          // NOTE - 채팅 목록이 구독되어야함. 목록을 받아올때
           responseData.forEach(chat => {
+            console.log('구독 : ', chat);
             client.subscribe(
               `/subscribe/chat/${chat.chatRoomId}`,
               onRoomRecieved,
             );
+            console.log('ok');
           });
         };
 
@@ -211,6 +215,7 @@ const Chat = () => {
             ))}
         </ChatList>
         <ChatContent>
+          {/* <BlockChat /> */}
           <MessageChat stompClient={stompClient} />
         </ChatContent>
       </ChatLayout>

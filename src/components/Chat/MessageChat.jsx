@@ -183,7 +183,6 @@ const MessageChat = ({ stompClient }) => {
   const [startMessage, setStartMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [pastMessages, setPastMessages] = useState([]);
-  // const [stompClient, setStompClient] = useState(null);
   const [productInfo, setProductInfo] = useState({});
   const [formState, inputHandler] = useForm({}, false);
   const { tokenErrorHandler } = useTokenRefresher(auth);
@@ -191,8 +190,6 @@ const MessageChat = ({ stompClient }) => {
 
   const [isExpanded, setIsExpanded] = useState(true);
   const toggleProductBox = () => setIsExpanded(!isExpanded);
-
-  // const [chatMessages, setChatMessages] = useState({});
 
   useEffect(() => {
     const messageBox = document.getElementById('message-box');
@@ -232,31 +229,7 @@ const MessageChat = ({ stompClient }) => {
           errorHandler(err);
         }
       });
-
-    if (stompClient) {
-      stompClient.subscribe(`/subscribe/chat/${chatRoomId}`, onMessageReceived);
-
-      return () => {
-        stompClient.unsubscribe(`/subscribe/chat/${chatRoomId}`);
-        setMessages([]);
-        setPastMessages([]);
-        console.log('WebSocket 연결이 해제되었습니다.');
-      };
-    }
   }, [chatRoomId]);
-
-  const onMessageReceived = message => {
-    const messageBody = JSON.parse(message.body);
-    console.log('메시지를 받았습니다:', messageBody);
-    // 중복 체크
-    const isMessageAlreadyReceived = messages.some(
-      msg => msg.messageId === messageBody.messageId,
-    );
-
-    if (!isMessageAlreadyReceived) {
-      setMessages(prevMessages => [...prevMessages, messageBody]);
-    }
-  };
 
   const sendMessage = () => {
     if (stompClient) {
@@ -451,7 +424,6 @@ const MessageChat = ({ stompClient }) => {
         <ChatBoxLayout>
           {renderPastMessages()}
           {renderMessages()}
-          {/* {renderAllMessages()} */}
         </ChatBoxLayout>
       </MessageBox>
       <MessageInputBox>
