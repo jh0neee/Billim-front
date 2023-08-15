@@ -10,6 +10,7 @@ import ErrorModal from '../../util/ErrorModal';
 import LoadingSpinner from '../UI/LoadingSpinner';
 import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../hooks/useAuth';
+import { NoneText } from './WishList';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
@@ -202,56 +203,60 @@ const Review = () => {
       <ErrorModal error={error} onClear={clearError} />
       <p>구매 후기</p>
       {isLoading && <LoadingSpinner asOverlay />}
-      {reviewList.map(item => (
-        <ReviewLayout key={item.orderId}>
-          <ReviewItemList>
-            <TopList>
-              <Link to={`/${item.productId}/detail`}>
-                <ProductImage src={item.productImageUrl} alt="상품이미지" />
-              </Link>
-              <ReviewItemTextBox>
-                <p>{item.productName}</p>
-                <p>\ {item.price.toLocaleString('kr-KR')}</p>
-                <p>{item.sellerNickname}</p>
-              </ReviewItemTextBox>
-            </TopList>
-            <BottomList>
-              <p>{item.orderCreatedAt.slice(0, 19)}</p>
-              {item.isWritable && (
-                <ExtraButton onClick={() => toggleReview(item.orderId)}>
-                  후기작성
-                </ExtraButton>
-              )}
-            </BottomList>
-          </ReviewItemList>
-          {item.isWritable && isOpenReview === item.orderId && (
-            <WritedReview review>
-              <p> ➤ 후기 작성하기</p>
-              <ReviewInputBox
-                onSubmit={e => reviewSubmitHandler(e, item.orderId)}
-              >
-                <StarRating rating={rating} setRating={setRating} />
-                <Input
-                  element="textarea"
-                  id="review"
-                  width="100%"
-                  rows="5"
-                  validators={[VALIDATOR_REQUIRE()]}
-                  errorText={null}
-                  onInput={inputHandler}
-                />
-                <ExtraButton type="submit">확인</ExtraButton>
-              </ReviewInputBox>
-            </WritedReview>
-          )}
-          {!item.isWritable && (
-            <WritedReview>
-              <p>내가 작성한 후기</p>
-              <div>{item.content}</div>
-            </WritedReview>
-          )}
-        </ReviewLayout>
-      ))}
+      {reviewList.length === 0 ? (
+        <NoneText>작성할 리뷰가 없습니다.</NoneText>
+      ) : (
+        reviewList.map(item => (
+          <ReviewLayout key={item.orderId}>
+            <ReviewItemList>
+              <TopList>
+                <Link to={`/${item.productId}/detail`}>
+                  <ProductImage src={item.productImageUrl} alt="상품이미지" />
+                </Link>
+                <ReviewItemTextBox>
+                  <p>{item.productName}</p>
+                  <p>\ {item.price.toLocaleString('kr-KR')}</p>
+                  <p>{item.sellerNickname}</p>
+                </ReviewItemTextBox>
+              </TopList>
+              <BottomList>
+                <p>{item.orderCreatedAt.slice(0, 19)}</p>
+                {item.isWritable && (
+                  <ExtraButton onClick={() => toggleReview(item.orderId)}>
+                    후기작성
+                  </ExtraButton>
+                )}
+              </BottomList>
+            </ReviewItemList>
+            {item.isWritable && isOpenReview === item.orderId && (
+              <WritedReview review>
+                <p> ➤ 후기 작성하기</p>
+                <ReviewInputBox
+                  onSubmit={e => reviewSubmitHandler(e, item.orderId)}
+                >
+                  <StarRating rating={rating} setRating={setRating} />
+                  <Input
+                    element="textarea"
+                    id="review"
+                    width="100%"
+                    rows="5"
+                    validators={[VALIDATOR_REQUIRE()]}
+                    errorText={null}
+                    onInput={inputHandler}
+                  />
+                  <ExtraButton type="submit">확인</ExtraButton>
+                </ReviewInputBox>
+              </WritedReview>
+            )}
+            {!item.isWritable && (
+              <WritedReview>
+                <p>내가 작성한 후기</p>
+                <div>{item.content}</div>
+              </WritedReview>
+            )}
+          </ReviewLayout>
+        ))
+      )}
     </>
   );
 };
