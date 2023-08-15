@@ -139,10 +139,14 @@ const SalesDetailManagement = () => {
       })
       .then(response => {
         const responseData = response.data;
-        console.log(responseData);
+
+        const sortedWaitingItem = responseData.standbyOrders.sort(
+          (a, b) => new Date(a.startAt) - new Date(b.startAt),
+        );
+
         setSalesItem(responseData);
         setRentalItem(responseData.currentOrder);
-        setWaitinItem(responseData.standbyOrders);
+        setWaitinItem(sortedWaitingItem);
         setUsedItem([
           ...responseData.pastOrders,
           ...responseData.canceledOrders,
