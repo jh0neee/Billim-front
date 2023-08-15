@@ -14,45 +14,50 @@ const PaginationBox = styled.div`
 
   > * {
     &:nth-child(3) {
-      margin: 1.5rem 1rem;
+      margin: 0 1rem;
+      font-size: 0.8rem;
+
+      > span {
+        font-weight: 600;
+      }
     }
   }
 `;
 
 const ArrowButton = styled.button`
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
 `;
 
 const SmallListPagination = ({ currentPage, totalPages, handlePageChange }) => {
-  return (
+  return totalPages === 0 ? null : (
     <PaginationBox>
       <ArrowButton
         onClick={() => handlePageChange(1)}
         disabled={currentPage === 1}
       >
-        <MdKeyboardDoubleArrowLeft size="25px" />
+        <MdKeyboardDoubleArrowLeft size="20px" />
       </ArrowButton>
       <ArrowButton
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
-        <MdKeyboardArrowLeft size="25px" />
+        <MdKeyboardArrowLeft size="20px" />
       </ArrowButton>
-      <span>
-        {currentPage} / {totalPages}
-      </span>
+      <p>
+        <span>{currentPage}</span> / {totalPages}
+      </p>
       <ArrowButton
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
-        <MdKeyboardArrowRight size="25px" />
+        <MdKeyboardArrowRight size="20px" />
       </ArrowButton>
       <ArrowButton
         onClick={() => handlePageChange(totalPages)}
         disabled={currentPage === totalPages}
       >
-        <MdKeyboardDoubleArrowRight size="25px" />
+        <MdKeyboardDoubleArrowRight size="20px" />
       </ArrowButton>
     </PaginationBox>
   );

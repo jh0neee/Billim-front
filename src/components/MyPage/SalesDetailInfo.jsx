@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -8,6 +8,7 @@ import Card from '../UI/Card';
 import Modal from '../UI/Modal';
 import { Profile } from '../UI/Profile';
 import { useAuth } from '../../hooks/useAuth';
+import SmallListPagination from '../UI/SmallListPagination';
 
 const SaleInfoLayout = styled.div`
   margin: 3rem 0 0;
@@ -140,6 +141,19 @@ const SalesDetailInfo = ({
   const auth = useAuth();
   const navigate = useNavigate();
 
+  const itemsPerPage = 4;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = items.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+
+  const handlePageChange = newPage => {
+    setCurrentPage(newPage);
+  };
+
   const EnterChatRoom = buyerId => {
     axios
       .post(
@@ -203,7 +217,7 @@ const SalesDetailInfo = ({
           {items.length === 0 ? (
             <EmptyParagraph>현재 {label}이 없습니다.</EmptyParagraph>
           ) : (
-            items.map(item => (
+            currentItems.map(item => (
               <>
                 <SaleBottomBox key={item.orderId}>
                   <BuyerInfo>
@@ -231,6 +245,11 @@ const SalesDetailInfo = ({
           )}
         </ListCard>
       </SaleInfoLayout>
+      <SmallListPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handlePageChange={handlePageChange}
+      />
     </>
   );
 };
