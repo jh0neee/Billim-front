@@ -21,7 +21,6 @@ const SaleLayout = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   row-gap: 3rem;
-  column-gap: 2.6rem;
   justify-items: center;
 
   @media (max-width: 1110px) {

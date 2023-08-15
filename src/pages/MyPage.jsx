@@ -59,6 +59,7 @@ const MyPageUserBox = styled.div`
 
   @media ${theme.mobile} {
     margin-top: 150px;
+    margin-bottom: 1rem;
     flex-direction: column;
 
     > * {
@@ -75,8 +76,7 @@ const MyPageBox = styled.div`
   column-gap: 3rem;
 
   @media ${theme.tablet} {
-    grid-template-columns: 1fr;
-    column-gap: 0;
+    display: block;
 
     > * {
       &:first-child {
