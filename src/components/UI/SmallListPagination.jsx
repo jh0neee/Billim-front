@@ -30,7 +30,7 @@ const ArrowButton = styled.button`
 `;
 
 const SmallListPagination = ({ currentPage, totalPages, handlePageChange }) => {
-  return totalPages === 0 ? null : (
+  return totalPages <= 1 ? null : (
     <PaginationBox>
       <ArrowButton
         onClick={() => handlePageChange(1)}
