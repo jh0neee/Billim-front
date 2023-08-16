@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
@@ -11,6 +11,8 @@ import parseISO from 'date-fns/parseISO';
 import { format } from 'date-fns';
 import { useAuth } from '../../hooks/useAuth';
 import { useForm } from '../../hooks/useForm';
+import { FcAddImage } from 'react-icons/fc';
+import { ImageInput } from '../UI/ImageUpload';
 import { chatAction } from '../../store/chat';
 import { useLocation } from 'react-router-dom';
 import { CiPaperplane } from 'react-icons/ci';
@@ -177,6 +179,7 @@ const MessageChat = ({ stompClient }) => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const dispatch = useDispatch();
+  const fileRef = useRef(null);
   const chatRoomId = useLocation().pathname.slice(15);
   const [currentDate, setCurrentDate] = useState('');
   const [resetInput, setResetInput] = useState(false);
@@ -254,6 +257,53 @@ const MessageChat = ({ stompClient }) => {
         }),
       );
     }
+  };
+
+  const encodeFileToBase64 = image => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(image);
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = err => reject(err);
+    });
+  };
+
+  const pickImageHandler = () => {
+    fileRef.current.click();
+  };
+
+  const fileChangeHandler = e => {
+    const chatImage = e.target.files[0];
+    console.log(chatImage);
+    encodeFileToBase64(chatImage).then(data => {
+      if (stompClient) {
+        console.log('이미지 전송 중:', data);
+        const messageData = {
+          chatRoomId,
+          senderId: auth.memberId,
+          messages: data,
+        };
+
+        const headers = {
+          'content-type': 'application/octet-stream',
+          Authorization: `Bearer ${auth.token}`,
+        };
+
+        console.log('전송할 이미지 데이터:', JSON.stringify(messageData));
+        stompClient.publish({
+          destination: `/publish/send/image`,
+          body: JSON.stringify(messageData),
+          headers,
+        });
+
+        dispatch(
+          chatAction.changeMsg({
+            chatRoomId: Number(chatRoomId),
+            message: '사진을 보냈습니다.',
+          }),
+        );
+      }
+    });
   };
 
   const submitHandler = e => {
@@ -427,6 +477,8 @@ const MessageChat = ({ stompClient }) => {
         </ChatBoxLayout>
       </MessageBox>
       <MessageInputBox>
+        <FcAddImage size="30px" onClick={pickImageHandler} />
+        <ImageInput type="file" ref={fileRef} onChange={fileChangeHandler} />
         <Input
           element="textarea"
           type="text"
