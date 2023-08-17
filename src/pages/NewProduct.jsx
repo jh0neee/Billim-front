@@ -118,49 +118,59 @@ const NewProduct = () => {
   const submitProductHandler = e => {
     e.preventDefault();
 
-    if (!formState.isValid) {
-      alert('빈칸 없이 작성해주세요.');
-      return;
-    }
+    if (formState.inputs.category && formState.inputs.tradeMethods) {
+      const notIsValid =
+        formState.inputs.tradeMethods.value === 'DELIVERY' &&
+        !formState.inputs.place.isValid;
 
-    const files = formState.inputs.images.value;
-    const formData = new FormData();
-
-    files.forEach((file, index) => {
-      formData.append(`image${index}`, file);
-    });
-    formData.append('rentalProduct', formState.inputs.rentalProduct.value);
-    formData.append('category', formState.inputs.category.value);
-    formData.append('rentalFee', formState.inputs.rentalFee.value);
-    formData.append('tradeMethods', formState.inputs.tradeMethods.value);
-    formData.append('description', formState.inputs.description.value);
-    if (formState.inputs.place && formState.inputs.place.value) {
-      formData.append('place', formState.inputs.place.value);
-    }
-
-    onLoading(true);
-    axios
-      .post(`${url}/product/register`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: 'Bearer ' + auth.token,
-        },
-      })
-      .then(() => {
-        setRegisterModal(true);
-        onLoading(false);
-      })
-      .catch(err => {
-        if (
-          err.response.status === 401 &&
-          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
-        ) {
-          tokenErrorHandler(err);
-          onLoading(false);
-        } else {
-          errorHandler(err);
+      if (!notIsValid) {
+        if (!formState.isValid) {
+          alert('빈칸 없이 작성해주세요.');
+          return;
         }
+      }
+
+      const files = formState.inputs.images.value;
+      const formData = new FormData();
+
+      files.forEach((file, index) => {
+        formData.append(`image${index}`, file);
       });
+      formData.append('rentalProduct', formState.inputs.rentalProduct.value);
+      formData.append('category', formState.inputs.category.value);
+      formData.append('rentalFee', formState.inputs.rentalFee.value);
+      formData.append('tradeMethods', formState.inputs.tradeMethods.value);
+      formData.append('description', formState.inputs.description.value);
+      if (formState.inputs.place && formState.inputs.place.value) {
+        formData.append('place', formState.inputs.place.value);
+      }
+
+      onLoading(true);
+      axios
+        .post(`${url}/product/register`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + auth.token,
+          },
+        })
+        .then(() => {
+          setRegisterModal(true);
+          onLoading(false);
+        })
+        .catch(err => {
+          if (
+            err.response.status === 401 &&
+            err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+          ) {
+            tokenErrorHandler(err);
+            onLoading(false);
+          } else {
+            errorHandler(err);
+          }
+        });
+    } else {
+      alert('모든 필드를 빠짐없이 작성해주세요.');
+    }
   };
 
   return (
