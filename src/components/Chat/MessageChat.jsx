@@ -2,9 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-// import SockJS from 'sockjs-client';
-// import * as StompJS from '@stomp/stompjs';
-
 import axios from 'axios';
 import Input from '../UI/Input';
 import parseISO from 'date-fns/parseISO';
@@ -19,10 +16,10 @@ import { CiPaperplane } from 'react-icons/ci';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
-import {
-  MdOutlineKeyboardArrowUp,
-  MdOutlineKeyboardArrowDown,
-} from 'react-icons/md';
+// import {
+//   MdOutlineKeyboardArrowUp,
+//   MdOutlineKeyboardArrowDown,
+// } from 'react-icons/md';
 
 const MessageChatLayout = styled.form`
   height: 84vh;
@@ -115,84 +112,85 @@ const ChatTime = styled.p`
   font-size: 10px;
 `;
 
-const ProductInfoBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: ${props => (props.isExpanded ? '0.5rem 0.5rem 0' : '0.5rem 0 0')};
-  position: sticky;
-  width: 25%;
-  height: 6.2rem;
-  top: ${props => (props.isExpanded ? '0' : '-80px')};
-  right: ${props => (props.isExpanded ? '0' : '-238px')};
-  background-color: rgba(255, 255, 255, 0.7);
-  transition: 0.5s;
-`;
+// const ProductInfoBox = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   padding: ${props => (props.isExpanded ? '0.5rem 0.5rem 0' : '0.5rem 0 0')};
+//   position: sticky;
+//   width: 25%;
+//   height: 6.2rem;
+//   top: ${props => (props.isExpanded ? '0' : '-80px')};
+//   right: ${props => (props.isExpanded ? '0' : '-238px')};
+//   background-color: rgba(255, 255, 255, 0.7);
+//   transition: 0.5s;
+// `;
 
-const RightIcon = styled(MdOutlineKeyboardArrowUp)`
-  position: sticky;
-  bottom: 0;
-  animation: moveArrowRight 0.5s ease;
-  left: 228px;
+// const RightIcon = styled(MdOutlineKeyboardArrowUp)`
+//   position: sticky;
+//   bottom: 0;
+//   animation: moveArrowRight 0.5s ease;
+//   left: 228px;
 
-  @keyframes moveArrowRight {
-    from {
-      left: 0;
-    }
-    to {
-      left: 228px;
-    }
-  }
-`;
+//   @keyframes moveArrowRight {
+//     from {
+//       left: 0;
+//     }
+//     to {
+//       left: 228px;
+//     }
+//   }
+// `;
 
-const LeftIcon = styled(MdOutlineKeyboardArrowDown)`
-  position: sticky;
-  bottom: 0;
-  animation: moveArrowLeft 0.5s ease;
-  left: 0px;
+// const LeftIcon = styled(MdOutlineKeyboardArrowDown)`
+//   position: sticky;
+//   bottom: 0;
+//   animation: moveArrowLeft 0.5s ease;
+//   left: 0px;
 
-  @keyframes moveArrowLeft {
-    from {
-      left: 228px;
-    }
-    to {
-      left: 0;
-    }
-  }
-`;
+//   @keyframes moveArrowLeft {
+//     from {
+//       left: 228px;
+//     }
+//     to {
+//       left: 0;
+//     }
+//   }
+// `;
 
-const ProductInfo = styled.div`
-  display: flex;
+// const ProductInfo = styled.div`
+//   display: flex;
 
-  > div {
-    display: flex;
-    flex-direction: column;
-    margin-left: 1rem;
-  }
-`;
+//   > div {
+//     display: flex;
+//     flex-direction: column;
+//     margin-left: 1rem;
+//   }
+// `;
 
-const ProductInfoImage = styled.img`
-  width: 60px;
-  height: 70px;
-`;
+// const ProductInfoImage = styled.img`
+//   width: 60px;
+//   height: 70px;
+// `;
 
-const MessageChat = ({ stompClient }) => {
+const MessageChat = ({ stompClient, messages, setMessages }) => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const dispatch = useDispatch();
   const fileRef = useRef(null);
   const chatRoomId = useLocation().pathname.slice(15);
+  const [inRoomId, setInRoomId] = useState(null);
   const [currentDate, setCurrentDate] = useState('');
   const [resetInput, setResetInput] = useState(false);
   const [startMessage, setStartMessage] = useState('');
-  const [messages, setMessages] = useState([]);
+  // const [messages, setMessages] = useState([]);
   const [pastMessages, setPastMessages] = useState([]);
-  const [productInfo, setProductInfo] = useState({});
+  // const [productInfo, setProductInfo] = useState({});
   const [formState, inputHandler] = useForm({}, false);
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const { onLoading, errorHandler } = useLoadingError();
 
-  const [isExpanded, setIsExpanded] = useState(true);
-  const toggleProductBox = () => setIsExpanded(!isExpanded);
+  // const [isExpanded, setIsExpanded] = useState(true);
+  // const toggleProductBox = () => setIsExpanded(!isExpanded);
 
   useEffect(() => {
     const messageBox = document.getElementById('message-box');
@@ -204,6 +202,8 @@ const MessageChat = ({ stompClient }) => {
       return;
     }
 
+    setMessages([]); // 여기에 넣으니까 메시지를 보내도 메시지가 담기지 않고 빈배열로 설정된다
+
     console.log('요청');
     axios
       .get(`${url}/api/chat/messages/${chatRoomId}`, {
@@ -211,12 +211,12 @@ const MessageChat = ({ stompClient }) => {
       })
       .then(response => {
         const messageData = response.data;
-        getProductInfo();
         console.log('처음 이전 메시지 요청: ', messageData);
         const firstDate = format(
           parseISO(messageData[0].sendAt),
           'yyyy년 MM월 dd일',
         );
+        setInRoomId(messageData[0].chatRoomId);
         setCurrentDate(firstDate);
         setStartMessage(messageData[0].message);
         setPastMessages(messageData.slice(1));
@@ -235,6 +235,7 @@ const MessageChat = ({ stompClient }) => {
   }, [chatRoomId]);
 
   const sendMessage = () => {
+    console.log(stompClient);
     if (stompClient) {
       console.log('텍스트 메시지 전송 중:', formState.inputs.message.value);
       const messageData = {
@@ -250,6 +251,7 @@ const MessageChat = ({ stompClient }) => {
         headers,
       });
 
+      // dispatch(chatAction.sendMsg({ stompClient, messageData, headers }));
       dispatch(
         chatAction.changeMsg({
           chatRoomId: Number(chatRoomId),
@@ -306,26 +308,6 @@ const MessageChat = ({ stompClient }) => {
     });
   };
 
-  const submitHandler = e => {
-    e.preventDefault();
-    sendMessage();
-    setResetInput(true);
-  };
-
-  const getProductInfo = () => {
-    axios
-      .get(`${url}/api/chat/product-info/${chatRoomId}`, {
-        headers: { Authorization: `Bearer ${auth.token}` },
-      })
-      .then(response => {
-        console.log(response);
-        setProductInfo(response.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-
   const convertToAmPmFormat = createdAt => {
     const date = new Date(createdAt);
     const hour = date.getHours();
@@ -354,7 +336,7 @@ const MessageChat = ({ stompClient }) => {
     const timeValue = convertToAmPmFormat(msg.sendAt);
     const nextMessage = messages[index + 1];
 
-    const trueMsg = msg.newMessage === true;
+    const trueMsg = msg.newMessage;
 
     const isSameTimeAsNext =
       nextMessage &&
@@ -435,7 +417,6 @@ const MessageChat = ({ stompClient }) => {
 
   const renderPastMessages = () => {
     // 이전 메시지 내용 불러오기
-    console.log('pastMessage: ', pastMessages);
     return pastMessages.map((msg, index) =>
       MessageLists(pastMessages, msg, index, 'pastMessage'),
     );
@@ -443,34 +424,26 @@ const MessageChat = ({ stompClient }) => {
 
   const renderMessages = () => {
     // 내가 보낼때 함수 실행
-    // console.log(messages);
+    console.log(messages);
     return messages.map((msg, index) =>
       MessageLists(messages, msg, index, 'currentMessage'),
     );
+  };
+
+  const submitHandler = e => {
+    e.preventDefault();
+    if (Number(chatRoomId) === inRoomId) {
+      sendMessage();
+      setResetInput(true);
+    }
   };
 
   return (
     <MessageChatLayout onSubmit={submitHandler}>
       <MessageBox id="message-box">
         <MessageDate>{currentDate}</MessageDate>
+        <MessageDate>{chatRoomId}</MessageDate>
         <StartMessage>{startMessage}</StartMessage>
-        <ProductInfoBox isExpanded={isExpanded}>
-          <ProductInfo>
-            <ProductInfoImage
-              src={productInfo.productImageUrl}
-              alt="상품이미지"
-            />
-            <div>
-              <p>{productInfo.productName}</p>
-              <p>{productInfo.price}원</p>
-            </div>
-          </ProductInfo>
-          {isExpanded ? (
-            <RightIcon size="20px" onClick={toggleProductBox} />
-          ) : (
-            <LeftIcon size="20px" onClick={toggleProductBox} />
-          )}
-        </ProductInfoBox>
         <ChatBoxLayout>
           {renderPastMessages()}
           {renderMessages()}
