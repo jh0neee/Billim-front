@@ -36,20 +36,15 @@ const TopTextBox = styled.div`
   > * {
     &:nth-child(2) {
       padding: ${({ rentalItem }) =>
-        rentalItem ? '2rem 0 0' : '2.5rem 0 1.5rem'};
+        rentalItem ? '1.5rem 0 0' : '2rem 0px 1.5rem'};
 
-      @media (max-width: 502px) {
-        padding: 1.5rem 0 0;
-      }
       @media ${theme.mobile} {
         padding: 0.5rem 0 0;
       }
     }
 
     &:last-child {
-      @media ${theme.mobile} {
-        padding-top: 0.2rem;
-      }
+      padding-top: ${({ rentalItem }) => (rentalItem ? '0.5rem' : 'null')};
     }
   }
 
@@ -58,7 +53,7 @@ const TopTextBox = styled.div`
     align-items: center;
   }
 
-  @media (max-width: 502px) {
+  @media (max-width: 513px) {
     font-size: 0.7rem;
   }
   @media ${theme.mobile} {
@@ -67,15 +62,15 @@ const TopTextBox = styled.div`
 `;
 
 const SalesImage = styled.img`
-  width: 100px;
-  height: 120px;
+  width: 90px;
+  height: 100px;
 
-  @media (max-width: 502px) {
-    width: 75px;
+  @media (max-width: 513px) {
+    width: 85px;
     height: 95px;
   }
   @media ${theme.mobile} {
-    width: 130px;
+    width: 140px;
     height: 150px;
     margin: 0 0 1rem;
   }
@@ -180,7 +175,7 @@ const SalesDetailManagement = () => {
             </ProductText>
             {rentalItem ? (
               <>
-                <p>상태: {rentalItem.status}</p>
+                <p>상태: 대여중</p>
                 <div>
                   <p>구매자: {rentalItem.buyerNickname}</p>
                   {<ExtraButton>채팅하기</ExtraButton>}
