@@ -223,7 +223,7 @@ const Review = () => {
                 <p>{item.orderCreatedAt.slice(0, 19)}</p>
                 {item.isWritable && (
                   <ExtraButton onClick={() => toggleReview(item.orderId)}>
-                    후기작성
+                    {isOpenReview === item.orderId ? '취소' : '후기 작성'}
                   </ExtraButton>
                 )}
               </BottomList>
