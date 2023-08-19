@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from 'axios';
@@ -9,6 +9,7 @@ import ErrorModal from '../../util/ErrorModal';
 import LoadingSpinner from '../UI/LoadingSpinner';
 import SalesDetailInfo from './SalesDetailInfo';
 import { useAuth } from '../../hooks/useAuth';
+import { HiChevronLeft } from 'react-icons/hi';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { useCancelReservation } from '../../hooks/useCancelReservation';
@@ -17,6 +18,12 @@ const DetailSaleBox = styled.div`
   background-color: #ededed;
   margin: 1rem 0;
   padding: 1rem;
+`;
+
+const DetailSalesTitle = styled.div`
+  display: flex;
+  align-items: center;
+  padding-left: 0 !important;
 `;
 
 const SaleTopBox = styled.div`
@@ -93,9 +100,15 @@ const ExtraButton = styled(Button)`
   font-weight: 400;
 `;
 
+const GoBack = styled(HiChevronLeft)`
+  cursor: pointer;
+  margin-top: 0.1rem;
+`;
+
 const SalesDetailManagement = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
+  const navigate = useNavigate();
   const productId = useParams().productId;
   const [salesItem, setSalesItem] = useState({});
   const [rentalItem, setRentalItem] = useState({});
@@ -165,7 +178,10 @@ const SalesDetailManagement = () => {
     <>
       <ErrorModal error={error} onClear={clearError} />
       {isLoading && <LoadingSpinner asOverlay />}
-      <p>판매관리</p>
+      <DetailSalesTitle>
+        <GoBack size="40px" onClick={() => navigate(-1)} />
+        <p>판매관리</p>
+      </DetailSalesTitle>
       <DetailSaleBox>
         <SaleTopBox>
           <SalesImage src={salesItem.imageUrls} alt="상품이미지" />
