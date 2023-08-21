@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from 'axios';
+import theme from '../../styles/theme';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
 import StarRating from './StarRating';
@@ -17,8 +18,16 @@ import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
 const ReviewLayout = styled.div`
   background-color: #ededed;
-  margin: 1rem 0;
+  margin: 1rem 0 2rem;
   padding: 1rem;
+`;
+
+const OrderCreatedAt = styled.p`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 1rem;
+  font-size: 0.6rem;
 `;
 
 const ReviewItemList = styled.div`
@@ -26,6 +35,10 @@ const ReviewItemList = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+
+  @media ${theme.mobile} {
+    padding: 0;
+  }
 `;
 
 const TopList = styled.div`
@@ -37,10 +50,10 @@ const BottomList = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  margin-top: 5rem;
 
-  > p {
-    margin-bottom: 5rem;
-    font-size: 0.6rem;
+  @media ${theme.mobile} {
+    margin-top: 4rem;
   }
 `;
 
@@ -64,10 +77,20 @@ const ReviewItemTextBox = styled.div`
     display: flex;
     align-items: center;
   }
+
+  @media ${theme.mobile} {
+    margin: auto 1rem;
+
+    > * {
+      &:nth-child(-n + 2) {
+        font-size: 0.85rem;
+      }
+    }
+  }
 `;
 
 const WritedReview = styled.div`
-  margin: 1rem;
+  margin: 1rem 1rem 0;
 
   > div {
     width: 100%;
@@ -79,11 +102,20 @@ const WritedReview = styled.div`
       font-size: 0.8rem;
     }
   }
+
+  @media ${theme.mobile} {
+    margin: 1rem 0 0;
+  }
 `;
 
 const ProductImage = styled.img`
   width: 100px;
   height: 120px;
+
+  @media ${theme.mobile} {
+    width: 70px;
+    height: 90px;
+  }
 `;
 
 const ReviewInputBox = styled.form`
@@ -208,6 +240,7 @@ const Review = () => {
       ) : (
         reviewList.map(item => (
           <ReviewLayout key={item.orderId}>
+            <OrderCreatedAt>{item.orderCreatedAt.slice(0, 19)}</OrderCreatedAt>
             <ReviewItemList>
               <TopList>
                 <Link to={`/${item.productId}/detail`}>
@@ -215,12 +248,11 @@ const Review = () => {
                 </Link>
                 <ReviewItemTextBox>
                   <p>{item.productName}</p>
-                  <p>\ {item.price.toLocaleString('kr-KR')}</p>
+                  <p>\{item.price.toLocaleString('kr-KR')}</p>
                   <p>{item.sellerNickname}</p>
                 </ReviewItemTextBox>
               </TopList>
               <BottomList>
-                <p>{item.orderCreatedAt.slice(0, 19)}</p>
                 {item.isWritable && (
                   <ExtraButton onClick={() => toggleReview(item.orderId)}>
                     {isOpenReview === item.orderId ? '취소' : '후기 작성'}
