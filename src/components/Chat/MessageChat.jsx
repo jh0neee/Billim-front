@@ -8,6 +8,7 @@ import parseISO from 'date-fns/parseISO';
 import { format } from 'date-fns';
 import { useAuth } from '../../hooks/useAuth';
 import { useForm } from '../../hooks/useForm';
+
 import { FcAddImage } from 'react-icons/fc';
 import { ImageInput } from '../UI/ImageUpload';
 import { chatAction } from '../../store/chat';
@@ -16,6 +17,8 @@ import { CiPaperplane } from 'react-icons/ci';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
+import Modal from '../UI/Modal';
+import Button from '../UI/Button';
 // import {
 //   MdOutlineKeyboardArrowUp,
 //   MdOutlineKeyboardArrowDown,
@@ -172,18 +175,30 @@ const ChatTime = styled.p`
 //   height: 70px;
 // `;
 
+const PreviewBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ImagePreview = styled.img`
+  width: 100%;
+  height: 52vh;
+  object-fit: contain;
+`;
+
 const MessageChat = ({ stompClient, messages, setMessages }) => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
-  const dispatch = useDispatch();
   const fileRef = useRef(null);
+  const dispatch = useDispatch();
   const chatRoomId = useLocation().pathname.slice(15);
   const [inRoomId, setInRoomId] = useState(null);
   const [currentDate, setCurrentDate] = useState('');
   const [resetInput, setResetInput] = useState(false);
   const [startMessage, setStartMessage] = useState('');
-  // const [messages, setMessages] = useState([]);
   const [pastMessages, setPastMessages] = useState([]);
+  const [file, setFile] = useState(null);
   // const [productInfo, setProductInfo] = useState({});
   const [formState, inputHandler] = useForm({}, false);
   const { tokenErrorHandler } = useTokenRefresher(auth);
@@ -192,17 +207,23 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
   // const [isExpanded, setIsExpanded] = useState(true);
   // const toggleProductBox = () => setIsExpanded(!isExpanded);
 
+  const [sendImageModal, setSendImageModal] = useState(false);
+  const cancelSendImage = () => {
+    setSendImageModal(false);
+    setFile(null);
+  };
+
   useEffect(() => {
     const messageBox = document.getElementById('message-box');
     messageBox.scrollTop = messageBox.scrollHeight;
-  }, [messages]);
+  }, [messages, pastMessages]);
 
   useEffect(() => {
     if (!chatRoomId) {
       return;
     }
 
-    setMessages([]); // 여기에 넣으니까 메시지를 보내도 메시지가 담기지 않고 빈배열로 설정된다
+    setMessages([]);
 
     console.log('요청');
     axios
@@ -234,39 +255,33 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
       });
   }, [chatRoomId]);
 
-  const sendMessage = () => {
-    console.log(stompClient);
-    if (stompClient) {
-      console.log('텍스트 메시지 전송 중:', formState.inputs.message.value);
-      const messageData = {
-        chatRoomId,
-        senderId: auth.memberId,
-        message: formState.inputs.message.value,
-      };
-      const headers = { Authorization: `Bearer ${auth.token}` };
-      console.log('전송할 텍스트 메시지 데이터:', JSON.stringify(messageData));
-      stompClient.publish({
-        destination: `/publish/send/text`,
-        body: JSON.stringify(messageData),
-        headers,
-      });
+  const [fileSizeInMB, setFileSizeInMB] = useState(null);
 
-      // dispatch(chatAction.sendMsg({ stompClient, messageData, headers }));
-      dispatch(
-        chatAction.changeMsg({
-          chatRoomId: Number(chatRoomId),
-          message: formState.inputs.message.value,
-        }),
-      );
+  const handleImageSelection = async event => {
+    const selectedImage = event.target.files[0];
+
+    const fileSizeInBytes = selectedImage.size;
+    const fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+    setFileSizeInMB(fileSizeInMB);
+
+    console.log(event.target.files, selectedImage);
+    if (selectedImage) {
+      const base64Image = await convertImageToBase64(selectedImage);
+      console.log(base64Image.slice(23));
+      setFile(base64Image);
     }
+
+    setSendImageModal(true);
   };
 
-  const encodeFileToBase64 = image => {
+  console.log(sendImageModal, file);
+
+  const convertImageToBase64 = imageFile => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.readAsDataURL(image);
-      reader.onload = e => resolve(e.target.result);
-      reader.onerror = err => reject(err);
+      reader.readAsDataURL(imageFile);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
     });
   };
 
@@ -274,38 +289,71 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
     fileRef.current.click();
   };
 
-  const fileChangeHandler = e => {
-    const chatImage = e.target.files[0];
-    console.log(chatImage);
-    encodeFileToBase64(chatImage).then(data => {
-      if (stompClient) {
-        console.log('이미지 전송 중:', data);
+  const sendMessage = () => {
+    console.log(file);
+    console.log(stompClient);
+
+    // if (!formState.inputs.message.value) {
+    //   alert('메시지 입력해주세요');
+    //   return;
+    // }
+
+    const headers = { Authorization: `Bearer ${auth.token}` };
+    const imageHeaders = {
+      Authorization: `Bearer ${auth.token}`,
+      // 'content-type': 'application/octet-stream',
+    };
+
+    let latestMessage;
+
+    if (stompClient) {
+      if (file) {
+        console.log(file.slice(23));
         const messageData = {
           chatRoomId,
           senderId: auth.memberId,
-          messages: data,
+          message: file.slice(23),
         };
-
-        const headers = {
-          'content-type': 'application/octet-stream',
-          Authorization: `Bearer ${auth.token}`,
-        };
-
-        console.log('전송할 이미지 데이터:', JSON.stringify(messageData));
+        console.log(
+          '전송할 이미지 메시지 데이터:',
+          JSON.stringify(messageData),
+        );
         stompClient.publish({
           destination: `/publish/send/image`,
+          body: JSON.stringify(messageData),
+          imageHeaders,
+        });
+
+        latestMessage = '사진을 보냈습니다.';
+        setSendImageModal(false);
+        setFile(null);
+      } else {
+        console.log('텍스트 메시지 전송 중:', formState.inputs.message.value);
+        const messageData = {
+          chatRoomId,
+          senderId: auth.memberId,
+          message: formState.inputs.message.value,
+        };
+        console.log(
+          '전송할 텍스트 메시지 데이터:',
+          JSON.stringify(messageData),
+        );
+        stompClient.publish({
+          destination: `/publish/send/text`,
           body: JSON.stringify(messageData),
           headers,
         });
 
-        dispatch(
-          chatAction.changeMsg({
-            chatRoomId: Number(chatRoomId),
-            message: '사진을 보냈습니다.',
-          }),
-        );
+        latestMessage = formState.inputs.message.value;
       }
-    });
+
+      dispatch(
+        chatAction.changeMsg({
+          chatRoomId: Number(chatRoomId),
+          message: latestMessage,
+        }),
+      );
+    }
   };
 
   const convertToAmPmFormat = createdAt => {
@@ -329,14 +377,15 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
     return `${year}년 ${month}월 ${day}일`;
   };
 
-  const MessageLists = (messages, msg, index, apple) => {
-    // console.log(msg, apple);
+  const MessageLists = (messages, msg, index, messageType) => {
     const isSentByRoom = msg.chatRoomId === Number(chatRoomId);
     const isSentByUser = msg.senderId === auth.memberId;
     const timeValue = convertToAmPmFormat(msg.sendAt);
     const nextMessage = messages[index + 1];
 
-    const trueMsg = msg.newMessage;
+    const trueNewMessage = msg.newMessage;
+    const pastMessages = messageType === 'pastMessage' && !msg.newMessage;
+    const currentMessages = messageType === 'currentMessage' && msg.newMessage;
 
     const isSameTimeAsNext =
       nextMessage &&
@@ -346,7 +395,7 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
       nextMessage &&
       msg.sendAt.slice(0, 10) !== nextMessage.sendAt.slice(0, 10);
 
-    if (apple === 'pastMessage' && !msg.newMessage) {
+    const renderChatMessage = () => {
       return (
         <React.Fragment key={msg.messageId}>
           {isSameDateAsNext && (
@@ -354,8 +403,9 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
               {formatDate(nextMessage.sendAt.slice(0, 10))}
             </MessageDate>
           )}
+
           <MessageContainer isSent={isSentByUser}>
-            {isSentByRoom && isSentByUser && (
+            {isSentByUser && (
               <ChatReadTime isSent={isSentByUser}>
                 <ChatRead hasTime={!isSameTimeAsNext}>
                   {!msg.read && '1'}
@@ -368,7 +418,7 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
               <p>{msg.message}</p>
             </ChatMessageBox>
 
-            {isSentByRoom && !isSentByUser && (
+            {!isSentByUser && (
               <ChatReadTime isSent={isSentByUser}>
                 <ChatRead hasTime={!isSameTimeAsNext}>
                   {!msg.read && '1'}
@@ -379,52 +429,24 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
           </MessageContainer>
         </React.Fragment>
       );
-    } else if (apple === 'currentMessage' && msg.newMessage) {
-      return (
-        <React.Fragment key={msg.messageId}>
-          {trueMsg && isSameDateAsNext && (
-            <MessageDate>
-              {formatDate(nextMessage.sendAt.slice(0, 10))}
-            </MessageDate>
-          )}
-          <MessageContainer isSent={isSentByUser}>
-            {trueMsg && isSentByRoom && isSentByUser && (
-              <ChatReadTime isSent={isSentByUser}>
-                <ChatRead hasTime={!isSameTimeAsNext}>
-                  {!msg.read && '1'}
-                </ChatRead>
-                {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
-              </ChatReadTime>
-            )}
-            {trueMsg && (
-              <ChatMessageBox isSent={isSentByUser}>
-                <p>{msg.message}</p>
-              </ChatMessageBox>
-            )}
-            {trueMsg && isSentByRoom && !isSentByUser && (
-              <ChatReadTime isSent={isSentByUser}>
-                <ChatRead hasTime={!isSameTimeAsNext}>
-                  {!msg.read && '1'}
-                </ChatRead>
-                {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
-              </ChatReadTime>
-            )}
-          </MessageContainer>
-        </React.Fragment>
-      );
+    };
+
+    if (isSentByRoom) {
+      if (pastMessages) {
+        return renderChatMessage();
+      } else if (currentMessages) {
+        return trueNewMessage && renderChatMessage();
+      }
     }
   };
 
   const renderPastMessages = () => {
-    // 이전 메시지 내용 불러오기
     return pastMessages.map((msg, index) =>
       MessageLists(pastMessages, msg, index, 'pastMessage'),
     );
   };
 
   const renderMessages = () => {
-    // 내가 보낼때 함수 실행
-    console.log(messages);
     return messages.map((msg, index) =>
       MessageLists(messages, msg, index, 'currentMessage'),
     );
@@ -439,36 +461,71 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
   };
 
   return (
-    <MessageChatLayout onSubmit={submitHandler}>
-      <MessageBox id="message-box">
-        <MessageDate>{currentDate}</MessageDate>
-        <MessageDate>{chatRoomId}</MessageDate>
-        <StartMessage>{startMessage}</StartMessage>
-        <ChatBoxLayout>
-          {renderPastMessages()}
-          {renderMessages()}
-        </ChatBoxLayout>
-      </MessageBox>
-      <MessageInputBox>
-        <FcAddImage size="30px" onClick={pickImageHandler} />
-        <ImageInput type="file" ref={fileRef} onChange={fileChangeHandler} />
-        <Input
-          element="textarea"
-          type="text"
-          id="message"
-          rows={2}
-          width="55rem"
-          reset={resetInput}
-          setReset={setResetInput}
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText={null}
-          onInput={inputHandler}
-        />
-        <MessageButton type="submit">
-          <CiPaperplane size="30px" />
-        </MessageButton>
-      </MessageInputBox>
-    </MessageChatLayout>
+    <>
+      <Modal
+        show={sendImageModal}
+        header="이미지 전송"
+        onCancel={cancelSendImage}
+        footer={
+          <>
+            <Button small width="60px" onClick={sendMessage}>
+              전송
+            </Button>
+
+            <Button small width="60px" onClick={cancelSendImage}>
+              취소
+            </Button>
+          </>
+        }
+      >
+        <PreviewBox>
+          <ImagePreview src={file} alt="이미지프리뷰" />
+          {fileSizeInMB !== null && (
+            <p>파일 크기: {fileSizeInMB.toFixed(2)} MB</p>
+          )}
+        </PreviewBox>
+      </Modal>
+
+      <MessageChatLayout onSubmit={submitHandler}>
+        <MessageBox id="message-box">
+          <MessageDate>{currentDate}</MessageDate>
+          <MessageDate>{chatRoomId}</MessageDate>
+          <StartMessage>{startMessage}</StartMessage>
+          <ChatBoxLayout>
+            {renderPastMessages()}
+            {renderMessages()}
+          </ChatBoxLayout>
+        </MessageBox>
+
+        <MessageInputBox>
+          <FcAddImage size="30px" onClick={pickImageHandler} />
+
+          <ImageInput
+            id="file-input"
+            type="file"
+            ref={fileRef}
+            onChange={handleImageSelection}
+          />
+
+          <Input
+            element="textarea"
+            type="text"
+            id="message"
+            rows={2}
+            width="55rem"
+            reset={resetInput}
+            setReset={setResetInput}
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText={null}
+            onInput={inputHandler}
+          />
+
+          <MessageButton type="submit">
+            <CiPaperplane size="30px" />
+          </MessageButton>
+        </MessageInputBox>
+      </MessageChatLayout>
+    </>
   );
 };
 

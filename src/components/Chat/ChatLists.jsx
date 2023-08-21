@@ -79,11 +79,9 @@ const ChatLists = ({
   const [chatList, setChatList] = useState([]);
   const [showLatestMessage, setShowLatestMessage] = useState('');
   const { tokenErrorHandler } = useTokenRefresher(auth);
-
   // const { chatRoomId } = useParams();
 
   const client = useRef(null);
-
   // console.log(useParams(), chatRoomId);
 
   useEffect(() => {
@@ -196,6 +194,7 @@ const ChatLists = ({
       {!chatList && (
         <ReceiverList>채팅 내역이 없습니다! 시작해보세요!</ReceiverList>
       )}
+
       {chatList &&
         chatList.map(chat => (
           <ReceiverList
@@ -209,12 +208,14 @@ const ChatLists = ({
                   <p>
                     {chat.receiverNickname}({chat.chatRoomId})
                   </p>
+
                   <Unread unread={chat.unreadCount}>
                     <p>{chat.unreadCount}</p>
                   </Unread>
                 </NameBox>
                 <p>{chat.latestMessageTime.slice(0, 10)}</p>
               </div>
+
               <p>
                 {chat.chatRoomId === showLatestMessage.chatRoomId &&
                 showLatestMessage !== ''

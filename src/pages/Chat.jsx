@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import BlockChat from '../components/Chat/BlockChat';
@@ -23,14 +22,11 @@ const ChatContent = styled.div`
 `;
 
 const Chat = () => {
-  // const updateMsgChatRoomId = useSelector(state => state.chat.chatRoomId);
   const roomId = Number(useLocation().pathname.slice(15));
   const [messages, setMessages] = useState([]);
   const [stompClient, setStompClient] = useState(null);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
-
-  // console.log(roomId);
 
   return (
     <>
