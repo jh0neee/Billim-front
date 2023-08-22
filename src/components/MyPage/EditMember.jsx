@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import axios from 'axios';
+import theme from '../../styles/theme';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
 import Modal from '../UI/Modal';
@@ -23,20 +24,12 @@ import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
 const EditMemberLayout = styled.form`
   margin: 0 auto 3rem;
-
-  @media (min-width: 1280px) {
-    max-width: 603px;
-  }
-  @media (min-width: 964px) and (max-width: 1279px) {
-    max-width: 450px;
-  }
 `;
 
 const EditMemberBox = styled.div`
   display: grid;
-  grid-template-columns: 0.45fr 0.5fr 0.8fr;
+  grid-template-columns: 0.5fr 0.9fr 0.5fr;
   align-items: center;
-  margin: 2rem 0;
   margin-bottom: ${props => (props.mainInput ? '0' : '2rem')};
   margin-top: ${props => (props.subInput ? '1rem' : '2rem')};
 
@@ -49,12 +42,28 @@ const EditMemberBox = styled.div`
   }
 
   ${props =>
+    props.password &&
+    css`
+      grid-template-columns: 1fr 0.35fr;
+    `}
+
+  ${props =>
     props.address &&
     css`
       justify-items: end;
-      grid-template-columns: 1.15fr 0.45fr;
-      margin: 0;
-      margin-bottom: ${props => (props.subInput ? '2rem' : '0')};
+      grid-template-columns: ${props =>
+        props.subInput ? '1.1fr 0.3fr' : '0.36fr 1fr'};
+      margin: ${props =>
+        props.subInput ? '0px 0.35rem 2rem 0' : '0px 0.35rem 0 0'};
+
+      > * {
+        &:first-child {
+          grid-area: ${props => (props.subInput ? '1' : '1 / 2 / 2 / 3')};
+          margin: ${props => (props.subInput ? '0.5rem' : '0')};
+          display: ${props => (props.subInput ? 'flex' : 'null')};
+          justify-content: ${props => (props.subInput ? 'flex-end' : 'null')};
+        }
+      }
     `}
 
   > * {
@@ -64,12 +73,40 @@ const EditMemberBox = styled.div`
     }
   }
 
-  @media (min-width: 964px) and (max-width: 1279px) {
-    grid-template-columns: 0.6fr 0.8fr 0.7fr;
+  @media ${theme.tablet} {
+    grid-template-columns: 0.45fr 1fr 0.5fr;
+
     ${props =>
       props.password &&
       css`
-        grid-template-columns: 0.55fr 0.9fr 0.4fr;
+        grid-template-columns: 2.9fr 1fr;
+      `}
+
+    ${props =>
+      props.address &&
+      css`
+        grid-template-columns: ${props =>
+          props.subInput ? '0.85fr 0.3fr' : '0.4fr 1.31fr'};
+      `}
+  }
+
+  @media ${theme.mobile} {
+    grid-template-columns: 0.55fr 0.8fr 0.44fr;
+    margin: ${props => (props.mainInput ? '1rem 0 0' : '1rem 0')};
+
+    ${props =>
+      props.password &&
+      css`
+        grid-template-columns: 1fr 0.33fr;
+      `}
+
+    ${props =>
+      props.address &&
+      css`
+        margin: 0;
+        justify-items: end;
+        grid-template-columns: ${props => (props.subInput ? '1fr 0.4fr' : '0')};
+        margin: ${props => (props.subInput ? '0 0 1rem 0' : '0 0 0 0.2rem')};
       `}
   }
 `;
@@ -80,21 +117,53 @@ const ExtraButton = styled(Button)`
   height: 27px;
   font-size: 10px;
   font-weight: 400;
+  justify-self: center;
 
-  ${props =>
-    props.kakao &&
-    css`
-      width: 35px;
-      height: 35px;
-      border-radius: 2rem;
-      color: black;
-      background-color: #fee500;
-      font-weight: 600;
-    `}
+  @media ${theme.mobile} {
+    width: 60px;
+    justify-self: flex-end;
+  }
+`;
+
+const KakaoButton = styled(Button)`
+  width: 35px;
+  height: 35px;
+  border-radius: 2rem;
+  color: black;
+  background-color: #fee500;
+  font-weight: 600;
+  justify-self: center;
+
+  @media ${theme.mobile} {
+    margin: 0 0 0 1.5rem;
+  }
 `;
 
 const ExtraInput = styled(Input)`
-  margin-right: 4.5rem;
+  margin: 0;
+
+  > input {
+    width: 100%;
+  }
+`;
+
+const MainInput = styled(Input)`
+  max-width: auto;
+  width: 100%;
+
+  > input {
+    width: ${props => (props.subInput ? '64.5%' : '100%')};
+
+    @media ${theme.laptop} {
+      width: ${props => (props.subInput ? '63.7%' : '100%')};
+    }
+    @media ${theme.tablet} {
+      width: ${props => (props.subInput ? '66%' : '100%')};
+    }
+    @media ${theme.mobile} {
+      width: ${props => (props.subInput ? '95%' : '100%')};
+    }
+  }
 `;
 
 const EditMember = () => {
@@ -288,7 +357,7 @@ const EditMember = () => {
           <hr />
           <EditMemberBox>
             <p>닉네임</p>
-            <Input
+            <MainInput
               element="input"
               id="nickname"
               height="30px"
@@ -316,6 +385,7 @@ const EditMember = () => {
             {passwordChanged && <span>비밀번호가 변경되었습니다.</span>}
             {!passwordChanged && (
               <ExtraButton
+                password
                 type="button"
                 sub
                 onClick={() => setEditPasswordModal(true)}
@@ -327,7 +397,7 @@ const EditMember = () => {
           <hr />
           <EditMemberBox mainInput>
             <p>주소</p>
-            <Input
+            <MainInput
               element="input"
               id="postcode"
               type="text"
@@ -345,7 +415,8 @@ const EditMember = () => {
             </ExtraButton>
           </EditMemberBox>
           <EditMemberBox address>
-            <Input
+            <MainInput
+              midInput
               element="input"
               type="text"
               id="address"
@@ -362,7 +433,8 @@ const EditMember = () => {
             />
           </EditMemberBox>
           <EditMemberBox subInput address>
-            <Input
+            <MainInput
+              subInput
               element="input"
               type="text"
               id="address_detail"
@@ -392,11 +464,11 @@ const EditMember = () => {
             />
           </EditMemberBox>
           <hr />
-          <EditMemberBox>
+          <EditMemberBox password>
             <p>소셜연동</p>
-            <ExtraButton type="button" kakao>
+            <KakaoButton type="button" kakao>
               K
-            </ExtraButton>
+            </KakaoButton>
           </EditMemberBox>
           <hr />
           <FormBtnBox>

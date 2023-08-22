@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import theme from '../../styles/theme';
 import { FaPlus, FaTimes } from 'react-icons/fa';
 
 const ProfileUploadLayout = styled.div`
   display: grid;
-  grid-template-columns: 0.45fr 1fr 0.3fr;
+  grid-template-columns: 0.5fr 0.9fr 0.5fr;
   align-items: flex-start;
   margin-top: 2rem;
 
@@ -24,18 +25,33 @@ const ProfileUploadLayout = styled.div`
     margin-top: 1rem;
   }
 
-  @media (min-width: 964px) and (max-width: 1279px) {
-    grid-template-columns: 0.5fr 0.9fr 0.3fr;
-    margin-bottom: 0;
+  @media ${theme.tablet} {
+    grid-template-columns: 0.45fr 1fr 0.5fr;
+  }
+
+  @media ${theme.mobile} {
+    grid-template-columns: 0.55fr 0.8fr 0.44fr;
+    margin-top: 1rem;
+
+    span {
+      font-size: 0.7rem;
+    }
   }
 `;
 const ProfileTextBox = styled.div`
   display: grid;
-  grid-template-columns: 0.45fr 1fr 0.3fr;
+  grid-template-columns: 0.35fr 1fr;
+  line-height: 0.8rem;
   margin-bottom: 2rem;
 
-  @media (min-width: 964px) and (max-width: 1279px) {
-    grid-template-columns: 0.45fr 1fr 0.1fr;
+  @media ${theme.tablet} {
+    grid-template-columns: 0.45fr 1.5fr;
+  }
+
+  @media ${theme.mobile} {
+    grid-template-columns: 1fr;
+    margin-bottom: 1rem;
+    justify-items: end;
   }
 `;
 
@@ -88,8 +104,17 @@ export const ImageFile = styled.img`
 const ImageFileButton = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 1rem;
+  margin: auto 0;
   cursor: pointer;
+  justify-content: center;
+
+  @media ${theme.mobile} {
+    > * {
+      &:first-child {
+        width: 0.7rem;
+      }
+    }
+  }
 `;
 
 const ImageUpload = props => {
