@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import Carousel from '../components/UI/Carousel';
+import axios from 'axios';
 import theme from '../styles/theme';
+import Carousel from '../components/UI/Carousel';
+import ErrorModal from '../util/ErrorModal';
+import { useLoadingError } from '../hooks/useLoadingError';
 
 const ContentBox = styled.div`
   max-width: 1024px;
@@ -24,20 +27,20 @@ const ContentBox = styled.div`
 `;
 
 const Footer = styled.footer`
-  padding-top: 60px;
-  height: 150px;
+  height: 90px;
   color: #cccccc;
   text-align: left;
 `;
 
 const CarouselBox = styled.div`
   margin-top: 4.5rem;
-  height: ${props => (props.isEmpty ? 'auto' : '350px')};
+  margin-bottom: 3.75rem;
+  height: ${props => (props.isEmpty ? 'auto' : '400px')};
 
   > p:first-child {
     text-align: center;
     font-family: 'TRoundWind';
-    font-size: 2.5rem;
+    font-size: 2.3rem;
     font-weight: 600;
   }
 `;
@@ -51,28 +54,26 @@ const CarouselText = styled.p`
 `;
 
 const Home = () => {
+  const url = process.env.REACT_APP_URL;
   const [recentItems, setResentItems] = useState([]);
+  const { error, clearError, errorHandler } = useLoadingError();
 
   useEffect(() => {
-    const viewedProduct = localStorage.getItem('recentItems');
-
-    if (viewedProduct == null) {
-      setResentItems([]);
-    } else {
-      const viewedItems = JSON.parse(viewedProduct);
-      console.log(viewedItems);
-      setResentItems(viewedItems);
-    }
+    axios
+      .get(`${url}/product/list/most/popular`)
+      .then(response => setResentItems(response.data))
+      .catch(err => errorHandler(err));
   }, []);
 
   return (
     <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
       <ContentBox>
         <img src="https://via.placeholder.com/1260x400" alt="예시이미지" />
         <img src="https://via.placeholder.com/1260x400" alt="예시이미지" />
         <img src="https://via.placeholder.com/1260x400" alt="예시이미지" />
         <CarouselBox isEmpty={recentItems.length === 0}>
-          <p>최근 본 상품</p>
+          <p>인기 상품</p>
           {recentItems.length === 0 ? (
             <CarouselText>최근 내역이 없습니다.</CarouselText>
           ) : (

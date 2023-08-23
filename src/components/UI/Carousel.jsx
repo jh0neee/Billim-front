@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 import Slider from 'react-slick';
@@ -7,7 +8,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import theme from '../../styles/theme';
 
 const CarouselSlider = styled(Slider)`
-  margin-top: 2rem;
+  margin-top: 4rem;
   margin-left: 13%;
   width: 80%;
   text-align: center;
@@ -22,15 +23,15 @@ const CarouselSlider = styled(Slider)`
     right: 38px;
   }
 
-  ${({ slidesToShow }) =>
-    slidesToShow === 2 &&
+  ${({ lengthofslide }) =>
+    lengthofslide === 2 &&
     css`
       margin: 2rem auto;
       padding-left: 2.8rem;
       width: 50%;
     `}
-  ${({ slidesToShow }) =>
-    slidesToShow === 1 &&
+  ${({ lengthofslide }) =>
+    lengthofslide === 1 &&
     css`
       margin-left: 40%;
       width: 27%;
@@ -45,15 +46,15 @@ const CarouselSlider = styled(Slider)`
       right: 60px;
     }
 
-    ${({ slidesToShow }) =>
-      slidesToShow === 2 &&
+    ${({ lengthofslide }) =>
+      lengthofslide === 2 &&
       css`
         margin: 2rem auto;
         padding-left: 4rem;
         width: 40%;
       `}
-    ${({ slidesToShow }) =>
-      slidesToShow === 1 &&
+    ${({ lengthofslide }) =>
+      lengthofslide === 1 &&
       css`
         margin-left: 43%;
         width: 23%;
@@ -67,8 +68,8 @@ const CarouselSlider = styled(Slider)`
     .slick-dots {
       right: -8px;
     }
-    ${({ slidesToShow }) =>
-      slidesToShow === 1 &&
+    ${({ lengthofslide }) =>
+      lengthofslide === 1 &&
       css`
         margin: 2rem auto;
         padding-left: 1.8rem;
@@ -85,16 +86,21 @@ const CarouselSlider = styled(Slider)`
   }
 `;
 
-const CarouselImgBox = styled.div`
+const CarouselImgBox = styled(Link)`
   cursor: pointer;
 
   > p {
+    font-family: 'SCDream';
     padding-top: 10px;
     padding-right: 29%;
     text-align: center;
 
-    ${({ slidesToShow }) =>
-      slidesToShow === 2 &&
+    &:hover {
+      text-decoration: underline;
+    }
+
+    ${({ lengthofslide }) =>
+      lengthofslide === 2 &&
       css`
         padding-right: 15%;
       `}
@@ -104,8 +110,8 @@ const CarouselImgBox = styled.div`
     > p {
       padding-right: 41%;
 
-      ${({ slidesToShow }) =>
-        slidesToShow === 2 &&
+      ${({ lengthofslide }) =>
+        lengthofslide === 2 &&
         css`
           padding-right: 24%;
         `}
@@ -121,6 +127,11 @@ const CarouselImgBox = styled.div`
       padding-right: 12%;
     }
   }
+`;
+
+const CarouselImage = styled.img`
+  width: 200px;
+  height: 200px;
 `;
 
 const Carousel = ({ items }) => {
@@ -162,11 +173,16 @@ const Carousel = ({ items }) => {
 
   return (
     <CarouselSlider {...carouselSetting}>
-      {items.map((item, index) => (
-        <CarouselImgBox key={index} slidesToShow={items.length}>
-          <img src="https://via.placeholder.com/200x200" alt="예시이미지" />
-          <p>{item}</p>
-        </CarouselImgBox>
+      {items.map(item => (
+        <div key={item.productId}>
+          <CarouselImgBox
+            to={`/${item.productId}/detail`}
+            lengthofslide={items.length}
+          >
+            <CarouselImage src={item.imageUrl} alt="상품이미지" />
+            <p>{item.productName}</p>
+          </CarouselImgBox>
+        </div>
       ))}
     </CarouselSlider>
   );
