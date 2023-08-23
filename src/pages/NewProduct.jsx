@@ -121,7 +121,7 @@ const NewProduct = () => {
     if (formState.inputs.category && formState.inputs.tradeMethods) {
       const notIsValid =
         formState.inputs.tradeMethods.value === 'DELIVERY' &&
-        !formState.inputs.place.isValid;
+        (!formState.inputs.place || !formState.inputs.place.isValid);
 
       if (!notIsValid) {
         if (!formState.isValid) {
