@@ -205,7 +205,7 @@ const Review = () => {
         {
           content: formState.inputs.review.value,
           orderId: id,
-          StarRating: rating,
+          starRating: rating,
         },
         {
           headers: {
