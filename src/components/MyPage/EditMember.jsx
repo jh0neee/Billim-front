@@ -440,7 +440,7 @@ const EditMember = () => {
               id="address_detail"
               height="30px"
               width="17.5rem"
-              placeholder="변경할 상세주소를 입력해주세요"
+              placeholder="상세주소"
               validators={[VALIDATOR_REQUIRE()]}
               initialValue={formState.inputs.address_detail.value}
               initialValid={formState.inputs.address_detail.isValid}
