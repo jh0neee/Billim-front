@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import Input from '../UI/Input';
 import parseISO from 'date-fns/parseISO';
+import AWS from 'aws-sdk';
 import { format } from 'date-fns';
 import { useAuth } from '../../hooks/useAuth';
 import { useForm } from '../../hooks/useForm';
@@ -198,7 +199,9 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
   const [resetInput, setResetInput] = useState(false);
   const [startMessage, setStartMessage] = useState('');
   const [pastMessages, setPastMessages] = useState([]);
-  const [file, setFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewFile, setPreviewFile] = useState(null);
+  // const [imageUrl, setImageUrl] = useState('');
   // const [productInfo, setProductInfo] = useState({});
   const [formState, inputHandler] = useForm({}, false);
   const { tokenErrorHandler } = useTokenRefresher(auth);
@@ -210,7 +213,7 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
   const [sendImageModal, setSendImageModal] = useState(false);
   const cancelSendImage = () => {
     setSendImageModal(false);
-    setFile(null);
+    setSelectedFile(null);
   };
 
   useEffect(() => {
@@ -255,26 +258,20 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
       });
   }, [chatRoomId]);
 
-  const [fileSizeInMB, setFileSizeInMB] = useState(null);
+  const BUCKET_NAME = process.env.REACT_APP_BUCKET_NAME;
+  const REGION = process.env.REACT_APP_REGION;
+  const ACCESS_KEY = process.env.REACT_APP_ACCESS;
+  const SECRET_KEY = process.env.REACT_APP_SECRET;
 
-  const handleImageSelection = async event => {
-    const selectedImage = event.target.files[0];
+  AWS.config.update({
+    accessKeyId: ACCESS_KEY,
+    secretAccessKey: SECRET_KEY,
+    region: REGION,
+  });
 
-    const fileSizeInBytes = selectedImage.size;
-    const fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-    setFileSizeInMB(fileSizeInMB);
-
-    console.log(event.target.files, selectedImage);
-    if (selectedImage) {
-      const base64Image = await convertImageToBase64(selectedImage);
-      console.log(base64Image.slice(23));
-      setFile(base64Image);
-    }
-
-    setSendImageModal(true);
+  const pickImageHandler = () => {
+    fileRef.current.click();
   };
-
-  console.log(sendImageModal, file);
 
   const convertImageToBase64 = imageFile => {
     return new Promise((resolve, reject) => {
@@ -285,34 +282,58 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
     });
   };
 
-  const pickImageHandler = () => {
-    fileRef.current.click();
+  const handleImageSelection = async event => {
+    const selectedImage = event.target.files[0];
+
+    setSelectedFile(selectedImage);
+
+    if (selectedImage) {
+      const base64Image = await convertImageToBase64(selectedImage);
+      setPreviewFile(base64Image);
+    }
+    setSendImageModal(true);
   };
 
-  const sendMessage = () => {
-    console.log(file);
-    console.log(stompClient);
+  const handleUpload = file => {
+    const s3 = new AWS.S3();
 
+    console.log(file);
+
+    const params = {
+      Bucket: BUCKET_NAME,
+      Key: `chat/${file.name}`,
+      Body: file,
+      ACL: 'public-read',
+      ContentType: file.type,
+    };
+
+    s3.upload(params, (err, data) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log('Image uploaded successfully:', data.Location);
+        // setTimeout(() => {
+        sendMessage(data.Location);
+        // }, 1200);
+      }
+    });
+  };
+
+  const sendMessage = imageUrl => {
     // if (!formState.inputs.message.value) {
     //   alert('메시지 입력해주세요');
     //   return;
     // }
-
     const headers = { Authorization: `Bearer ${auth.token}` };
-    const imageHeaders = {
-      Authorization: `Bearer ${auth.token}`,
-      // 'content-type': 'application/octet-stream',
-    };
 
     let latestMessage;
 
     if (stompClient) {
-      if (file) {
-        console.log(file.slice(23));
+      if (selectedFile) {
         const messageData = {
           chatRoomId,
           senderId: auth.memberId,
-          message: file.slice(23),
+          message: imageUrl,
         };
         console.log(
           '전송할 이미지 메시지 데이터:',
@@ -321,12 +342,14 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
         stompClient.publish({
           destination: `/publish/send/image`,
           body: JSON.stringify(messageData),
-          imageHeaders,
+          headers,
         });
+
+        console.log('사진 전송');
 
         latestMessage = '사진을 보냈습니다.';
         setSendImageModal(false);
-        setFile(null);
+        setSelectedFile(null);
       } else {
         console.log('텍스트 메시지 전송 중:', formState.inputs.message.value);
         const messageData = {
@@ -403,7 +426,6 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
               {formatDate(nextMessage.sendAt.slice(0, 10))}
             </MessageDate>
           )}
-
           <MessageContainer isSent={isSentByUser}>
             {isSentByUser && (
               <ChatReadTime isSent={isSentByUser}>
@@ -468,10 +490,13 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
         onCancel={cancelSendImage}
         footer={
           <>
-            <Button small width="60px" onClick={sendMessage}>
+            <Button
+              small
+              width="60px"
+              onClick={() => handleUpload(selectedFile)}
+            >
               전송
             </Button>
-
             <Button small width="60px" onClick={cancelSendImage}>
               취소
             </Button>
@@ -479,13 +504,9 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
         }
       >
         <PreviewBox>
-          <ImagePreview src={file} alt="이미지프리뷰" />
-          {fileSizeInMB !== null && (
-            <p>파일 크기: {fileSizeInMB.toFixed(2)} MB</p>
-          )}
+          <ImagePreview src={previewFile} alt="이미지프리뷰" />
         </PreviewBox>
       </Modal>
-
       <MessageChatLayout onSubmit={submitHandler}>
         <MessageBox id="message-box">
           <MessageDate>{currentDate}</MessageDate>
@@ -496,17 +517,14 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
             {renderMessages()}
           </ChatBoxLayout>
         </MessageBox>
-
         <MessageInputBox>
           <FcAddImage size="30px" onClick={pickImageHandler} />
-
           <ImageInput
             id="file-input"
             type="file"
             ref={fileRef}
             onChange={handleImageSelection}
           />
-
           <Input
             element="textarea"
             type="text"
@@ -519,7 +537,6 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
             errorText={null}
             onInput={inputHandler}
           />
-
           <MessageButton type="submit">
             <CiPaperplane size="30px" />
           </MessageButton>

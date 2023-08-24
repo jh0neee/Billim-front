@@ -88,6 +88,12 @@ const ChatLists = ({
     const initializeStompClient = () => {
       client.current = new StompJS.Client({
         brokerURL: `ws://localhost:8080/stomp/chat`,
+        debug: str => {
+          console.log(str);
+        },
+        // reconnectDelay: 5000,
+        // heartbeatIncoming: 4000,
+        // heartbeatOutgoing: 4000,
       });
 
       client.current.webSocketFactory = function () {
