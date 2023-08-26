@@ -63,6 +63,11 @@ const ProfileText = styled.p`
 
 export const ImageLayout = styled.div`
   margin-left: 1rem;
+
+  @media ${theme.mobile}, ${theme.tablet} {
+    margin-bottom: 0.5rem;
+    margin-top: 1rem;
+  }
 `;
 
 export const ImageInput = styled.input`
@@ -71,8 +76,10 @@ export const ImageInput = styled.input`
 
 export const ImagesBox = styled.div`
   display: flex;
+  flex-wrap: wrap;
   margin-top: ${({ imageLength }) =>
     imageLength === 0 || typeof imageLength === 'undefined' ? '0' : '1rem'};
+  gap: 0.3rem;
 `;
 
 export const ImageContent = styled.div`
@@ -134,7 +141,7 @@ const ImageUpload = props => {
       return;
     }
 
-    if (props.id === 'profile' && showImages.length === 1) {
+    if (props.id === 'profileImageUrl' && showImages.length === 1) {
       const fileReader = new FileReader();
       fileReader.onload = () => {
         setPreview(fileReader.result);
@@ -197,7 +204,7 @@ const ImageUpload = props => {
     props.onInput(props.id, pickedFile, fileIsValid);
   };
 
-  return props.id === 'profile' ? (
+  return props.id === 'profileImageUrl' ? (
     <div>
       <ProfileUploadLayout>
         <p>프로필</p>
@@ -241,7 +248,7 @@ const ImageUpload = props => {
         <ImageInput
           type="file"
           id={props.id}
-          multiple={props.id !== 'profile'}
+          multiple={props.id !== 'profileImageUrl'}
         />
         <FaPlus fill="#646F7C" />
         <span>사진추가</span>

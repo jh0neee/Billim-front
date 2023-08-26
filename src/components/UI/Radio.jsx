@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import theme from '../../styles/theme';
 
 const StyledInput = styled.input`
   appearance: none;
@@ -16,6 +17,12 @@ const StyledInput = styled.input`
     background-position: 50%;
     background-repeat: no-repeat;
     background-color: ${({ disabled }) => (disabled ? '#ced4da' : '#fcd34d')};
+  }
+
+  @media ${theme.mobile},
+    ${theme.tablet},
+    (min-width: 769px) and (max-width: 1097px) {
+    margin: 0.5rem 0.5rem -1.5px 1rem;
   }
 `;
 

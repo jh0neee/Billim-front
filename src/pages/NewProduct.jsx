@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
+import theme from '../styles/theme';
 import Input from '../components/UI/Input';
 import Radio from '../components/UI/Radio';
 import Modal from '../components/UI/Modal';
@@ -20,6 +21,7 @@ import { useLoadingError } from '../hooks/useLoadingError';
 import { useTokenRefresher } from '../hooks/useTokenRefresher';
 
 export const FormLayout = styled.form`
+  max-width: fit-content;
   width: 60%;
   margin: 85px auto 0px;
   padding: 1.5rem 0 0;
@@ -30,6 +32,16 @@ export const FormLayout = styled.form`
     font-weight: 700;
     font-size: 1.7rem;
     text-align: center;
+  }
+
+  @media ${theme.mobile} {
+    width: 70%;
+    margin: 150px auto 0;
+    padding: 0;
+  }
+  @media ${theme.tablet} {
+    margin: 150px auto 0;
+    padding: 0;
   }
 `;
 
@@ -50,6 +62,17 @@ export const FormItem = styled.div`
     font-weight: 600;
     font-size: 1.1rem;
   }
+
+  @media ${theme.mobile}, ${theme.tablet} {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin: 0;
+  }
+  @media (min-width: 769px) and (max-width: 1140px) {
+    grid-template-columns: 2fr 5fr;
+    margin: 20px 4rem 20px 5rem;
+  }
 `;
 
 export const ItemBox = styled.div`
@@ -59,14 +82,95 @@ export const ItemBox = styled.div`
   > p {
     margin-left: 0.5rem;
   }
+
+  @media ${theme.mobile}, ${theme.tablet} {
+    width: 90%;
+    margin-top: 0.5rem;
+    align-self: center;
+  }
 `;
 
 export const FormInput = styled(Input)`
   margin-left: 1rem;
+
+  @media ${theme.mobile}, ${theme.tablet} {
+    width: 95%;
+    margin-left: 0;
+    align-self: center;
+    margin-top: ${props => (props.id === 'rentalFee' ? '0.5rem' : '1rem')};
+
+    > * {
+      &:nth-child(2) {
+        width: 100%;
+      }
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1140px) {
+    width: 95%;
+
+    > * {
+      &:nth-child(2) {
+        width: 100%;
+      }
+    }
+  }
 `;
+
+export const CategoryBox = styled.div`
+  @media ${theme.mobile} {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    width: 7rem;
+  }
+
+  @media (min-width: 481px) and (max-width: 630px) {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    width: 18rem;
+  }
+  @media (min-width: 631px) and (max-width: 768px) {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  @media (min-width: 769px) and (max-width: 850px) {
+    width: 7rem;
+  }
+  @media (min-width: 942px) and (max-width: 1100px) {
+    width: 18rem;
+  }
+`;
+
 export const TradeBox = styled.div`
+  width: 100%;
   display: flex;
+  justify-content: space-between;
   align-items: center;
+
+  @media ${theme.mobile}, ${theme.tablet} {
+    margin-top: 0.5rem;
+    margin-bottom: ${({ checkedTrade }) =>
+      checkedTrade === 'DIRECT' || checkedTrade === 'ALL' ? '0' : '0.5rem'};
+  }
+
+  > div {
+    @media (min-width: 375px) and (max-width: 645px),
+      (min-width: 769px) and (max-width: 1060px) {
+      width: ${({ checkedTrade }) =>
+        checkedTrade === 'DIRECT' || checkedTrade === 'ALL' ? '7rem' : 'null'};
+      align-self: baseline;
+    }
+  }
+  > * {
+    &:first-child {
+      @media (min-width: 1070px) and (max-width: 1152px) {
+        width: ${({ checkedTrade }) =>
+          checkedTrade === 'DIRECT' || checkedTrade === 'ALL'
+            ? '13rem'
+            : 'null'};
+      }
+    }
+  }
 `;
 
 export const PlaceBox = styled.div`
@@ -81,6 +185,33 @@ export const PlaceBox = styled.div`
     margin-right: 1rem;
     line-height: 0.8rem;
   }
+
+  @media ${theme.mobile}, ${theme.tablet} {
+    margin-top: 8px;
+    justify-content: center;
+    > p {
+      margin-right: 1rem;
+      line-height: 0.8rem;
+    }
+  }
+
+  @media (min-width: 375px) and (max-width: 645px),
+    (min-width: 769px) and (max-width: 1060px) {
+    margin: 0;
+    flex-direction: column;
+
+    > p {
+      margin: 0;
+    }
+  }
+
+  @media (min-width: 1061px) and (max-width: 1280px) {
+    flex-direction: column;
+
+    > p {
+      margin: 0;
+    }
+  }
 `;
 
 export const FormBtnBox = styled.div`
@@ -88,6 +219,14 @@ export const FormBtnBox = styled.div`
   display: flex;
   justify-content: center;
   font-weight: 600;
+`;
+
+export const Line = styled.hr`
+  width: 80%;
+
+  @media ${theme.mobile}, ${theme.tablet} {
+    width: 100%;
+  }
 `;
 
 const NewProduct = () => {
@@ -196,7 +335,7 @@ const NewProduct = () => {
             <p>상품 사진</p>
             <ImageUpload id="images" onInput={inputHandler} />
           </FormItem>
-          <hr width="80%" />
+          <Line width="80%" />
           <FormItem>
             <p>대여 상품명</p>
             <FormInput
@@ -209,10 +348,10 @@ const NewProduct = () => {
               onInput={inputHandler}
             />
           </FormItem>
-          <hr width="80%" />
+          <Line width="80%" />
           <FormItem>
             <p>카테고리</p>
-            <div>
+            <CategoryBox>
               {CategoryList.map(item => (
                 <Radio
                   key={item.id}
@@ -222,9 +361,9 @@ const NewProduct = () => {
                   onChecked={onCheckedCategory}
                 />
               ))}
-            </div>
+            </CategoryBox>
           </FormItem>
-          <hr width="80%" />
+          <Line width="80%" />
           <FormItem>
             <p>대여 요금</p>
             <ItemBox>
@@ -240,19 +379,21 @@ const NewProduct = () => {
               <p>원/[일]</p>
             </ItemBox>
           </FormItem>
-          <hr width="80%" />
+          <Line width="80%" />
           <FormItem>
             <p>거래 방법</p>
-            <TradeBox>
-              {TradeMethod.map(item => (
-                <Radio
-                  key={item.id}
-                  item={item}
-                  name="tradeMethods"
-                  checked={checkedTrade}
-                  onChecked={onCheckedTrade}
-                />
-              ))}
+            <TradeBox checkedTrade={checkedTrade}>
+              <div>
+                {TradeMethod.map(item => (
+                  <Radio
+                    key={item.id}
+                    item={item}
+                    name="tradeMethods"
+                    checked={checkedTrade}
+                    onChecked={onCheckedTrade}
+                  />
+                ))}
+              </div>
               {(checkedTrade === 'DIRECT' || checkedTrade === 'ALL') && (
                 <PlaceBox>
                   <p>
@@ -273,7 +414,7 @@ const NewProduct = () => {
               )}
             </TradeBox>
           </FormItem>
-          <hr width="80%" />
+          <Line width="80%" />
           <FormItem>
             <p>상품 설명</p>
             <FormInput
@@ -286,7 +427,7 @@ const NewProduct = () => {
               onInput={inputHandler}
             />
           </FormItem>
-          <hr width="80%" />
+          <Line width="80%" />
         </FormBox>
         <FormBtnBox>
           <Button type="submit" width="10rem">
