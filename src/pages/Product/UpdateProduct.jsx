@@ -25,6 +25,8 @@ import {
   FormBtnBox,
   PlaceBox,
   TradeBox,
+  CategoryBox,
+  Line,
 } from '../NewProduct';
 
 const UpdateProduct = () => {
@@ -221,7 +223,7 @@ const UpdateProduct = () => {
               onInput={inputHandler}
             />
           </FormItem>
-          <hr width="80%" />
+          <Line />
           <FormItem>
             <p>대여 상품명</p>
             <FormInput
@@ -236,10 +238,10 @@ const UpdateProduct = () => {
               onInput={inputHandler}
             />
           </FormItem>
-          <hr width="80%" />
+          <Line />
           <FormItem>
             <p>카테고리</p>
-            <div>
+            <CategoryBox>
               {CategoryList.map(item => (
                 <Radio
                   key={item.id}
@@ -249,9 +251,9 @@ const UpdateProduct = () => {
                   disabled={true}
                 />
               ))}
-            </div>
+            </CategoryBox>
           </FormItem>
-          <hr width="80%" />
+          <Line />
           <FormItem>
             <p>대여 요금</p>
             <ItemBox>
@@ -269,19 +271,21 @@ const UpdateProduct = () => {
               <p>원/[일]</p>
             </ItemBox>
           </FormItem>
-          <hr width="80%" />
+          <Line />
           <FormItem>
             <p>거래 방법</p>
-            <TradeBox>
-              {TradeMethod.map(item => (
-                <Radio
-                  key={item.id}
-                  item={item}
-                  name="tradeMethods"
-                  checked={checkedTrade}
-                  onChecked={onCheckedTrade}
-                />
-              ))}
+            <TradeBox checkedTrade={checkedTrade}>
+              <div>
+                {TradeMethod.map(item => (
+                  <Radio
+                    key={item.id}
+                    item={item}
+                    name="tradeMethods"
+                    checked={checkedTrade}
+                    onChecked={onCheckedTrade}
+                  />
+                ))}
+              </div>
               {(checkedTrade === 'DIRECT' || checkedTrade === 'ALL') && (
                 <PlaceBox>
                   <p>
@@ -304,7 +308,7 @@ const UpdateProduct = () => {
               )}
             </TradeBox>
           </FormItem>
-          <hr width="80%" />
+          <Line />
           <FormItem>
             <p>상품 설명</p>
             <FormInput
@@ -319,7 +323,7 @@ const UpdateProduct = () => {
               onInput={inputHandler}
             />
           </FormItem>
-          <hr width="80%" />
+          <Line />
         </FormBox>
         <FormBtnBox>
           <Button type="submit" disabled={!formState.isValid} width="10rem">

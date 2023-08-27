@@ -335,7 +335,7 @@ const NewProduct = () => {
             <p>상품 사진</p>
             <ImageUpload id="images" onInput={inputHandler} />
           </FormItem>
-          <Line width="80%" />
+          <Line />
           <FormItem>
             <p>대여 상품명</p>
             <FormInput
@@ -348,7 +348,7 @@ const NewProduct = () => {
               onInput={inputHandler}
             />
           </FormItem>
-          <Line width="80%" />
+          <Line />
           <FormItem>
             <p>카테고리</p>
             <CategoryBox>
@@ -363,7 +363,7 @@ const NewProduct = () => {
               ))}
             </CategoryBox>
           </FormItem>
-          <Line width="80%" />
+          <Line />
           <FormItem>
             <p>대여 요금</p>
             <ItemBox>
@@ -379,7 +379,7 @@ const NewProduct = () => {
               <p>원/[일]</p>
             </ItemBox>
           </FormItem>
-          <Line width="80%" />
+          <Line />
           <FormItem>
             <p>거래 방법</p>
             <TradeBox checkedTrade={checkedTrade}>
@@ -414,7 +414,7 @@ const NewProduct = () => {
               )}
             </TradeBox>
           </FormItem>
-          <Line width="80%" />
+          <Line />
           <FormItem>
             <p>상품 설명</p>
             <FormInput
@@ -427,7 +427,7 @@ const NewProduct = () => {
               onInput={inputHandler}
             />
           </FormItem>
-          <Line width="80%" />
+          <Line />
         </FormBox>
         <FormBtnBox>
           <Button type="submit" width="10rem">
