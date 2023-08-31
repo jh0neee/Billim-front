@@ -7,6 +7,7 @@ import Button from '../UI/Button';
 import ErrorModal from '../../util/ErrorModal';
 import LoadingSpinner from '../UI/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
+import { Paginate } from '../UI/Pagination';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
@@ -115,10 +116,24 @@ const SalesManagement = () => {
     useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
 
+  const perPage = 6;
+  const [count, setCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
+
+  const getCurrentItems = () => {
+    const firstItemIndex = (currentPage - 1) * perPage;
+    const lastItemIndex = firstItemIndex + perPage;
+    return loadedData.slice(firstItemIndex, lastItemIndex);
+  };
+
   useEffect(() => {
     onLoading(true);
     axios
-      .get(`${url}/order/my/sales`, {
+      .get(`${url}/order/my/sales?page=${currentPage}`, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
@@ -127,7 +142,10 @@ const SalesManagement = () => {
         },
       })
       .then(response => {
-        setLoadedData(response.data);
+        const responseData = response.data.content;
+        setLoadedData(responseData);
+
+        setCount(responseData.length);
         onLoading(false);
       })
       .catch(err => {
@@ -141,7 +159,9 @@ const SalesManagement = () => {
           errorHandler(err);
         }
       });
-  }, []);
+  }, [currentPage]);
+
+  const currentItems = getCurrentItems();
 
   return (
     <>
@@ -151,14 +171,14 @@ const SalesManagement = () => {
         <p>판매중인 상품</p>
         <EnrollButton to="/product/new">상품 등록</EnrollButton>
       </SaleHeader>
-      {loadedData.length === 0 ? (
+      {currentItems.length === 0 ? (
         <NoneText>
           <p>새로운 상품을 등록해보세요! </p>
           <p>&apos;상품 등록&apos; 버튼을 통해 당신의 물건을 공유해보세요.</p>
         </NoneText>
       ) : (
         <SaleLayout>
-          {loadedData.map(item => (
+          {currentItems.map(item => (
             <SaleBox key={item.productId}>
               <Link to={`/mypage/sales/${item.productId}`}>
                 <SaleImage src={item.imageUrl} alt="상품이미지" />
@@ -167,6 +187,15 @@ const SalesManagement = () => {
             </SaleBox>
           ))}
         </SaleLayout>
+      )}
+      {currentItems.length > 0 && (
+        <Paginate
+          activePage={currentPage}
+          itemsCountPerPage={perPage}
+          totalItemsCount={count}
+          pageRangeDisplayed={5}
+          onChange={handlePageChange}
+        />
       )}
     </>
   );
