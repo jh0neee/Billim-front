@@ -93,7 +93,7 @@ const UpdateImageUpload = props => {
   return (
     <ImageLayout>
       <label htmlFor={id} onChange={handleAddImages}>
-        <ImageInput type="file" id={id} multiple={id !== 'profile'} />
+        <ImageInput type="file" id={id} multiple={id !== 'profileImageUrl'} />
         <FaPlus fill="#646F7C" />
         <span>사진추가</span>
       </label>

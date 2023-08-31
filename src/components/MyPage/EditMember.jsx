@@ -1,7 +1,9 @@
+/* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import axios from 'axios';
+import theme from '../../styles/theme';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
 import Modal from '../UI/Modal';
@@ -18,16 +20,16 @@ import { ToastContainer } from 'react-toastify';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useAddressSplitter } from '../../hooks/useAddressSplitter';
+import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
 const EditMemberLayout = styled.form`
-  margin: 0 0 3rem;
+  margin: 0 auto 3rem;
 `;
 
 const EditMemberBox = styled.div`
   display: grid;
-  grid-template-columns: 0.45fr 0.5fr 0.8fr;
+  grid-template-columns: 0.5fr 0.9fr 0.5fr;
   align-items: center;
-  margin: 2rem 0;
   margin-bottom: ${props => (props.mainInput ? '0' : '2rem')};
   margin-top: ${props => (props.subInput ? '1rem' : '2rem')};
 
@@ -40,12 +42,28 @@ const EditMemberBox = styled.div`
   }
 
   ${props =>
+    props.password &&
+    css`
+      grid-template-columns: 1fr 0.35fr;
+    `}
+
+  ${props =>
     props.address &&
     css`
       justify-items: end;
-      grid-template-columns: 1.15fr 0.45fr;
-      margin: 0;
-      margin-bottom: ${props => (props.subInput ? '2rem' : '0')};
+      grid-template-columns: ${props =>
+        props.subInput ? '1.1fr 0.3fr' : '0.36fr 1fr'};
+      margin: ${props =>
+        props.subInput ? '0px 0.35rem 2rem 0' : '0px 0.35rem 0 0'};
+
+      > * {
+        &:first-child {
+          grid-area: ${props => (props.subInput ? '1' : '1 / 2 / 2 / 3')};
+          margin: ${props => (props.subInput ? '0.5rem' : '0')};
+          display: ${props => (props.subInput ? 'flex' : 'null')};
+          justify-content: ${props => (props.subInput ? 'flex-end' : 'null')};
+        }
+      }
     `}
 
   > * {
@@ -53,6 +71,43 @@ const EditMemberBox = styled.div`
       margin-left: 0.5rem;
       font-weight: 600;
     }
+  }
+
+  @media ${theme.tablet} {
+    grid-template-columns: 0.45fr 1fr 0.5fr;
+
+    ${props =>
+      props.password &&
+      css`
+        grid-template-columns: 2.9fr 1fr;
+      `}
+
+    ${props =>
+      props.address &&
+      css`
+        grid-template-columns: ${props =>
+          props.subInput ? '0.85fr 0.3fr' : '0.4fr 1.31fr'};
+      `}
+  }
+
+  @media ${theme.mobile} {
+    grid-template-columns: 0.55fr 0.8fr 0.44fr;
+    margin: ${props => (props.mainInput ? '1rem 0 0' : '1rem 0')};
+
+    ${props =>
+      props.password &&
+      css`
+        grid-template-columns: 1fr 0.33fr;
+      `}
+
+    ${props =>
+      props.address &&
+      css`
+        margin: 0;
+        justify-items: end;
+        grid-template-columns: ${props => (props.subInput ? '1fr 0.4fr' : '0')};
+        margin: ${props => (props.subInput ? '0 0 1rem 0' : '0 0 0 0.2rem')};
+      `}
   }
 `;
 
@@ -62,21 +117,53 @@ const ExtraButton = styled(Button)`
   height: 27px;
   font-size: 10px;
   font-weight: 400;
+  justify-self: center;
 
-  ${props =>
-    props.kakao &&
-    css`
-      width: 35px;
-      height: 35px;
-      border-radius: 2rem;
-      color: black;
-      background-color: #fee500;
-      font-weight: 600;
-    `}
+  @media ${theme.mobile} {
+    width: 60px;
+    justify-self: flex-end;
+  }
+`;
+
+const KakaoButton = styled(Button)`
+  width: 35px;
+  height: 35px;
+  border-radius: 2rem;
+  color: black;
+  background-color: #fee500;
+  font-weight: 600;
+  justify-self: center;
+
+  @media ${theme.mobile} {
+    margin: 0 0 0 1.5rem;
+  }
 `;
 
 const ExtraInput = styled(Input)`
-  margin-right: 4.5rem;
+  margin: 0;
+
+  > input {
+    width: 100%;
+  }
+`;
+
+const MainInput = styled(Input)`
+  max-width: auto;
+  width: 100%;
+
+  > input {
+    width: ${props => (props.subInput ? '64.5%' : '100%')};
+
+    @media ${theme.laptop} {
+      width: ${props => (props.subInput ? '63.7%' : '100%')};
+    }
+    @media ${theme.tablet} {
+      width: ${props => (props.subInput ? '66%' : '100%')};
+    }
+    @media ${theme.mobile} {
+      width: ${props => (props.subInput ? '95%' : '100%')};
+    }
+  }
 `;
 
 const EditMember = () => {
@@ -84,6 +171,7 @@ const EditMember = () => {
   const auth = useAuth();
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
+  const { tokenErrorHandler } = useTokenRefresher(auth);
   const [isCheckNickname, setIsCheckNickname] = useState(true);
   const [passwordChanged, setPasswordChanged] = useState(false);
   const [loadedMember, setLoadedMember] = useState();
@@ -101,6 +189,12 @@ const EditMember = () => {
 
   const [editPasswordModal, setEditPasswordModal] = useState(false);
   const closeEditPasswordModal = () => setEditPasswordModal(false);
+
+  const [updateModal, setUpdateModal] = useState(false);
+  const closeUpdate = () => {
+    setUpdateModal(false);
+    window.location.reload();
+  };
 
   useEffect(() => {
     onLoading(true);
@@ -123,6 +217,10 @@ const EditMember = () => {
 
         setFormData(
           {
+            profileImageUrl: {
+              value: responseData.profileImageUrl,
+              isValid: true,
+            },
             nickname: {
               value: responseData.nickname,
               isValid: true,
@@ -145,18 +243,95 @@ const EditMember = () => {
         onLoading(false);
       })
       .catch(err => {
-        errorHandler(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
       });
   }, [setFormData, auth.token]);
 
   const EditSubmitHandler = e => {
     e.preventDefault();
 
+    const { address, address_detail, address_legal } = formState.inputs;
+    const combinedAddress = `${address.value} ${address_detail.value} ${address_legal.value}`;
+    const formData = new FormData();
+
+    const file = formState.inputs.profileImageUrl.value;
+    let updateFile;
+    if (typeof file === 'object') {
+      updateFile = formState.inputs.profileImageUrl.value[0];
+      formData.append('newProfileImage', updateFile);
+    }
+
+    formData.append('nickname', formState.inputs.nickname.value);
+    formData.append('address', combinedAddress);
+
+    const hasChanges = checkForChanges(combinedAddress);
+
+    if (!hasChanges) {
+      alert('수정할 정보가 없습니다.');
+      return;
+    }
+
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+
     if (isCheckNickname) {
-      console.log(formState.inputs);
+      onLoading(true);
+      axios
+        .put(`${url}/member/info`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + auth.token,
+          },
+          params: {
+            memberId: auth.memberId,
+          },
+        })
+        .then(() => {
+          setUpdateModal(true);
+          onLoading(false);
+        })
+        .catch(err => {
+          if (
+            err.response.status === 401 &&
+            err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+          ) {
+            tokenErrorHandler(err);
+            onLoading(false);
+          } else {
+            errorHandler(err);
+          }
+        });
     } else {
       setShowModal(true);
     }
+  };
+
+  const checkForChanges = combinedAddress => {
+    for (const inputKey in formState.inputs) {
+      if (
+        inputKey === 'address' &&
+        combinedAddress !== loadedMember[inputKey]
+      ) {
+        return true;
+      } else if (
+        !['address', 'address_detail', 'address_legal', 'postcode'].includes(
+          inputKey,
+        ) &&
+        formState.inputs[inputKey].value !== loadedMember[inputKey]
+      ) {
+        return true;
+      }
+    }
+    return false;
   };
 
   if (isLoading) {
@@ -166,6 +341,18 @@ const EditMember = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      <Modal
+        show={updateModal}
+        header="수정 완료!"
+        onCancel={closeUpdate}
+        footer={
+          <Button small width="60px" onClick={closeUpdate}>
+            확인
+          </Button>
+        }
+      >
+        성공적으로 수정되었습니다!
+      </Modal>
       <Modal
         show={showModal}
         header="중복 확인"
@@ -180,7 +367,7 @@ const EditMember = () => {
       </Modal>
       <EditPassword
         url={url}
-        token={auth.token}
+        auth={auth}
         setPasswordChanged={setPasswordChanged}
         showModal={editPasswordModal}
         closeModal={closeEditPasswordModal}
@@ -189,11 +376,16 @@ const EditMember = () => {
       <hr />
       {!isLoading && loadedMember && (
         <EditMemberLayout onSubmit={EditSubmitHandler}>
-          <ImageUpload id="profile" onInput={inputHandler} size="50px" />
+          <ImageUpload
+            id="profileImageUrl"
+            onInput={inputHandler}
+            size="50px"
+            src={loadedMember.profileImageUrl}
+          />
           <hr />
           <EditMemberBox>
             <p>닉네임</p>
-            <Input
+            <MainInput
               element="input"
               id="nickname"
               height="30px"
@@ -216,11 +408,12 @@ const EditMember = () => {
             />
           </EditMemberBox>
           <hr />
-          <EditMemberBox>
+          <EditMemberBox password>
             <p>비밀번호 변경</p>
             {passwordChanged && <span>비밀번호가 변경되었습니다.</span>}
             {!passwordChanged && (
               <ExtraButton
+                password
                 type="button"
                 sub
                 onClick={() => setEditPasswordModal(true)}
@@ -232,7 +425,7 @@ const EditMember = () => {
           <hr />
           <EditMemberBox mainInput>
             <p>주소</p>
-            <Input
+            <MainInput
               element="input"
               id="postcode"
               type="text"
@@ -245,12 +438,13 @@ const EditMember = () => {
               onInput={inputHandler}
               disabled={true}
             />
-            <ExtraButton sub onClick={postCodeOpenHandler}>
+            <ExtraButton type="button" sub onClick={postCodeOpenHandler}>
               주소 변경
             </ExtraButton>
           </EditMemberBox>
           <EditMemberBox address>
-            <Input
+            <MainInput
+              midInput
               element="input"
               type="text"
               id="address"
@@ -267,13 +461,14 @@ const EditMember = () => {
             />
           </EditMemberBox>
           <EditMemberBox subInput address>
-            <Input
+            <MainInput
+              subInput
               element="input"
               type="text"
               id="address_detail"
               height="30px"
               width="17.5rem"
-              placeholder="변경할 상세주소를 입력해주세요"
+              placeholder="상세주소"
               validators={[VALIDATOR_REQUIRE()]}
               initialValue={formState.inputs.address_detail.value}
               initialValid={formState.inputs.address_detail.isValid}
@@ -297,9 +492,11 @@ const EditMember = () => {
             />
           </EditMemberBox>
           <hr />
-          <EditMemberBox>
+          <EditMemberBox password>
             <p>소셜연동</p>
-            <ExtraButton kakao>K</ExtraButton>
+            <KakaoButton type="button" kakao>
+              K
+            </KakaoButton>
           </EditMemberBox>
           <hr />
           <FormBtnBox>
