@@ -6,7 +6,17 @@
   padding-bottom: 3rem;
 }
 
-.pagination li {
+.inner-page {
+  font-family: 'TRoundWind';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 3rem;
+  padding-top: 1rem;
+}
+
+.pagination li,
+.inner-page li {
   margin: 7px;
   width: 25px;
   height: 25px;
@@ -16,7 +26,8 @@
   font-size: 1rem;
 }
 
-.pagination li a {
+.pagination li a,
+.inner-page li a {
   text-decoration: none;
   font-size: 0.75rem;
   line-height: 25px;
@@ -28,25 +39,29 @@
   border-radius: 20px;
 }
 
-.pagination :nth-child(2) a {
+.pagination:nth-child(2) a,
+.inner-page:nth-child(2) a {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.pagination :nth-last-child(2) a {
+.pagination:nth-last-child(2) a,
+.inner-page:nth-last-child(2) a {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.pagination :first-child a {
+.pagination:first-child a,
+.inner-page:first-child a {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.pagination :last-child a {
+.pagination:last-child a,
+.inner-page:last-child a {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,4 +74,13 @@
 
 .pagination li.active {
   font-weight: 700;
+}
+
+.active-page {
+  color: black;
+}
+
+.active-page > a {
+  font-weight: 700;
+  font-size: 14px !important;
 }

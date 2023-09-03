@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -130,6 +130,11 @@ const DetailView = ({ items, onDeleteProduct }) => {
   const auth = useAuth();
   const productId = items.productId;
   const navigate = useNavigate();
+
+  const [reviewData, setReviewData] = useState([]);
+  const [count, setCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, error, onLoading, clearError, errorHandler } =
@@ -168,6 +173,23 @@ const DetailView = ({ items, onDeleteProduct }) => {
         }
       });
   };
+
+  useEffect(() => {
+    axios
+      .get(`${url}/review/list/${productId}?pageable=${currentPage}`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+      })
+      .then(response => {
+        const responseData = response.data.content;
+        setReviewData(responseData);
+        setCount(responseData.length);
+      })
+      .catch(err => {
+        errorHandler(err);
+      });
+  }, [currentPage]);
 
   const EnterChatRoom = () => {
     axios
@@ -243,7 +265,7 @@ const DetailView = ({ items, onDeleteProduct }) => {
           name={items.productName}
           scope={items.starRating.toFixed(1)}
           grade={items.sellerGrade}
-          reviewCount={items.productReviewListResponses.length}
+          reviewCount={reviewData.length}
         />
         <DetailImageGallery images={items.imageUrls} />
         <DetailBox>
@@ -271,7 +293,12 @@ const DetailView = ({ items, onDeleteProduct }) => {
         <StyledLine />
         <DetailReviewBox>
           <ReviewTitle>후기</ReviewTitle>
-          <DetailReview data={items.productReviewListResponses} />
+          <DetailReview
+            reviewData={reviewData}
+            count={count}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
         </DetailReviewBox>
       </DetailLayout>
     </>

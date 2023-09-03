@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO';
 import { Profile } from '../UI/Profile';
-import SmallListPagination from '../UI/SmallListPagination';
+import { Paginate } from '../UI/Pagination';
 
 const ReviewLayout = styled.div`
   display: grid;
@@ -20,7 +20,8 @@ const ReviewLayout = styled.div`
 
 const ReviewContent = styled.div`
   width: 100%;
-  border-bottom: ${({ dataZero }) => (dataZero ? '0' : '1px solid #dee2e6')};
+  border-bottom: ${({ dataZero, lastData }) =>
+    dataZero || lastData ? '0' : '1px solid #dee2e6'};
 
   > * {
     &:first-child {
@@ -44,34 +45,38 @@ const ReviewUserBox = styled.div`
   }
 `;
 
-const DetailReview = ({ data }) => {
-  const itemsPerPage = 4;
-  const [currentPage, setCurrentPage] = useState(1);
+const DetailReview = ({ reviewData, count, currentPage, setCurrentPage }) => {
+  const perPage = 4;
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentItems = data.slice(startIndex, endIndex);
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
 
-  const totalPages = Math.ceil(data.length / itemsPerPage);
-
-  const handlePageChange = newPage => {
-    setCurrentPage(newPage);
+  const getCurrentItems = () => {
+    const firstItemIndex = (currentPage - 1) * perPage;
+    const lastItemIndex = firstItemIndex + perPage;
+    return reviewData.slice(firstItemIndex, lastItemIndex);
   };
 
   const dateFormat = date => {
     return format(parseISO(date), 'yyyy-MM-dd');
   };
 
+  const currentItems = getCurrentItems();
+
   return (
     <>
       <ReviewLayout>
-        {data.length === 0 && (
+        {currentItems.length === 0 && (
           <ReviewContent dataZero>
             <p>작성된 리뷰가 없습니다.</p>
           </ReviewContent>
         )}
         {currentItems.map(review => (
-          <ReviewContent key={review.reviewId}>
+          <ReviewContent
+            key={review.reviewId}
+            lastData={currentItems.length === 1}
+          >
             <div>
               <Profile src={review.profileImageUrl} size="45px" />
               <ReviewUserBox>
@@ -83,11 +88,16 @@ const DetailReview = ({ data }) => {
           </ReviewContent>
         ))}
       </ReviewLayout>
-      <SmallListPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        handlePageChange={handlePageChange}
-      />
+      {currentItems.length > 0 && (
+        <Paginate
+          activePage={currentPage}
+          itemsCountPerPage={perPage}
+          totalItemsCount={count}
+          pageRangeDisplayed={5}
+          onChange={handlePageChange}
+          isPageStyle={true}
+        />
+      )}
     </>
   );
 };
