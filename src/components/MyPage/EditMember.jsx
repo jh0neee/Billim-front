@@ -217,7 +217,7 @@ const EditMember = () => {
 
         setFormData(
           {
-            profile: {
+            profileImageUrl: {
               value: responseData.profileImageUrl,
               isValid: true,
             },
@@ -255,6 +255,25 @@ const EditMember = () => {
       });
   }, [setFormData, auth.token]);
 
+  const checkForChanges = combinedAddress => {
+    for (const inputKey in formState.inputs) {
+      if (
+        inputKey === 'address' &&
+        combinedAddress !== loadedMember[inputKey]
+      ) {
+        return true;
+      } else if (
+        !['address', 'address_detail', 'address_legal', 'postcode'].includes(
+          inputKey,
+        ) &&
+        formState.inputs[inputKey].value !== loadedMember[inputKey]
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const EditSubmitHandler = e => {
     e.preventDefault();
 
@@ -262,17 +281,22 @@ const EditMember = () => {
     const combinedAddress = `${address.value} ${address_detail.value} ${address_legal.value}`;
     const formData = new FormData();
 
-    const file = formState.inputs.profile.value;
-    let updateFile;
+    const file = formState.inputs.profileImageUrl.value;
+
     if (typeof file === 'object') {
-      updateFile = formState.inputs.profile.value[0];
-    } else if (typeof file === 'string') {
-      updateFile = formState.inputs.profile.value;
+      const updateFile = formState.inputs.profileImageUrl.value[0];
+      formData.append('newProfileImage', updateFile);
     }
 
-    formData.append('newProfileImage', updateFile);
     formData.append('nickname', formState.inputs.nickname.value);
     formData.append('address', combinedAddress);
+
+    const hasChanges = checkForChanges(combinedAddress);
+
+    if (!hasChanges) {
+      alert('수정할 정보가 없습니다.');
+      return;
+    }
 
     if (isCheckNickname) {
       onLoading(true);
@@ -349,7 +373,7 @@ const EditMember = () => {
       {!isLoading && loadedMember && (
         <EditMemberLayout onSubmit={EditSubmitHandler}>
           <ImageUpload
-            id="profile"
+            id="profileImageUrl"
             onInput={inputHandler}
             size="50px"
             src={loadedMember.profileImageUrl}
