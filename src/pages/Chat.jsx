@@ -24,6 +24,8 @@ const ChatContent = styled.div`
 const Chat = () => {
   const roomId = Number(useLocation().pathname.slice(15));
   const [messages, setMessages] = useState([]);
+  const [enteredUsers, setEnteredUsers] = useState({});
+  const [inChatRoom, setInChatRoom] = useState({});
   const [stompClient, setStompClient] = useState(null);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
@@ -34,6 +36,8 @@ const Chat = () => {
       <ChatLayout>
         {isLoading && <LoadingSpinner asOverlay />}
         <ChatLists
+          setEnteredUsers={setEnteredUsers}
+          setInChatRoom={setInChatRoom}
           setStompClient={setStompClient}
           messages={messages}
           setMessages={setMessages}
@@ -45,6 +49,8 @@ const Chat = () => {
             <BlockChat />
           ) : (
             <MessageChat
+              enteredUsers={enteredUsers}
+              inChatRoom={inChatRoom}
               stompClient={stompClient}
               messages={messages}
               setMessages={setMessages}

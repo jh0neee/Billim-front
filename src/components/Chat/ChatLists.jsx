@@ -68,6 +68,8 @@ const Unread = styled.div`
 `;
 
 const ChatLists = ({
+  setEnteredUsers,
+  setInChatRoom,
   setStompClient,
   messages,
   setMessages,
@@ -79,17 +81,15 @@ const ChatLists = ({
   const [chatList, setChatList] = useState([]);
   const [showLatestMessage, setShowLatestMessage] = useState('');
   const { tokenErrorHandler } = useTokenRefresher(auth);
-  // const { chatRoomId } = useParams();
 
   const client = useRef(null);
-  // console.log(useParams(), chatRoomId);
 
   useEffect(() => {
     const initializeStompClient = () => {
       client.current = new StompJS.Client({
         brokerURL: `ws://localhost:8080/stomp/chat`,
         debug: str => {
-          console.log(str);
+          // console.log(str);
         },
         // reconnectDelay: 5000,
         // heartbeatIncoming: 4000,
@@ -132,6 +132,18 @@ const ChatLists = ({
 
         const responseData = await response.data;
 
+        const initialEnteredStatus = {};
+        responseData.forEach(chatRoom => {
+          initialEnteredStatus[chatRoom.chatRoomId] = false;
+        });
+        setInChatRoom(initialEnteredStatus);
+
+        const initialEnteredUsers = {};
+        responseData.forEach(chatRoom => {
+          initialEnteredUsers[chatRoom.chatRoomId] = [];
+        });
+        setEnteredUsers(initialEnteredUsers);
+
         setChatList(prevChatList => {
           const chatRoomIds = prevChatList.map(chat => chat.chatRoomId);
           const newChats = responseData.filter(
@@ -155,8 +167,6 @@ const ChatLists = ({
 
         onLoading(false);
       } catch (err) {
-        // console.log(err);
-        // console.log('Error fetching chat rooms:', err);
         if (
           err.response.status === 401 &&
           err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
@@ -177,17 +187,87 @@ const ChatLists = ({
     };
   }, []);
 
+  const updateBadges = (chatRoomId, senderId) => {
+    setChatList(prevChatList => {
+      return prevChatList.map(chat => {
+        if (chat.chatRoomId === chatRoomId) {
+          if (senderId === chat.receiverId) {
+            const updatedChat = { ...chat, unreadCount: chat.unreadCount + 1 };
+            return updatedChat;
+          }
+        }
+        return chat;
+      });
+    });
+  };
+
+  const openChatRoomHandler = (chat, chatRoomId) => {
+    console.log(`${chatRoomId} 입장`);
+    console.log(chat);
+
+    setInChatRoom(prev => {
+      const updatedEnteredStatus = { ...prev };
+
+      for (const key in prev) {
+        const roomId = String(chatRoomId);
+
+        if (key === roomId) {
+          updatedEnteredStatus[key] = true;
+        } else {
+          updatedEnteredStatus[key] = false;
+        }
+      }
+
+      return updatedEnteredStatus;
+    });
+
+    setEnteredUsers(prev => {
+      const updatedUsers = { ...prev };
+
+      for (const key in prev) {
+        const roomId = String(chatRoomId);
+        const usersInChatRoom = updatedUsers[key];
+
+        if (key === roomId) {
+          usersInChatRoom.push(auth.memberId);
+        } else {
+          // key와 roomId가 다를 때, 해당 키의 배열에 요소가 있을 때만 제거
+          if (usersInChatRoom.includes(auth.memberId)) {
+            updatedUsers[key] = usersInChatRoom.filter(
+              userId => userId !== auth.memberId,
+            );
+          }
+        }
+      }
+
+      return updatedUsers;
+    });
+
+    setChatList(prevChatList => {
+      return prevChatList.map(chat => {
+        if (chat.chatRoomId === chatRoomId) {
+          const updatedChat = { ...chat, unreadCount: 0 };
+          return updatedChat;
+        }
+        return chat;
+      });
+    });
+  };
+
   const onRoomRecieved = chatRoomId => message => {
     const messageBody = JSON.parse(message.body);
-    // console.log('onRoomReceived 호출됨:', messageBody);
-    if (messageBody.newMessage === true) {
+    const isCurrentUserInRoom = messageBody.chatRoomId === chatRoomId;
+
+    if (messageBody.newMessage) {
       console.log('입장했습니다: ', messageBody);
-      // console.log(messageBody, messageBody.chatRoomId, roomId);
-      setShowLatestMessage(messageBody);
       console.log(messageBody.chatRoomId, chatRoomId);
-      if (messageBody.chatRoomId === chatRoomId) {
+
+      console.log(isCurrentUserInRoom);
+      if (isCurrentUserInRoom) {
         setMessages(prev => [...prev, messageBody]);
+        updateBadges(messageBody.chatRoomId, messageBody.senderId);
       }
+      setShowLatestMessage(messageBody);
     }
   };
 
@@ -206,6 +286,7 @@ const ChatLists = ({
           <ReceiverList
             to={`/chat/messages/${chat.chatRoomId}`}
             key={chat.chatRoomId}
+            onClick={() => openChatRoomHandler(chat, chat.chatRoomId)}
           >
             <Profile size="50px" src={chat.receiverProfileImageUrl} />
             <DetailBox>

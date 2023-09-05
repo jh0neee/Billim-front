@@ -116,6 +116,11 @@ const ChatTime = styled.p`
   font-size: 10px;
 `;
 
+const ChatImageMessage = styled.img`
+  width: 50px;
+  height: 50px;
+`;
+
 // const ProductInfoBox = styled.div`
 //   display: flex;
 //   flex-direction: column;
@@ -188,7 +193,13 @@ const ImagePreview = styled.img`
   object-fit: contain;
 `;
 
-const MessageChat = ({ stompClient, messages, setMessages }) => {
+const MessageChat = ({
+  enteredUsers,
+  inChatRoom,
+  stompClient,
+  messages,
+  setMessages,
+}) => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const fileRef = useRef(null);
@@ -236,6 +247,8 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
       .then(response => {
         const messageData = response.data;
         console.log('처음 이전 메시지 요청: ', messageData);
+        console.log(inChatRoom);
+        console.log(enteredUsers);
         const firstDate = format(
           parseISO(messageData[0].sendAt),
           'yyyy년 MM월 dd일',
@@ -366,7 +379,7 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
           body: JSON.stringify(messageData),
           headers,
         });
-
+        console.log(messageData);
         latestMessage = formState.inputs.message.value;
       }
 
@@ -400,7 +413,44 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
     return `${year}년 ${month}월 ${day}일`;
   };
 
-  const MessageLists = (messages, msg, index, messageType) => {
+  const axiosReadMessage = (chatRoomId, messageId, token, url) => {
+    axios
+      .post(
+        `${url}/api/chat/message/read`,
+        {
+          chatRoomId,
+          messageId,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+  };
+
+  const readMessage = msg => {
+    let exam;
+
+    for (const key in inChatRoom) {
+      if (key === chatRoomId && enteredUsers[key][0] === msg.senderId) {
+        axiosReadMessage(msg.chatRoomId, msg.messageId, auth.token, url);
+        return (exam = true);
+      } else if (enteredUsers[key][0] === auth.memberId) {
+        axiosReadMessage(msg.chatRoomId, msg.messageId, auth.token, url);
+        return (exam = true);
+      } else {
+        exam = false;
+      }
+    }
+
+    return exam;
+  };
+
+  const MessageLists = (messages, msg, index, messageType, read) => {
     const isSentByRoom = msg.chatRoomId === Number(chatRoomId);
     const isSentByUser = msg.senderId === auth.memberId;
     const timeValue = convertToAmPmFormat(msg.sendAt);
@@ -418,6 +468,10 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
       nextMessage &&
       msg.sendAt.slice(0, 10) !== nextMessage.sendAt.slice(0, 10);
 
+    // if (!isSentByUser) {
+    //   console.log(read, msg.message);
+    // }
+
     const renderChatMessage = () => {
       return (
         <React.Fragment key={msg.messageId}>
@@ -429,22 +483,22 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
           <MessageContainer isSent={isSentByUser}>
             {isSentByUser && (
               <ChatReadTime isSent={isSentByUser}>
-                <ChatRead hasTime={!isSameTimeAsNext}>
-                  {!msg.read && '1'}
-                </ChatRead>
+                <ChatRead hasTime={!isSameTimeAsNext}>{!read && '1'}</ChatRead>
                 {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
               </ChatReadTime>
             )}
 
             <ChatMessageBox isSent={isSentByUser}>
-              <p>{msg.message}</p>
+              {msg.message.includes(`${BUCKET_NAME}.s3`) ? (
+                <ChatImageMessage src={msg.message} alt="채팅이미지" />
+              ) : (
+                <p>{msg.message}</p>
+              )}
             </ChatMessageBox>
 
             {!isSentByUser && (
               <ChatReadTime isSent={isSentByUser}>
-                <ChatRead hasTime={!isSameTimeAsNext}>
-                  {!msg.read && '1'}
-                </ChatRead>
+                <ChatRead hasTime={!isSameTimeAsNext}>{!read && '1'}</ChatRead>
                 {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
               </ChatReadTime>
             )}
@@ -464,14 +518,16 @@ const MessageChat = ({ stompClient, messages, setMessages }) => {
 
   const renderPastMessages = () => {
     return pastMessages.map((msg, index) =>
-      MessageLists(pastMessages, msg, index, 'pastMessage'),
+      MessageLists(pastMessages, msg, index, 'pastMessage', msg.read),
     );
   };
 
   const renderMessages = () => {
-    return messages.map((msg, index) =>
-      MessageLists(messages, msg, index, 'currentMessage'),
-    );
+    return messages.map((msg, index) => {
+      console.log(msg);
+      const read = readMessage(msg);
+      return MessageLists(messages, msg, index, 'currentMessage', read);
+    });
   };
 
   const submitHandler = e => {
