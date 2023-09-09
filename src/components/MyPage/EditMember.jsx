@@ -125,20 +125,6 @@ const ExtraButton = styled(Button)`
   }
 `;
 
-const KakaoButton = styled(Button)`
-  width: 35px;
-  height: 35px;
-  border-radius: 2rem;
-  color: black;
-  background-color: #fee500;
-  font-weight: 600;
-  justify-self: center;
-
-  @media ${theme.mobile} {
-    margin: 0 0 0 1.5rem;
-  }
-`;
-
 const ExtraInput = styled(Input)`
   margin: 0;
 
@@ -486,13 +472,6 @@ const EditMember = () => {
               onInput={inputHandler}
               disabled={true}
             />
-          </EditMemberBox>
-          <hr />
-          <EditMemberBox password>
-            <p>소셜연동</p>
-            <KakaoButton type="button" kakao>
-              K
-            </KakaoButton>
           </EditMemberBox>
           <hr />
           <FormBtnBox>

@@ -169,9 +169,6 @@ const SideMenu = () => {
                 <SideLink to="mypage/review">후기</SideLink>
               </SideNavItem>
               <SideNavItem>
-                <SideLink to="mypage/block">차단관리</SideLink>
-              </SideNavItem>
-              <SideNavItem>
                 <SideLink to="mypage/member">회원정보수정</SideLink>
               </SideNavItem>
             </SideNavList>

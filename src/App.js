@@ -19,7 +19,6 @@ import SalesManagement from './components/MyPage/SalesManagement.jsx';
 import WishList from './components/MyPage/WishList.jsx';
 import SalesDetailManagement from './components/MyPage/SalesDetailManagement.jsx';
 import Review from './components/MyPage/Review.jsx';
-import BlockManagement from './components/MyPage/BlockManagement.jsx';
 import EditMember from './components/MyPage/EditMember.jsx';
 import NewProduct from './pages/NewProduct.jsx';
 import MyPageCoupon from './components/MyPage/MyPageCoupon.jsx';
@@ -29,7 +28,6 @@ import MessageChat from './components/Chat/MessageChat.jsx';
 import BlockChat from './components/Chat/BlockChat.jsx';
 import EmailConfirm from './pages/Auth/EmailConfirm.jsx';
 import { pageAction } from './store/currentPage.js';
-import KakaoRedirect from './pages/Auth/KakaoRedirect.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -75,7 +73,6 @@ function App() {
           />
           <Route path="/mypage/favorite" element={<WishList />} />
           <Route path="/mypage/review" element={<Review />} />
-          <Route path="/mypage/block" element={<BlockManagement />} />
           <Route path="/mypage/member" element={<EditMember />} />
           <Route path="/mypage/coupon" element={<MyPageCoupon />} />
         </Route>
@@ -98,7 +95,6 @@ function App() {
         <Route path="/emailverify" element={<EmailVerification />} />
         <Route path="/emailverify/confirm" element={<EmailConfirm />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/oauth/kakao" element={<KakaoRedirect />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     );

@@ -8,7 +8,6 @@ import Input from '../../components/UI/Input';
 import Button from '../../components/UI/Button';
 import ErrorModal from '../../util/ErrorModal';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import { ImBubble } from 'react-icons/im';
 import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
@@ -38,24 +37,6 @@ const SignInLayout = styled.form`
   }
 `;
 
-const ButtonBox = styled.div`
-  position: relative;
-
-  > * {
-    &:nth-child(2) {
-      color: black;
-      background: #fee500;
-    }
-  }
-`;
-
-const KakaoIcon = styled(ImBubble)`
-  position: absolute;
-  font-size: 17.5px;
-  top: 21px;
-  left: 15px;
-`;
-
 const FindButtonBox = styled.div`
   display: flex;
   align-items: center;
@@ -75,10 +56,22 @@ const FindButtonBox = styled.div`
 const SignUpBox = styled.div`
   display: flex;
   align-items: center;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+
   > * {
     &:first-child {
-      font-size: 0.83rem;
-      margin-right: 3.4rem;
+      line-height: 1.1;
+
+      > span {
+        font-weight: 600;
+      }
+    }
+    &:last-child {
+      margin-right: 0.3rem;
+      margin-left: 4rem;
+      cursor: pointer;
+      text-decoration: underline;
     }
   }
 `;
@@ -89,14 +82,6 @@ const SignIn = () => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
-
-  const REST_API_KEY = process.env.REACT_APP_KAKAO_REST_API;
-  const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI;
-  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-
-  const KakaoLoginHandler = () => {
-    window.location.href = KAKAO_AUTH_URL;
-  };
 
   const SubmitHandler = e => {
     e.preventDefault();
@@ -152,24 +137,15 @@ const SignIn = () => {
         <Button type="submit" disabled={!formState.isValid}>
           로그인
         </Button>
-        <ButtonBox>
-          <KakaoIcon />
-          <Button type="button" onClick={KakaoLoginHandler}>
-            카카오 로그인
-          </Button>
-        </ButtonBox>
         <FindButtonBox>
           <p>비밀번호를 잊어버리셨나요?</p>
           <Link to="/finduser/password">비밀번호 찾기</Link>
         </FindButtonBox>
         <SignUpBox>
           <p>
-            빌림의 회원이 되시면 <br />
-            할인쿠폰을 드립니다.
+            빌림의 회원이 되시면 <span>할인쿠폰</span>을 <br /> 드립니다.
           </p>
-          <Button sub="true" small="true" to="/emailverify" width="80px">
-            회원가입
-          </Button>
+          <Link to="/emailverify">회원가입</Link>
         </SignUpBox>
       </SignInLayout>
     </>

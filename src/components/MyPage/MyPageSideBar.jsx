@@ -30,7 +30,6 @@ const MyPageSideBar = () => {
       <Link to="/mypage/sales">판매관리</Link>
       <Link to="/mypage/favorite">관심상품</Link>
       <Link to="/mypage/review">후기</Link>
-      <Link to="/mypage/block">차단관리</Link>
       <Link to="/mypage/member">회원정보수정</Link>
     </MyPageMenu>
   );
