@@ -9,6 +9,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { RiHeart3Fill, RiHeart3Line, RiStarSFill } from 'react-icons/ri';
+import { Paginate } from '../UI/Pagination';
 
 const WishListLayout = styled.div`
   margin: 1rem;
@@ -119,10 +120,17 @@ const ProductParagraph = styled.p`
 const WishList = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
+  const perPage = 9;
   const [interestItems, setInterestItems] = useState([]);
+  const [count, setCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
+
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
 
   useEffect(() => {
     onLoading(true);
@@ -133,11 +141,13 @@ const WishList = () => {
         },
         params: {
           memberId: auth.memberId,
+          page: currentPage,
         },
       })
       .then(response => {
-        const responseData = response.data.myInterestProductList;
-        setInterestItems(responseData);
+        console.log(response);
+        setInterestItems(response.data.content);
+        setCount(response.data.totalElements);
         onLoading(false);
       })
       .catch(err => {
@@ -150,7 +160,7 @@ const WishList = () => {
           errorHandler(err);
         }
       });
-  }, [auth.token]);
+  }, [currentPage]);
 
   const handleInterestToggle = item => {
     const interestedProductId = item.productId;
@@ -170,6 +180,9 @@ const WishList = () => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${auth.token}`,
+          },
+          params: {
+            memberId: auth.memberId,
           },
         },
       )
@@ -200,6 +213,15 @@ const WishList = () => {
         }
       });
   };
+
+  useEffect(() => {
+    // 한 페이지(1페이지제외)에서 아이템 전부 삭제했을 때 이전페이지로 이동
+    if (interestItems.length === 0 && currentPage !== 1) {
+      setTimeout(() => {
+        setCurrentPage(prev => prev - 1);
+      }, 100);
+    }
+  }, [interestItems]);
 
   return (
     <>
@@ -243,6 +265,15 @@ const WishList = () => {
             </ListBox>
           ))}
         </WishListLayout>
+      )}
+      {interestItems.length > 0 && (
+        <Paginate
+          activePage={currentPage}
+          itemsCountPerPage={perPage}
+          totalItemsCount={count}
+          pageRangeDisplayed={5}
+          onChange={handlePageChange}
+        />
       )}
     </>
   );

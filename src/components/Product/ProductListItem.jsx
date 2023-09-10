@@ -67,7 +67,7 @@ const ProductParagraph = styled.p`
     `}
 `;
 
-const ProductListItem = ({ items }) => {
+const ProductListItem = ({ items, currentPage }) => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
@@ -89,10 +89,11 @@ const ProductListItem = ({ items }) => {
         },
         params: {
           memberId: auth.memberId,
+          page: currentPage,
         },
       })
       .then(response => {
-        const responseData = response.data.myInterestProductList;
+        const responseData = response.data.content;
         setInterestList(responseData);
       })
       .catch(err => {
@@ -117,13 +118,16 @@ const ProductListItem = ({ items }) => {
         .post(
           `${url}/product/interest`,
           {
-            interest: false,
             productId: selectItem.productId,
+            interest: false,
           },
           {
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${auth.token}`,
+            },
+            params: {
+              memberId: auth.memberId,
             },
           },
         )
@@ -154,6 +158,9 @@ const ProductListItem = ({ items }) => {
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${auth.token}`,
+            },
+            params: {
+              memberId: auth.memberId,
             },
           },
         )

@@ -67,12 +67,6 @@ const ProductList = () => {
     setCurrentPage(pageNumber);
   };
 
-  const getCurrentItems = () => {
-    const firstItemIndex = (currentPage - 1) * perPage;
-    const lastItemIndex = firstItemIndex + perPage;
-    return items.slice(firstItemIndex, lastItemIndex);
-  };
-
   let requestUrl = `${url}/product/list/search?page=${currentPage}`;
 
   if (searchValue) {
@@ -87,9 +81,8 @@ const ProductList = () => {
       .get(requestUrl)
       .then(response => {
         if (response.status === 200) {
-          const responseData = response.data.content;
-          setItems(responseData);
-          setCount(responseData.length);
+          setItems(response.data.content);
+          setCount(response.data.totalElements);
         } else {
           errorHandler(response);
         }
@@ -109,7 +102,7 @@ const ProductList = () => {
           <ProductCategory />
         </CategoryLayout>
         <ProductItemLayout>
-          <ProductListItem items={getCurrentItems()} />
+          <ProductListItem items={items} currentPage={currentPage} />
         </ProductItemLayout>
         {items.length > 0 && (
           <Paginate
