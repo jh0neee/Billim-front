@@ -14,7 +14,7 @@ import {
   VALIDATOR_PASSWORD,
 } from '../../util/validators';
 
-const PasswordBox = styled.div`
+export const PasswordBox = styled.div`
   display: grid;
   grid-template-columns: 0.45fr 0.8fr;
   align-items: center;

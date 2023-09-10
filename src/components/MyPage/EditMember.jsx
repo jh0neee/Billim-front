@@ -9,9 +9,10 @@ import Input from '../UI/Input';
 import Modal from '../UI/Modal';
 import ErrorModal from '../../util/ErrorModal';
 import ImageUpload from '../UI/ImageUpload';
+import EditPassword from './EditPassword';
+import CancelMember from './CancelMember';
 import usePostalCode from '../../hooks/usePostalCode';
 import LoadingSpinner from '../UI/LoadingSpinner';
-import EditPassword from './EditPassword';
 import { useAuth } from '../../hooks/useAuth';
 import { useForm } from '../../hooks/useForm';
 import { FormBtnBox } from '../../pages/NewProduct';
@@ -21,6 +22,7 @@ import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useAddressSplitter } from '../../hooks/useAddressSplitter';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
+import { SaleHeader as EditHeader, EnrollButton } from './SalesManagement';
 
 const EditMemberLayout = styled.form`
   margin: 0 auto 3rem;
@@ -180,6 +182,11 @@ const EditMember = () => {
   const closeUpdate = () => {
     setUpdateModal(false);
     window.location.reload();
+  };
+
+  const [cancelModal, setCancelModal] = useState(false);
+  const closeCancel = () => {
+    setCancelModal(false);
   };
 
   useEffect(() => {
@@ -347,6 +354,7 @@ const EditMember = () => {
       >
         닉네임 중복 체크를 먼저 해 주세요
       </Modal>
+      <CancelMember showModal={cancelModal} closeModal={closeCancel} />
       <EditPassword
         url={url}
         auth={auth}
@@ -354,7 +362,12 @@ const EditMember = () => {
         showModal={editPasswordModal}
         closeModal={closeEditPasswordModal}
       />
-      <p>회원정보수정</p>
+      <EditHeader>
+        <p>회원정보수정</p>
+        <EnrollButton type="button" onClick={() => setCancelModal(true)}>
+          회원 탈퇴
+        </EnrollButton>
+      </EditHeader>
       <hr />
       {!isLoading && loadedMember && (
         <EditMemberLayout onSubmit={EditSubmitHandler}>

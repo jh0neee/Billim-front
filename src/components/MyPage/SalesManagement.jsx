@@ -11,7 +11,7 @@ import { Paginate } from '../UI/Pagination';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
-const SaleHeader = styled.div`
+export const SaleHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -96,7 +96,7 @@ const TextOverlay = styled.div`
   }
 `;
 
-const EnrollButton = styled(Button)`
+export const EnrollButton = styled(Button)`
   margin: 0 2rem 0 0;
   width: 60px;
   height: 27px;
