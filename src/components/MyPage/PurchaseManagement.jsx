@@ -10,6 +10,7 @@ import ErrorModal from '../../util/ErrorModal';
 import LoadingSpinner from '../UI/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
 import { NoneText } from './WishList';
+import { Paginate } from '../UI/Pagination';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { useCancelReservation } from '../../hooks/useCancelReservation';
@@ -168,10 +169,14 @@ const PurchaseManagement = () => {
   const contentRef = useRef(null);
   const { contentResize: InformResize } = useContentResize(531, contentRef);
   const { contentResize: DateResize } = useContentResize(500, contentRef);
+
+  const perPage = 4;
+  const [purchaseProduct, setPurchaseProduct] = useState([]);
+  const [count, setCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const { isLoading, onLoading, error, errorHandler, clearError } =
     useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
-  const [purchaseProduct, setPurchaseProduct] = useState([]);
   const {
     showReservaionModal,
     cancelCancellationHandler,
@@ -184,9 +189,13 @@ const PurchaseManagement = () => {
     errorHandler,
   );
 
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
+
   useEffect(() => {
     getPurchase();
-  }, []);
+  }, [currentPage]);
 
   const getPurchase = () => {
     onLoading(true);
@@ -197,10 +206,12 @@ const PurchaseManagement = () => {
         },
         params: {
           memberId: auth.memberId,
+          page: currentPage,
         },
       })
       .then(response => {
-        setPurchaseProduct(response.data.productOrders);
+        setPurchaseProduct(response.data.content);
+        setCount(response.data.totalElements);
         onLoading(false);
       })
       .catch(err => {
@@ -314,9 +325,7 @@ const PurchaseManagement = () => {
         </p>
       </Modal>
       <p>구매관리</p>
-      {purchaseProduct.length === 0 && (
-        <NoneText>구매한 상품이 없습니다.</NoneText>
-      )}
+      {count === 0 && <NoneText>구매한 상품이 없습니다.</NoneText>}
       {purchaseProduct.map(item => (
         <ContentBox key={item.orderId} ref={contentRef}>
           <div>
@@ -402,6 +411,16 @@ const PurchaseManagement = () => {
           </InformBox>
         </ContentBox>
       ))}
+      {count > 0 && (
+        <Paginate
+          activePage={currentPage}
+          itemsCountPerPage={perPage}
+          totalItemsCount={count}
+          pageRangeDisplayed={5}
+          onChange={handlePageChange}
+          isPageStyle={true}
+        />
+      )}
     </>
   );
 };
