@@ -131,6 +131,7 @@ const DetailView = ({ items, onDeleteProduct }) => {
   const productId = items.productId;
   const navigate = useNavigate();
 
+  const perPage = 4;
   const [reviewData, setReviewData] = useState([]);
   const [count, setCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -176,15 +177,14 @@ const DetailView = ({ items, onDeleteProduct }) => {
 
   useEffect(() => {
     axios
-      .get(`${url}/review/list/${productId}?pageable=${currentPage}`, {
+      .get(`${url}/review/list/${productId}?page=${currentPage}`, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
       })
       .then(response => {
-        const responseData = response.data.content;
-        setReviewData(responseData);
-        setCount(responseData.length);
+        setReviewData(response.data.content);
+        setCount(response.data.totalElements);
       })
       .catch(err => {
         errorHandler(err);
@@ -265,7 +265,7 @@ const DetailView = ({ items, onDeleteProduct }) => {
           name={items.productName}
           scope={items.starRating.toFixed(1)}
           grade={items.sellerGrade}
-          reviewCount={reviewData.length}
+          reviewCount={count}
         />
         <DetailImageGallery images={items.imageUrls} />
         <DetailBox>
@@ -296,6 +296,7 @@ const DetailView = ({ items, onDeleteProduct }) => {
           <DetailReview
             reviewData={reviewData}
             count={count}
+            perPage={perPage}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
           />

@@ -45,37 +45,33 @@ const ReviewUserBox = styled.div`
   }
 `;
 
-const DetailReview = ({ reviewData, count, currentPage, setCurrentPage }) => {
-  const perPage = 4;
-
+const DetailReview = ({
+  reviewData,
+  count,
+  perPage,
+  currentPage,
+  setCurrentPage,
+}) => {
   const handlePageChange = pageNumber => {
     setCurrentPage(pageNumber);
-  };
-
-  const getCurrentItems = () => {
-    const firstItemIndex = (currentPage - 1) * perPage;
-    const lastItemIndex = firstItemIndex + perPage;
-    return reviewData.slice(firstItemIndex, lastItemIndex);
   };
 
   const dateFormat = date => {
     return format(parseISO(date), 'yyyy-MM-dd');
   };
 
-  const currentItems = getCurrentItems();
-
   return (
     <>
       <ReviewLayout>
-        {currentItems.length === 0 && (
+        {count === 0 && (
           <ReviewContent dataZero>
             <p>작성된 리뷰가 없습니다.</p>
           </ReviewContent>
         )}
-        {currentItems.map(review => (
+        {reviewData.map((review, index) => (
           <ReviewContent
             key={review.reviewId}
-            lastData={currentItems.length === 1}
+            lastData={index === reviewData.length - 1}
           >
             <div>
               <Profile src={review.profileImageUrl} size="45px" />
@@ -88,7 +84,7 @@ const DetailReview = ({ reviewData, count, currentPage, setCurrentPage }) => {
           </ReviewContent>
         ))}
       </ReviewLayout>
-      {currentItems.length > 0 && (
+      {count > 0 && (
         <Paginate
           activePage={currentPage}
           itemsCountPerPage={perPage}
