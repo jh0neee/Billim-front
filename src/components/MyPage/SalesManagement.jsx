@@ -124,12 +124,6 @@ const SalesManagement = () => {
     setCurrentPage(pageNumber);
   };
 
-  const getCurrentItems = () => {
-    const firstItemIndex = (currentPage - 1) * perPage;
-    const lastItemIndex = firstItemIndex + perPage;
-    return loadedData.slice(firstItemIndex, lastItemIndex);
-  };
-
   useEffect(() => {
     onLoading(true);
     axios
@@ -142,10 +136,8 @@ const SalesManagement = () => {
         },
       })
       .then(response => {
-        const responseData = response.data.content;
-        setLoadedData(responseData);
-
-        setCount(responseData.length);
+        setLoadedData(response.data.content);
+        setCount(response.data.totalElements);
         onLoading(false);
       })
       .catch(err => {
@@ -161,8 +153,6 @@ const SalesManagement = () => {
       });
   }, [currentPage]);
 
-  const currentItems = getCurrentItems();
-
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
@@ -171,14 +161,14 @@ const SalesManagement = () => {
         <p>판매중인 상품</p>
         <EnrollButton to="/product/new">상품 등록</EnrollButton>
       </SaleHeader>
-      {currentItems.length === 0 ? (
+      {count === 0 ? (
         <NoneText>
           <p>새로운 상품을 등록해보세요! </p>
           <p>&apos;상품 등록&apos; 버튼을 통해 당신의 물건을 공유해보세요.</p>
         </NoneText>
       ) : (
         <SaleLayout>
-          {currentItems.map(item => (
+          {loadedData.map(item => (
             <SaleBox key={item.productId}>
               <Link to={`/mypage/sales/${item.productId}`}>
                 <SaleImage src={item.imageUrl} alt="상품이미지" />
@@ -188,7 +178,7 @@ const SalesManagement = () => {
           ))}
         </SaleLayout>
       )}
-      {currentItems.length > 0 && (
+      {count > 0 && (
         <Paginate
           activePage={currentPage}
           itemsCountPerPage={perPage}
