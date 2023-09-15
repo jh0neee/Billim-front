@@ -5,7 +5,6 @@ import searchReducer from './search';
 import authReducer from './auth';
 import pointReducer from './point';
 import pageReducer from './currentPage';
-import chatReducer from './chat';
 
 const store = configureStore({
   reducer: {
@@ -14,7 +13,6 @@ const store = configureStore({
     auth: authReducer,
     point: pointReducer,
     pages: pageReducer,
-    chat: chatReducer,
   },
 });
 
