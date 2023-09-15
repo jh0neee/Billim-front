@@ -59,10 +59,20 @@ const Unread = styled.div`
   margin-left: 0.2rem;
   padding: 4px;
   border-radius: 10px;
-  background-color: ${props => (props.unread !== 0 ? '#ff3932' : 'none')};
+  background-color: ${({ unreadCount, updatedUnread, inChatRoom }) =>
+    (unreadCount === 0 && updatedUnread === undefined) ||
+    updatedUnread === 0 ||
+    inChatRoom
+      ? 'transparent'
+      : '#ff3932'};
 
   > p {
-    visibility: ${props => (props.unread !== 0 ? 'visible' : 'hidden')};
+    visibility: ${({ unreadCount, updatedUnread, inChatRoom }) =>
+      (unreadCount === 0 && updatedUnread === undefined) ||
+      updatedUnread === 0 ||
+      inChatRoom
+        ? 'hidden'
+        : 'visible'};
     font-family: TRoundWind;
     font-size: 0.5rem;
     color: white;
@@ -230,7 +240,11 @@ const ChatLists = ({
     setChatList(prevChatList => {
       return prevChatList.map(chat => {
         if (chat.chatRoomId === chatRoomId) {
-          const updatedChat = { ...chat, unreadCount: 0 };
+          const updatedChat = {
+            ...chat,
+            unreadCount: 0,
+            updatedUnreadCount: 0,
+          };
           return updatedChat;
         }
         return chat;
@@ -320,7 +334,11 @@ const ChatLists = ({
                       {chat.receiverNickname}({chat.chatRoomId})
                     </p>
 
-                    <Unread unread={chat.unreadCount}>
+                    <Unread
+                      unreadCount={chat.unreadCount}
+                      updatedUnread={chat.updatedUnreadCount}
+                      inChatRoom={chat.chatRoomId === activeRoomId}
+                    >
                       <p>
                         {chat.chatRoomId !== activeRoomId &&
                         chat.updatedUnreadCount !== undefined
