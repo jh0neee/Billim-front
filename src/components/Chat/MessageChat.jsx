@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { useAuth } from '../../hooks/useAuth';
 import { useForm } from '../../hooks/useForm';
 
+import theme from '../../styles/theme';
 import Modal from '../UI/Modal';
 import Button from '../UI/Button';
 import { Profile } from '../UI/Profile';
@@ -26,10 +27,14 @@ const MessageChatLayout = styled.form`
 const MessageBox = styled.div`
   position: relative;
   padding: 1rem;
-  height: 69.1%;
+  height: calc(84vh - 145.6px);
   background-color: white;
   overflow-y: auto;
   overflow-x: hidden;
+
+  @media ${theme.tablet} {
+    height: calc(100vh - 299.8px);
+  }
 `;
 
 const MessageDate = styled.p`
@@ -51,10 +56,10 @@ const StartMessage = styled.p`
 
 const ProductBox = styled.div`
   display: flex;
-  padding: 0 1.3rem;
+  padding: 0px 3rem 0 1.3rem;
   align-items: center;
   justify-content: space-between;
-  height: 15.9%;
+  height: 75.6px;
   background-color: white;
   border-bottom: 1px solid rgb(222, 226, 230);
 
@@ -72,7 +77,8 @@ const ProductBox = styled.div`
 
 const MessageInputBox = styled.div`
   display: flex;
-  height: 15%;
+  width: 100%;
+  height: 70px;
   padding: 0 1.3rem;
   align-items: center;
   justify-content: space-between;
@@ -178,7 +184,13 @@ const UserProfile = styled(Profile)`
 `;
 
 const MessageInput = styled(Input)`
+  max-width: auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
   > input {
+    width: 90%;
     border-radius: 0px;
     border-top: 1px solid rgb(222, 226, 230);
     border-bottom: 1px solid rgb(222, 226, 230);

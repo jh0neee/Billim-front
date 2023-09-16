@@ -7,6 +7,7 @@ import SockJS from 'sockjs-client';
 import * as StompJS from '@stomp/stompjs';
 
 import axios from 'axios';
+import theme from '../../styles/theme';
 import { Profile } from '../UI/Profile';
 import { useAuth } from '../../hooks/useAuth';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
@@ -14,6 +15,10 @@ import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 const ChatList = styled.ul`
   background-color: #f1f3f5;
   border: 1px solid #dee2e6;
+
+  @media ${theme.tablet} {
+    height: 73vh;
+  }
 `;
 
 const ReceiverList = styled(Link)`
