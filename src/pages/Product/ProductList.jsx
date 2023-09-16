@@ -102,7 +102,7 @@ const ProductList = () => {
           <ProductCategory />
         </CategoryLayout>
         <ProductItemLayout>
-          <ProductListItem items={items} currentPage={currentPage} />
+          <ProductListItem items={items} />
         </ProductItemLayout>
         {items.length > 0 && (
           <Paginate

@@ -67,7 +67,7 @@ const ProductParagraph = styled.p`
     `}
 `;
 
-const ProductListItem = ({ items, currentPage }) => {
+const ProductListItem = ({ items }) => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
@@ -83,17 +83,16 @@ const ProductListItem = ({ items, currentPage }) => {
 
   const getInterestList = () => {
     axios
-      .get(`${url}/product/my/interest`, {
+      .get(`${url}/product/interest`, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
         params: {
           memberId: auth.memberId,
-          page: currentPage,
         },
       })
       .then(response => {
-        const responseData = response.data.content;
+        const responseData = response.data.myInterestProductList;
         setInterestList(responseData);
       })
       .catch(err => {

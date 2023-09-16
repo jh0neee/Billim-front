@@ -145,7 +145,6 @@ const WishList = () => {
         },
       })
       .then(response => {
-        console.log(response);
         setInterestItems(response.data.content);
         setCount(response.data.totalElements);
         onLoading(false);
