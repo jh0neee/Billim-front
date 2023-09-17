@@ -281,6 +281,7 @@ const ChatLists = ({
     });
   };
 
+  let latestMessages = [];
   const onRoomRecieved = chatRoomId => message => {
     const messageBody = JSON.parse(message.body);
     const isCurrentUserInRoom = messageBody.chatRoomId === chatRoomId;
@@ -299,13 +300,12 @@ const ChatLists = ({
           ? '사진을 보냈습니다.'
           : messageBody.message;
 
-      let latestMessages = [];
-
-      const exam = latestMessages.findIndex(
+      const findMsgObjectIdx = latestMessages.findIndex(
         obj => obj.chatRoomId === messageBody.chatRoomId,
       );
-      if (exam !== -1) {
-        latestMessages[exam].message = latestMessage;
+
+      if (findMsgObjectIdx !== -1) {
+        latestMessages[findMsgObjectIdx].message = latestMessage;
       } else {
         latestMessages.push({
           chatRoomId: messageBody.chatRoomId,
@@ -315,6 +315,25 @@ const ChatLists = ({
 
       setShowLatestMessage(latestMessages);
     }
+  };
+
+  const renderShowLatestMessage = chat => {
+    const findMsgObject = showLatestMessage.find(
+      obj => chat.chatRoomId === obj.chatRoomId,
+    );
+
+    let message;
+    if (findMsgObject) {
+      message = findMsgObject.message;
+    } else {
+      if (chat.latestMessage.includes('billim.s3')) {
+        message = '사진을 보냈습니다.';
+      } else {
+        message = chat.latestMessage;
+      }
+    }
+
+    return message;
   };
 
   return (
@@ -354,22 +373,7 @@ const ChatLists = ({
                   </NameBox>
                   <p>{chat.latestMessageTime.slice(0, 10)}</p>
                 </div>
-                <p>
-                  {showLatestMessage.length !== 0
-                    ? showLatestMessage.map(obj => {
-                        if (
-                          chat.chatRoomId === obj.chatRoomId &&
-                          obj.message !== undefined
-                        ) {
-                          return obj.message;
-                        } else if (chat.latestMessage.includes('billim.s3')) {
-                          return '사진을 보냈습니다.';
-                        } else {
-                          return chat.latestMessage;
-                        }
-                      })
-                    : chat.latestMessage}
-                </p>
+                <p>{renderShowLatestMessage(chat)}</p>
               </DetailBox>
             </ReceiverList>
           );
