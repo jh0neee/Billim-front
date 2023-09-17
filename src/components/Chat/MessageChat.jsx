@@ -349,7 +349,7 @@ const MessageChat = ({
   };
 
   const sendMessage = imageUrl => {
-    if (!formState.inputs.message.value) {
+    if (!formState.inputs.message.value && !selectedFile) {
       alert('메시지 입력해주세요');
       return;
     }
