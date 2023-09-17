@@ -143,8 +143,9 @@ const ChatUserProfile = styled.div`
 `;
 
 const ChatImageMessage = styled.img`
-  width: 50px;
-  height: 50px;
+  width: 200px;
+  margin: 0.5rem;
+  border-radius: 15px;
 `;
 
 const PreviewBox = styled.div`
@@ -481,13 +482,13 @@ const MessageChat = ({
                 )}
               </ChatUserProfile>
             )}
-            <ChatMessageBox isSent={isSentByUser}>
-              {msg.message.includes(`${BUCKET_NAME}.s3`) ? (
-                <ChatImageMessage src={msg.message} alt="채팅이미지" />
-              ) : (
+            {msg.message.includes(`${BUCKET_NAME}.s3`) ? (
+              <ChatImageMessage src={msg.message} alt="채팅이미지" />
+            ) : (
+              <ChatMessageBox isSent={isSentByUser}>
                 <p>{`[${msg.messageId}] ${msg.message}`}</p>
-              )}
-            </ChatMessageBox>
+              </ChatMessageBox>
+            )}
             {!isSentByUser && (
               <ChatReadTime isSent={isSentByUser}>
                 <ChatRead hasTime={!isSameTimeAsNext}>{!read && '1'}</ChatRead>
