@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from 'axios';
@@ -6,19 +7,19 @@ import Input from '../UI/Input';
 import parseISO from 'date-fns/parseISO';
 import AWS from 'aws-sdk';
 import { format } from 'date-fns';
-import { useAuth } from '../../hooks/useAuth';
-import { useForm } from '../../hooks/useForm';
 
 import theme from '../../styles/theme';
 import Modal from '../UI/Modal';
 import Button from '../UI/Button';
 import { Profile } from '../UI/Profile';
+import { useForm } from '../../hooks/useForm';
 import { ImageInput } from '../UI/ImageUpload';
-import { useLocation } from 'react-router-dom';
-import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
-import { useTokenRefresher } from '../../hooks/useTokenRefresher';
-import { PiImagesLight, PiPaperPlaneRightLight } from 'react-icons/pi';
+import {
+  PiImagesLight,
+  PiPaperPlaneRightLight,
+  PiSignOutLight,
+} from 'react-icons/pi';
 
 const MessageChatLayout = styled.form`
   height: 84vh;
@@ -56,7 +57,7 @@ const StartMessage = styled.p`
 
 const ProductBox = styled.div`
   display: flex;
-  padding: 0px 3rem 0 1.3rem;
+  padding: 0px 1rem 0 1.3rem;
   align-items: center;
   justify-content: space-between;
   height: 75.6px;
@@ -200,7 +201,29 @@ const MessageInput = styled(Input)`
   }
 `;
 
+const ExitIcon = styled.button`
+  all: unset;
+  align-self: center;
+  margin-left: 1rem;
+
+  &:hover {
+    cursor: poiner;
+  }
+
+  > svg {
+    width: 30px;
+    height: 20px;
+  }
+
+  > p {
+    font-size: 10px;
+  }
+`;
+
 const MessageChat = ({
+  url,
+  auth,
+  setOpenExitModal,
   correctSender,
   userInfo,
   enteredUsers,
@@ -208,9 +231,10 @@ const MessageChat = ({
   stompClient,
   messages,
   setMessages,
+  onLoading,
+  errorHandler,
+  tokenErrorHandler,
 }) => {
-  const url = process.env.REACT_APP_URL;
-  const auth = useAuth();
   const fileRef = useRef(null);
   const chatRoomId = useLocation().pathname.slice(15);
   const [inRoomId, setInRoomId] = useState(null);
@@ -222,8 +246,6 @@ const MessageChat = ({
   const [previewFile, setPreviewFile] = useState(null);
   const [productInfo, setProductInfo] = useState({});
   const [formState, inputHandler] = useForm({}, false);
-  const { tokenErrorHandler } = useTokenRefresher(auth);
-  const { onLoading, errorHandler } = useLoadingError();
 
   const [sendImageModal, setSendImageModal] = useState(false);
   const cancelSendImage = () => {
@@ -460,43 +482,55 @@ const MessageChat = ({
 
     const renderChatMessage = () => {
       return (
-        <React.Fragment key={msg.messageId}>
-          {isSameDateAsNext && (
-            <MessageDate>
-              {formatDate(prevMessage?.sendAt.slice(0, 10))}
-            </MessageDate>
-          )}
-          <MessageContainer isSent={isSentByUser}>
-            {isSentByUser && (
-              <ChatReadTime isSent={isSentByUser}>
-                <ChatRead hasTime={!isSameTimeAsNext}>{!read && '1'}</ChatRead>
-                {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
-              </ChatReadTime>
-            )}
-            {!isSentByUser && (
-              <ChatUserProfile>
-                {isDifferentUser || !isSameTimeAsNext ? (
-                  <UserProfile size="40px" src={userInfo.userProfile} />
-                ) : (
-                  <div style={{ marginLeft: '40px' }} />
+        <>
+          {msg.type === 'SYSTEM' ? (
+            <div key={msg.messageId}>
+              <StartMessage>{msg.message}</StartMessage>
+            </div>
+          ) : (
+            <React.Fragment key={msg.messageId}>
+              {isSameDateAsNext && (
+                <MessageDate>
+                  {formatDate(prevMessage?.sendAt.slice(0, 10))}
+                </MessageDate>
+              )}
+              <MessageContainer isSent={isSentByUser}>
+                {isSentByUser && (
+                  <ChatReadTime isSent={isSentByUser}>
+                    <ChatRead hasTime={!isSameTimeAsNext}>
+                      {!read && '1'}
+                    </ChatRead>
+                    {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
+                  </ChatReadTime>
                 )}
-              </ChatUserProfile>
-            )}
-            {msg.message.includes(`${BUCKET_NAME}.s3`) ? (
-              <ChatImageMessage src={msg.message} alt="채팅이미지" />
-            ) : (
-              <ChatMessageBox isSent={isSentByUser}>
-                <p>{`[${msg.messageId}] ${msg.message}`}</p>
-              </ChatMessageBox>
-            )}
-            {!isSentByUser && (
-              <ChatReadTime isSent={isSentByUser}>
-                <ChatRead hasTime={!isSameTimeAsNext}>{!read && '1'}</ChatRead>
-                {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
-              </ChatReadTime>
-            )}
-          </MessageContainer>
-        </React.Fragment>
+                {!isSentByUser && (
+                  <ChatUserProfile>
+                    {isDifferentUser || !isSameTimeAsNext ? (
+                      <UserProfile size="40px" src={userInfo.userProfile} />
+                    ) : (
+                      <div style={{ marginLeft: '40px' }} />
+                    )}
+                  </ChatUserProfile>
+                )}
+                {msg.message.includes(`${BUCKET_NAME}.s3`) ? (
+                  <ChatImageMessage src={msg.message} alt="채팅이미지" />
+                ) : (
+                  <ChatMessageBox isSent={isSentByUser}>
+                    <p>{`[${msg.messageId}] ${msg.message}`}</p>
+                  </ChatMessageBox>
+                )}
+                {!isSentByUser && (
+                  <ChatReadTime isSent={isSentByUser}>
+                    <ChatRead hasTime={!isSameTimeAsNext}>
+                      {!read && '1'}
+                    </ChatRead>
+                    {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
+                  </ChatReadTime>
+                )}
+              </MessageContainer>
+            </React.Fragment>
+          )}
+        </>
       );
     };
 
@@ -579,6 +613,10 @@ const MessageChat = ({
               <p>{productInfo.productName}</p>
               <p>{productInfo.price?.toLocaleString('ko-KR')}원</p>
             </ProductInfoContent>
+            <ExitIcon type="button" onClick={() => setOpenExitModal(true)}>
+              <PiSignOutLight />
+              <p>나가기</p>
+            </ExitIcon>
           </div>
         </ProductBox>
         <MessageBox id="message-box">

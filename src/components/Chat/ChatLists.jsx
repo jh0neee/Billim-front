@@ -9,8 +9,6 @@ import * as StompJS from '@stomp/stompjs';
 import axios from 'axios';
 import theme from '../../styles/theme';
 import { Profile } from '../UI/Profile';
-import { useAuth } from '../../hooks/useAuth';
-import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 
 const ChatList = styled.ul`
   background-color: #f1f3f5;
@@ -86,6 +84,9 @@ const Unread = styled.div`
 `;
 
 const ChatLists = ({
+  url,
+  auth,
+  exitStatus,
   setCorrectSender,
   setUserInfo,
   setEnteredUsers,
@@ -94,13 +95,11 @@ const ChatLists = ({
   setMessages,
   onLoading,
   errorHandler,
+  tokenErrorHandler,
 }) => {
-  const url = process.env.REACT_APP_URL;
-  const auth = useAuth();
   const [chatList, setChatList] = useState([]);
   const [activeRoomId, setActiveRoomId] = useState(null);
   const [showLatestMessage, setShowLatestMessage] = useState([]);
-  const { tokenErrorHandler } = useTokenRefresher(auth);
 
   const client = useRef(null);
 
@@ -198,6 +197,14 @@ const ChatLists = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (exitStatus.status) {
+      setChatList(prev =>
+        prev.filter(chat => chat.chatRoomId !== exitStatus.chatRoomId),
+      );
+    }
+  }, [exitStatus]);
+
   const openChatRoomHandler = (chat, chatRoomId) => {
     setUserInfo({
       user: chat.receiverNickname,
@@ -215,6 +222,11 @@ const ChatLists = ({
           updatedEnteredStatus[key] = true;
         } else {
           updatedEnteredStatus[key] = false;
+        }
+
+        const chatRoomIds = chatList.map(room => room.chatRoomId);
+        if (!chatRoomIds.includes(exitStatus.chatRoomId) && exitStatus.status) {
+          delete updatedEnteredStatus[exitStatus.chatRoomId];
         }
       }
 
