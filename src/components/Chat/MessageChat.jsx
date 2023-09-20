@@ -259,12 +259,14 @@ const MessageChat = ({
   }, [messages, pastMessages]);
 
   const getProductInfo = () => {
+    onLoading(true);
     axios
       .get(`${url}/api/chat/product-info/${chatRoomId}`, {
         headers: { Authorization: `Bearer ${auth.token}` },
       })
       .then(response => {
         setProductInfo(response.data);
+        onLoading(false);
       })
       .catch(err => {
         if (

@@ -77,6 +77,7 @@ const Chat = () => {
       .then(() => {
         navigate('/chat');
         setExitStatus({ chatRoomId: roomId, status: true });
+        onLoading(false);
       })
       .catch(err => {
         if (
@@ -84,6 +85,7 @@ const Chat = () => {
           err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
         ) {
           tokenErrorHandler(err);
+          onLoading(false);
         } else {
           errorHandler(err);
         }
