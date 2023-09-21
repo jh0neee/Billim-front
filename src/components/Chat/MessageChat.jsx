@@ -207,7 +207,7 @@ const ExitIcon = styled.button`
   margin-left: 1rem;
 
   &:hover {
-    cursor: poiner;
+    cursor: pointer;
   }
 
   > svg {
