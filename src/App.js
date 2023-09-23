@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Reset } from 'styled-reset';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Home from './pages/Home.jsx';
@@ -27,23 +27,10 @@ import Chat from './pages/Chat.jsx';
 import MessageChat from './components/Chat/MessageChat.jsx';
 import BlockChat from './components/Chat/BlockChat.jsx';
 import EmailConfirm from './pages/Auth/EmailConfirm.jsx';
-import { pageAction } from './store/currentPage.js';
+import BackLocation from './util/BackLocation.js';
 
 function App() {
-  const dispatch = useDispatch();
-  const currentPage = useSelector(state => state.pages.currentPage);
   const token = useSelector(state => state.auth.token);
-
-  useEffect(() => {
-    const storedPage = localStorage.getItem('currentPage');
-    if (storedPage) {
-      dispatch(pageAction.setCurrentPage(storedPage));
-    }
-  }, [dispatch]);
-
-  useEffect(() => {
-    localStorage.setItem('currentPage', currentPage);
-  }, [currentPage]);
 
   let routes;
   if (token) {
@@ -105,6 +92,7 @@ function App() {
       <Reset />
       <BrowserRouter>
         <ScrollToTop />
+        <BackLocation />
         <Header />
         <main>{routes}</main>
       </BrowserRouter>

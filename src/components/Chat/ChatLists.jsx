@@ -1,6 +1,7 @@
 /* eslint-disable prefer-const */
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import SockJS from 'sockjs-client';
@@ -9,6 +10,7 @@ import * as StompJS from '@stomp/stompjs';
 import axios from 'axios';
 import theme from '../../styles/theme';
 import { Profile } from '../UI/Profile';
+import { chatAction } from '../../store/chat';
 
 const ChatList = styled.ul`
   background-color: #f1f3f5;
@@ -97,6 +99,7 @@ const ChatLists = ({
   errorHandler,
   tokenErrorHandler,
 }) => {
+  const dispatch = useDispatch();
   const [chatList, setChatList] = useState([]);
   const [activeRoomId, setActiveRoomId] = useState(null);
   const [showLatestMessage, setShowLatestMessage] = useState([]);
@@ -197,6 +200,14 @@ const ChatLists = ({
     };
   }, []);
 
+  const sendEntryStatus = chatRoomId => {
+    console.log({
+      chatRoomId,
+      memberId: auth.memberId,
+      isEntered: true,
+    });
+  };
+
   useEffect(() => {
     if (exitStatus.status) {
       setChatList(prev =>
@@ -206,6 +217,10 @@ const ChatLists = ({
   }, [exitStatus]);
 
   const openChatRoomHandler = (chat, chatRoomId) => {
+    dispatch(chatAction.updateRoomId(chatRoomId));
+
+    sendEntryStatus(chatRoomId);
+
     setUserInfo({
       user: chat.receiverNickname,
       userProfile: chat.receiverProfileImageUrl,

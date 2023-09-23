@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import axios from 'axios';
@@ -13,6 +14,8 @@ import ErrorModal from '../util/ErrorModal';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import { useLoadingError } from '../hooks/useLoadingError';
 import { useAuth } from '../hooks/useAuth';
+import { HeaderBox } from '../components/Navigation/Header';
+import { HiChevronLeft } from 'react-icons/hi';
 import { useTokenRefresher } from '../hooks/useTokenRefresher';
 
 const ChatContainer = styled.div`
@@ -44,11 +47,39 @@ const ChatContent = styled.div`
   }
 `;
 
+const ChatHeaderContainer = styled(HeaderBox)`
+  display: flex;
+  justify-content: center;
+`;
+
+const ChatHeaderBox = styled(HeaderBox)`
+  max-width: 1250px;
+  width: 100%;
+  display: block;
+`;
+
+const ChatHeaderContent = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  > p {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+`;
+
+const GoBack = styled(HiChevronLeft)`
+  cursor: pointer;
+`;
+
 const Chat = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const navigate = useNavigate();
   const roomId = Number(useLocation().pathname.slice(15));
+  const lastChatRoomId = useSelector(state => state.chat.roomId);
+  const prevChatPage = useSelector(state => state.pages.currentPage);
   const [messages, setMessages] = useState([]);
   const [enteredUsers, setEnteredUsers] = useState({});
   const [inChatRoom, setInChatRoom] = useState({});
@@ -92,6 +123,46 @@ const Chat = () => {
       });
   };
 
+  const clickToBack = () => {
+    // 채팅페이지에서 나갈 때(웹소켓 연결 해제)
+    console.log({
+      chatRoomId: lastChatRoomId,
+      memberId: auth.memberId,
+      isEntered: false,
+    });
+
+    // axios
+    //   .post(
+    //     `${url}/`,
+    //     {
+    //       chatRoomId: lastChatRoomId,
+    //       memberId: auth.memberId,
+    //       isEntered: false,
+    //     },
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${auth.token}`,
+    //       },
+    //     },
+    //   )
+    //   .then(response => {
+    //     console.log(response.status);
+    //   })
+    //   .catch(err => {
+    //     if (
+    //       err.response.status === 401 &&
+    //       err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+    //     ) {
+    //       tokenErrorHandler(err);
+    //       onLoading(false);
+    //     } else {
+    //       errorHandler(err);
+    //     }
+    //   });
+
+    navigate(prevChatPage);
+  };
+
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
@@ -114,6 +185,14 @@ const Chat = () => {
         <br />
         채팅목록에서도 사라집니다.
       </Modal>
+      <ChatHeaderContainer>
+        <ChatHeaderBox>
+          <ChatHeaderContent>
+            <GoBack size="45px" onClick={() => clickToBack()} />
+            <p>채팅</p>
+          </ChatHeaderContent>
+        </ChatHeaderBox>
+      </ChatHeaderContainer>
       <ChatContainer>
         <ChatLayout>
           {isLoading && <LoadingSpinner asOverlay />}

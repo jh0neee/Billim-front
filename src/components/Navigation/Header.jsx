@@ -10,7 +10,7 @@ import BackDrop from '../UI/BackDrop';
 import logoImg from '../../asset/image/billim_logo_1.png';
 import theme from '../../styles/theme';
 
-const HeaderBox = styled.div`
+export const HeaderBox = styled.div`
   position: fixed;
   margin: 0 auto;
   padding: 0px 10px;
