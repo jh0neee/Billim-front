@@ -89,6 +89,7 @@ const ChatLists = ({
   url,
   auth,
   exitStatus,
+  setRead,
   setCorrectSender,
   setUserInfo,
   setEnteredUsers,
@@ -281,6 +282,18 @@ const ChatLists = ({
         }
         return chat;
       });
+    });
+
+    setRead(prev => {
+      const updatedStatus = {};
+
+      for (const roomId in prev) {
+        updatedStatus[roomId] = false;
+      }
+
+      updatedStatus[chatRoomId] = true;
+
+      return updatedStatus;
     });
   };
 

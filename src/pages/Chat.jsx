@@ -90,6 +90,7 @@ const Chat = () => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
+  const [readStatus, setReadStatus] = useState({});
   const [exitStatus, setExitStatus] = useState({});
   const [openExitModal, setOpenExitModal] = useState(false);
   const exitChatHandler = () => {
@@ -200,6 +201,7 @@ const Chat = () => {
             url={url}
             auth={auth}
             exitStatus={exitStatus}
+            setRead={setReadStatus}
             setCorrectSender={setCorrectSender}
             setUserInfo={setUserInfo}
             setEnteredUsers={setEnteredUsers}
@@ -218,6 +220,7 @@ const Chat = () => {
                 url={url}
                 auth={auth}
                 setOpenExitModal={setOpenExitModal}
+                readStatus={readStatus}
                 correctSender={correctSender}
                 userInfo={userInfo}
                 enteredUsers={enteredUsers}

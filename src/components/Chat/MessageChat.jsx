@@ -224,6 +224,7 @@ const MessageChat = ({
   url,
   auth,
   setOpenExitModal,
+  readStatus,
   correctSender,
   userInfo,
   enteredUsers,
@@ -461,6 +462,7 @@ const MessageChat = ({
   };
 
   const MessageLists = (messages, msg, index, messageType, read) => {
+    // console.log(msg, read);
     const isSentByRoom = msg.chatRoomId === Number(chatRoomId);
     const isSentByUser = msg.senderId === auth.memberId;
     const timeValue = convertToAmPmFormat(msg.sendAt);
@@ -486,11 +488,11 @@ const MessageChat = ({
       return (
         <>
           {msg.type === 'SYSTEM' ? (
-            <div key={msg.messageId}>
+            <div>
               <StartMessage>{msg.message}</StartMessage>
             </div>
           ) : (
-            <React.Fragment key={msg.messageId}>
+            <React.Fragment>
               {isSameDateAsNext && (
                 <MessageDate>
                   {formatDate(prevMessage?.sendAt.slice(0, 10))}
@@ -547,23 +549,60 @@ const MessageChat = ({
 
   const renderPastMessages = () => {
     return pastMessages.map((msg, index) => {
-      let read;
-      if (!correctSender) {
-        read = true;
-      } else {
-        read = msg.read;
-      }
-      return MessageLists(pastMessages, msg, index, 'pastMessage', read);
+      // let read;
+      // if (!correctSender) {
+      //   console.log('보낸사람이 아니면');
+      //   read = true;
+      // } else {
+      //   console.log('message의 sender랑 memberId랑 같으면 이쪽');
+      //   read = msg.read;
+      // }
+      return (
+        <React.Fragment key={msg.messageId}>
+          {MessageLists(pastMessages, msg, index, 'pastMessage', msg.read)}
+        </React.Fragment>
+      );
     });
   };
 
   const renderMessages = () => {
     return messages.map((msg, index) => {
+      console.log(msg.type);
       let read;
-      if (msg.newMessage) {
+      // correctSender => msg.senderId !== auth.memberId
+      // !correctSender => msg.senderId === auth.memberId
+      if (msg.newMessage && !correctSender) {
+        // 보내는 사람
+        console.log(readMessage(msg), msg.read);
+        console.log(enteredUsers[msg.chatRoomId]); // 본인의 입장여부만 알 수 있음
+        // 본인이 메시지를 보낼때 이쪽. 상대의 입장여부에 따라 1 표시(읽음여부) 달라지게 설정.
+        if (enteredUsers[msg.chatRoomId].length !== 0) {
+          // 상대유저가 입장했다면 '나'의 채팅방에서 읽음 표시되게
+          // 여기 if의 조건문이 상대유저 입장여부가 true이면
+          console.log('1');
+          read = readMessage(msg);
+        } else {
+          // 상대유저 입장 안함 '나'의 채팅방에서는 1이 표시되어야함
+          console.log('2');
+          read = msg.read;
+        }
+      } else if (msg.newMessage && correctSender) {
+        // 받는사람
+        // => 들어와있으면 1 없어지고, 안들어와있으면 나중에 들어올때 전체 1 없어지게
+
+        console.log('3');
+        // 유저(본인)가 채팅방에 들어와있는 상태 1이 없어져야함
+
+        // 나중에 들어올때 전체 1 삭제되어야함.
+        // read = readStatus[msg.chatRoomId];
         read = readMessage(msg);
       }
-      return MessageLists(messages, msg, index, 'currentMessage', read);
+      console.log(enteredUsers);
+      return (
+        <React.Fragment key={msg.messageId}>
+          {MessageLists(messages, msg, index, 'currentMessage', read)}
+        </React.Fragment>
+      );
     });
   };
 
