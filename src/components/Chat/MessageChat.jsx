@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from 'axios';
@@ -161,9 +161,14 @@ const ImagePreview = styled.img`
   object-fit: contain;
 `;
 
+const ProductInfoBox = styled(Link)`
+  display: flex;
+  cursor: pointer;
+`;
+
 const ProductInfoContent = styled.div`
   margin-left: 0.5rem;
-  margin-top: 0.3rem;
+  margin-top: 0.2rem;
   > * {
     font-size: 0.8rem;
 
@@ -646,14 +651,16 @@ const MessageChat = ({
             <p>{userInfo.user}</p>
           </div>
           <div>
-            <ProductInfoImage
-              src={productInfo.productImageUrl}
-              alt="상품이미지"
-            />
-            <ProductInfoContent>
-              <p>{productInfo.productName}</p>
-              <p>{productInfo.price?.toLocaleString('ko-KR')}원</p>
-            </ProductInfoContent>
+            <ProductInfoBox to={`/${productInfo.productId}/detail`}>
+              <ProductInfoImage
+                src={productInfo.productImageUrl}
+                alt="상품이미지"
+              />
+              <ProductInfoContent>
+                <p>{productInfo.productName}</p>
+                <p>{productInfo.price?.toLocaleString('ko-KR')}원</p>
+              </ProductInfoContent>
+            </ProductInfoBox>
             <ExitIcon type="button" onClick={() => setOpenExitModal(true)}>
               <PiSignOutLight />
               <p>나가기</p>
