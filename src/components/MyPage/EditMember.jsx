@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+/* eslint-disable */
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -124,6 +124,20 @@ const ExtraButton = styled(Button)`
   @media ${theme.mobile} {
     width: 60px;
     justify-self: flex-end;
+  }
+`;
+
+const KakaoButton = styled(Button)`
+  width: 35px;
+  height: 35px;
+  border-radius: 2rem;
+  color: black;
+  background-color: #fee500;
+  font-weight: 600;
+  justify-self: center;
+
+  @media ${theme.mobile} {
+    margin: 0 0 0 1.5rem;
   }
 `;
 
@@ -486,6 +500,13 @@ const EditMember = () => {
               disabled={true}
             />
           </EditMemberBox>
+            <hr />
+            <EditMemberBox password>
+                <p>소셜연동</p>
+                <KakaoButton type="button" kakao>
+                    K
+                </KakaoButton>
+            </EditMemberBox>
           <hr />
           <FormBtnBox>
             <Button type="submit" width="10rem">
