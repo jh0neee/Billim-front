@@ -78,7 +78,6 @@ const Chat = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   const roomId = Number(useLocation().pathname.slice(15));
-  const lastChatRoomId = useSelector(state => state.chat.roomId);
   const prevChatPage = useSelector(state => state.pages.currentPage);
   const [messages, setMessages] = useState([]);
   const [enteredUsers, setEnteredUsers] = useState({});
@@ -90,7 +89,7 @@ const Chat = () => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
-  const [readStatus, setReadStatus] = useState({});
+  const [readStatus, setReadStatus] = useState(null);
   const [exitStatus, setExitStatus] = useState({});
   const [openExitModal, setOpenExitModal] = useState(false);
   const exitChatHandler = () => {
@@ -125,42 +124,7 @@ const Chat = () => {
   };
 
   const clickToBack = () => {
-    // 채팅페이지에서 나갈 때(웹소켓 연결 해제)
-    console.log({
-      chatRoomId: lastChatRoomId,
-      memberId: auth.memberId,
-      isEntered: false,
-    });
-
-    // axios
-    //   .post(
-    //     `${url}/`,
-    //     {
-    //       chatRoomId: lastChatRoomId,
-    //       memberId: auth.memberId,
-    //       isEntered: false,
-    //     },
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${auth.token}`,
-    //       },
-    //     },
-    //   )
-    //   .then(response => {
-    //     console.log(response.status);
-    //   })
-    //   .catch(err => {
-    //     if (
-    //       err.response.status === 401 &&
-    //       err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
-    //     ) {
-    //       tokenErrorHandler(err);
-    //       onLoading(false);
-    //     } else {
-    //       errorHandler(err);
-    //     }
-    //   });
-
+    // 채팅페이지 나갈 때
     navigate(prevChatPage);
   };
 
