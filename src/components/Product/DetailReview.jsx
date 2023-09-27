@@ -91,7 +91,6 @@ const DetailReview = ({
           totalItemsCount={count}
           pageRangeDisplayed={5}
           onChange={handlePageChange}
-          isPageStyle={true}
         />
       )}
     </>

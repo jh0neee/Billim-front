@@ -182,42 +182,38 @@ const ProductListItem = ({ items }) => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {items.length === 0 ? (
-        <span>검색결과가 없습니다.</span>
-      ) : (
-        items.map(item => (
-          <ProductCard key={item.productId}>
+      {items.map(item => (
+        <ProductCard key={item.productId}>
+          <Link to={`/${item.productId}/detail`}>
+            <ImageBox>
+              <ProductImage src={item.imageUrls[0]} alt="상품이미지" />
+            </ImageBox>
+          </Link>
+          <LikeIcon onClick={() => handleInterestToggle(item)}>
+            {!interestList && <RiHeart3Line color="grey" />}
+            {interestList &&
+            interestList.find(obj => obj.productId === item.productId) ? (
+              <RiHeart3Fill color="red" />
+            ) : (
+              <RiHeart3Line color="grey" />
+            )}
+          </LikeIcon>
+          <ProductInfoBox>
             <Link to={`/${item.productId}/detail`}>
-              <ImageBox>
-                <ProductImage src={item.imageUrls[0]} alt="상품이미지" />
-              </ImageBox>
-            </Link>
-            <LikeIcon onClick={() => handleInterestToggle(item)}>
-              {!interestList && <RiHeart3Line color="grey" />}
-              {interestList &&
-              interestList.find(obj => obj.productId === item.productId) ? (
-                <RiHeart3Fill color="red" />
-              ) : (
-                <RiHeart3Line color="grey" />
-              )}
-            </LikeIcon>
-            <ProductInfoBox>
-              <Link to={`/${item.productId}/detail`}>
-                <ProductItemBox>
-                  <ProductParagraph>{item.productName}</ProductParagraph>
-                  <ProductParagraph>
-                    <RiStarSFill />
-                    {item.starRating.toFixed(1)}
-                  </ProductParagraph>
-                </ProductItemBox>
-                <ProductParagraph amount>
-                  \ {item.price.toLocaleString('ko-KR')} /일
+              <ProductItemBox>
+                <ProductParagraph>{item.productName}</ProductParagraph>
+                <ProductParagraph>
+                  <RiStarSFill />
+                  {item.starRating.toFixed(1)}
                 </ProductParagraph>
-              </Link>
-            </ProductInfoBox>
-          </ProductCard>
-        ))
-      )}
+              </ProductItemBox>
+              <ProductParagraph amount>
+                \ {item.price.toLocaleString('ko-KR')} /일
+              </ProductParagraph>
+            </Link>
+          </ProductInfoBox>
+        </ProductCard>
+      ))}
     </>
   );
 };

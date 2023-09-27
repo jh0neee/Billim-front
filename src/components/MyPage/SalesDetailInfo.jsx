@@ -218,8 +218,8 @@ const SalesDetailInfo = ({
             <EmptyParagraph>현재 {label}이 없습니다.</EmptyParagraph>
           ) : (
             currentItems.map(item => (
-              <>
-                <SaleBottomBox key={item.orderId}>
+              <React.Fragment key={item.orderId}>
+                <SaleBottomBox>
                   <BuyerInfo>
                     <Profile size="45px" src={item.buyerProfileImageUrl} />
                     <BottomTextBox status={item.status}>
@@ -240,7 +240,7 @@ const SalesDetailInfo = ({
                   ) : null}
                 </SaleBottomBox>
                 <hr width="100%" />
-              </>
+              </React.Fragment>
             ))
           )}
         </ListCard>

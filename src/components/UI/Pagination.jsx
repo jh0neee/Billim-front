@@ -15,15 +15,9 @@ export const Paginate = ({
   itemsCountPerPage,
   pageRangeDisplayed,
   onChange,
-  isPageStyle,
 }) => {
-  const activeClass = isPageStyle && 'active-page';
-  const innerClass = isPageStyle && 'inner-page';
-
   return (
     <Pagination
-      innerClass={innerClass}
-      activeClass={activeClass}
       activePage={activePage}
       itemsCountPerPage={itemsCountPerPage}
       totalItemsCount={totalItemsCount}

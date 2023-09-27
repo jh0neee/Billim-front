@@ -34,7 +34,7 @@ const CategoryLayout = styled.div`
 `;
 
 const ProductItemLayout = styled.div`
-  margin: 5rem;
+  margin: 4rem 5rem 5rem;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, auto));
   row-gap: 3.5rem;
@@ -48,6 +48,32 @@ const ProductItemLayout = styled.div`
 
   @media ${theme.tablet} {
     grid-template-columns: repeat(auto-fill, minmax(200px, auto));
+  }
+`;
+
+const SearchBox = styled.div`
+  background: #f7f7f7;
+  width: 85%;
+  height: 4.7rem;
+  padding: 1rem;
+  margin: 2rem auto 0;
+  text-align: center;
+
+  > p {
+    line-height: 1.4;
+  }
+
+  > * {
+    &:first-child {
+      > span {
+        font-weight: 700;
+        font-family: 'SCDream';
+      }
+    }
+
+    &:last-child {
+      font-size: 0.9rem;
+    }
   }
 `;
 
@@ -101,6 +127,23 @@ const ProductList = () => {
         <CategoryLayout>
           <ProductCategory />
         </CategoryLayout>
+        {searchValue !== null &&
+          (searchValue && items.length !== 0 ? (
+            <SearchBox>
+              <p>
+                &apos;<span>{searchValue}</span>&apos;에 대한 검색결과입니다.
+              </p>
+              <p>{items.length}개의 상품이 검색되었습니다.</p>
+            </SearchBox>
+          ) : (
+            <SearchBox>
+              <p>
+                &apos;<span>{searchValue}</span>&apos;에 대한 검색결과가
+                없습니다.
+              </p>
+              <p>정확한 검색어인지 확인하고 다시 시도해 주세요.</p>
+            </SearchBox>
+          ))}
         <ProductItemLayout>
           <ProductListItem items={items} />
         </ProductItemLayout>

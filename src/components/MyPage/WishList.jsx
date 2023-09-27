@@ -123,6 +123,7 @@ const WishList = () => {
   const perPage = 9;
   const [interestItems, setInterestItems] = useState([]);
   const [count, setCount] = useState(0);
+  const [totalPage, setTotalPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
@@ -132,7 +133,7 @@ const WishList = () => {
     setCurrentPage(pageNumber);
   };
 
-  useEffect(() => {
+  const axiosToWishListItem = () => {
     onLoading(true);
     axios
       .get(`${url}/product/my/interest`, {
@@ -147,6 +148,7 @@ const WishList = () => {
       .then(response => {
         setInterestItems(response.data.content);
         setCount(response.data.totalElements);
+        setTotalPage(response.data.totalPages);
         onLoading(false);
       })
       .catch(err => {
@@ -159,6 +161,10 @@ const WishList = () => {
           errorHandler(err);
         }
       });
+  };
+
+  useEffect(() => {
+    axiosToWishListItem();
   }, [currentPage]);
 
   const handleInterestToggle = item => {
@@ -214,8 +220,11 @@ const WishList = () => {
   };
 
   useEffect(() => {
-    // 한 페이지(1페이지제외)에서 아이템 전부 삭제했을 때 이전페이지로 이동
-    if (interestItems.length === 0 && currentPage !== 1) {
+    if (currentPage !== totalPage && interestItems.length < 9) {
+      // 현재페이지(마지막페이지제외)에서 아이템 삭제했을 때 다음페이지에서 가져옴
+      axiosToWishListItem();
+    } else if (interestItems.length === 0 && currentPage !== 1) {
+      // 한 페이지(1페이지제외)에서 아이템 전부 삭제했을 때 이전페이지로 이동
       setTimeout(() => {
         setCurrentPage(prev => prev - 1);
       }, 100);

@@ -72,7 +72,14 @@ const ProductCategory = () => {
 
   const searchSubmitHandler = e => {
     e.preventDefault();
+
     const inputValue = formState.inputs.search?.value;
+
+    if (!inputValue) {
+      alert('검색어를 입력해주세요!');
+      return;
+    }
+
     dispatch(searchAction.CLICK_SEARCH(inputValue));
     setResetInput(true);
   };
