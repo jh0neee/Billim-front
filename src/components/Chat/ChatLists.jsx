@@ -1,7 +1,6 @@
 /* eslint-disable prefer-const */
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import SockJS from 'sockjs-client';
@@ -10,7 +9,6 @@ import * as StompJS from '@stomp/stompjs';
 import axios from 'axios';
 import theme from '../../styles/theme';
 import { Profile } from '../UI/Profile';
-import { chatAction } from '../../store/chat';
 
 const ChatList = styled.ul`
   background-color: #f1f3f5;
@@ -100,7 +98,6 @@ const ChatLists = ({
   errorHandler,
   tokenErrorHandler,
 }) => {
-  const dispatch = useDispatch();
   const [chatList, setChatList] = useState([]);
   const [activeRoomId, setActiveRoomId] = useState(null);
   const [showLatestMessage, setShowLatestMessage] = useState([]);
@@ -201,14 +198,6 @@ const ChatLists = ({
     };
   }, []);
 
-  const sendEntryStatus = chatRoomId => {
-    console.log({
-      chatRoomId,
-      memberId: auth.memberId,
-      isEntered: true,
-    });
-  };
-
   useEffect(() => {
     if (exitStatus.status) {
       setChatList(prev =>
@@ -218,10 +207,6 @@ const ChatLists = ({
   }, [exitStatus]);
 
   const openChatRoomHandler = (chat, chatRoomId) => {
-    dispatch(chatAction.updateRoomId(chatRoomId));
-
-    sendEntryStatus(chatRoomId);
-
     setUserInfo({
       user: chat.receiverNickname,
       userProfile: chat.receiverProfileImageUrl,
@@ -283,31 +268,21 @@ const ChatLists = ({
         return chat;
       });
     });
-
-    setRead(prev => {
-      const updatedStatus = {};
-
-      for (const roomId in prev) {
-        updatedStatus[roomId] = false;
-      }
-
-      updatedStatus[chatRoomId] = true;
-
-      return updatedStatus;
-    });
   };
 
-  const updateBadges = (chatRoomId, senderId) => {
+  const updateBadges = (read, chatRoomId, senderId) => {
     setChatList(prevChatList => {
       return prevChatList.map(chat => {
         if (chat.chatRoomId === chatRoomId) {
-          let updatedUnreadCount = chat.unreadCount;
+          let updatedUnreadCount = chat.updatedUnreadCount;
 
           if (senderId === chat.receiverId) {
-            if (chat.updatedUnreadCount) {
-              updatedUnreadCount = chat.updatedUnreadCount + 1;
-            } else {
+            if (updatedUnreadCount === undefined) {
+              updatedUnreadCount = chat.unreadCount + 1;
+            } else if (updatedUnreadCount !== undefined && !read) {
               updatedUnreadCount += 1;
+            } else {
+              updatedUnreadCount = 0;
             }
           }
 
@@ -331,7 +306,11 @@ const ChatLists = ({
         setCorrectSender(messageBody.senderId !== auth.memberId);
         setMessages(prev => [...prev, messageBody]);
         if (messageBody.senderId !== auth.memberId) {
-          updateBadges(messageBody.chatRoomId, messageBody.senderId);
+          updateBadges(
+            messageBody.read,
+            messageBody.chatRoomId,
+            messageBody.senderId,
+          );
         }
       }
 
@@ -354,6 +333,15 @@ const ChatLists = ({
       }
 
       setShowLatestMessage(latestMessages);
+    } else {
+      if (messageBody.senderId !== auth.memberId) {
+        updateBadges(
+          messageBody.read,
+          messageBody.chatRoomId,
+          messageBody.senderId,
+        );
+      }
+      setRead(messageBody.read);
     }
   };
 
