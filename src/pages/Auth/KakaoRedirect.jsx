@@ -22,7 +22,7 @@ const KakaoRedirect = () => {
         console.log(code, state);
         onLoading(true);
         axios
-            .get(`${url}/oauth/kakao?code=${code}&state=${state}`)
+            .get(`http://localhost:3000/oauth/kakao?code=${code}&state=${state}`)
             .then(response => {
                 console.log(response.data);
                 const { accessToken, refreshToken, memberId } = response.data;
@@ -42,3 +42,4 @@ const KakaoRedirect = () => {
 };
 
 export default KakaoRedirect;
+

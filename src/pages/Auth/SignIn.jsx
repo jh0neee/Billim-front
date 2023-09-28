@@ -102,12 +102,12 @@ const SignIn = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const { isLoading, error, onLoading, clearError, errorHandler } =
-    useLoadingError();
+      useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
 
   const REST_API_KEY = process.env.REACT_APP_KAKAO_REST_API;
   const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI;
-  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+  const KAKAO_AUTH_URL = `http://localhost:8080/oauth2/authorization/kakao`; // redirect - state save,  authorization - find
 
   const KakaoLoginHandler = () => {
     window.location.href = KAKAO_AUTH_URL;
@@ -117,75 +117,76 @@ const SignIn = () => {
     e.preventDefault();
     onLoading(true);
     axios
-      .post(
-        `${url}/auth/login`,
-        {
-          email: formState.inputs.email.value,
-          password: formState.inputs.password.value,
-        },
-        { headers: { 'Content-Type': 'application/json' } },
-      )
-      .then(response => {
-        if (response.status === 200) {
-          const { accessToken, refreshToken, memberId } = response.data;
-          auth.login(accessToken, refreshToken, memberId);
-        } else {
-          errorHandler(response);
-        }
-        onLoading(false);
-      })
-      .catch(err => {
-        errorHandler(err);
-      });
+        .post(
+            `${url}/auth/login`,
+            {
+              email: formState.inputs.email.value,
+              password: formState.inputs.password.value,
+            },
+            { headers: { 'Content-Type': 'application/json' } },
+        )
+        .then(response => {
+          if (response.status === 200) {
+            const { accessToken, refreshToken, memberId } = response.data;
+            auth.login(accessToken, refreshToken, memberId);
+          } else {
+            errorHandler(response);
+          }
+          onLoading(false);
+        })
+        .catch(err => {
+          errorHandler(err);
+        });
   };
 
   return (
-    <>
-      <ErrorModal error={error} onClear={clearError} />
-      <SignInLayout onSubmit={SubmitHandler}>
-        {isLoading && <LoadingSpinner asOverlay />}
-        <Input
-          element="input"
-          id="email"
-          type="text"
-          width="300px"
-          placeholder="Email"
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText="이메일을 입력해주세요"
-          onInput={inputHandler}
-        />
-        <Input
-          element="input"
-          id="password"
-          type="password"
-          width="300px"
-          placeholder="Password"
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText="비밀번호를 입력해주세요"
-          onInput={inputHandler}
-        />
-        <Button type="submit" disabled={!formState.isValid}>
-          로그인
-        </Button>
-        <ButtonBox>
-          <KakaoIcon />
-          <Button type="button" onClick={KakaoLoginHandler}>
-            카카오 로그인
+      <>
+        <ErrorModal error={error} onClear={clearError} />
+        <SignInLayout onSubmit={SubmitHandler}>
+          {isLoading && <LoadingSpinner asOverlay />}
+          <Input
+              element="input"
+              id="email"
+              type="text"
+              width="300px"
+              placeholder="Email"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="이메일을 입력해주세요"
+              onInput={inputHandler}
+          />
+          <Input
+              element="input"
+              id="password"
+              type="password"
+              width="300px"
+              placeholder="Password"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="비밀번호를 입력해주세요"
+              onInput={inputHandler}
+          />
+          <Button type="submit" disabled={!formState.isValid}>
+            로그인
           </Button>
-        </ButtonBox>
-        <FindButtonBox>
-          <p>비밀번호를 잊어버리셨나요?</p>
-          <Link to="/finduser/password">비밀번호 찾기</Link>
-        </FindButtonBox>
-        <SignUpBox>
-          <p>
-            빌림의 회원이 되시면 <span>할인쿠폰</span>을 <br /> 드립니다.
-          </p>
-          <Link to="/emailverify">회원가입</Link>
-        </SignUpBox>
-      </SignInLayout>
-    </>
+          <ButtonBox>
+            <KakaoIcon />
+            <Button type="button" onClick={KakaoLoginHandler}>
+              카카오 로그인
+            </Button>
+          </ButtonBox>
+          <FindButtonBox>
+            <p>비밀번호를 잊어버리셨나요?</p>
+            <Link to="/finduser/password">비밀번호 찾기</Link>
+          </FindButtonBox>
+          <SignUpBox>
+            <p>
+              빌림의 회원이 되시면 <span>할인쿠폰</span>을 <br /> 드립니다.
+            </p>
+            <Link to="/emailverify">회원가입</Link>
+          </SignUpBox>
+        </SignInLayout>
+      </>
   );
 };
 
 export default SignIn;
+
