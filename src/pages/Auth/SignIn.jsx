@@ -107,7 +107,7 @@ const SignIn = () => {
 
   const REST_API_KEY = process.env.REACT_APP_KAKAO_REST_API;
   const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI;
-  const KAKAO_AUTH_URL = `http://localhost:8080/oauth2/authorization/kakao`; // redirect - state save,  authorization - find
+  const KAKAO_AUTH_URL = `http://3.36.154.178:8080/oauth2/authorization/kakao`; // redirect - state save,  authorization - find
 
   const KakaoLoginHandler = () => {
     window.location.href = KAKAO_AUTH_URL;

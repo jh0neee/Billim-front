@@ -8,7 +8,6 @@ import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
 
 const KakaoRedirect = () => {
-    const url = process.env.REACT_APP_URL;
     const auth = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
