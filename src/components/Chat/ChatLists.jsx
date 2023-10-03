@@ -112,7 +112,7 @@ const ChatLists = ({
       });
 
       client.current.webSocketFactory = function () {
-        return new SockJS('http://3.36.154.178:8080/stomp/chat');
+        return new SockJS('http://localhost:8080/stomp/chat');
       };
 
       client.current.onConnect = async () => {
