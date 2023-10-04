@@ -80,6 +80,7 @@ const Chat = () => {
   const roomId = Number(useLocation().pathname.slice(15));
   const prevChatPage = useSelector(state => state.pages.currentPage);
   const [messages, setMessages] = useState([]);
+  const [unreadMessages, setUnreadMessages] = useState(messages);
   const [enteredUsers, setEnteredUsers] = useState({});
   const [inChatRoom, setInChatRoom] = useState({});
   const [userInfo, setUserInfo] = useState({});
@@ -172,6 +173,7 @@ const Chat = () => {
             setInChatRoom={setInChatRoom}
             setStompClient={setStompClient}
             setMessages={setMessages}
+            setUnreadMessages={setUnreadMessages}
             onLoading={onLoading}
             errorHandler={errorHandler}
             tokenErrorHandler={tokenErrorHandler}
@@ -191,6 +193,7 @@ const Chat = () => {
                 inChatRoom={inChatRoom}
                 stompClient={stompClient}
                 messages={messages}
+                unreadMessages={unreadMessages}
                 setMessages={setMessages}
                 onLoading={onLoading}
                 errorHandler={errorHandler}

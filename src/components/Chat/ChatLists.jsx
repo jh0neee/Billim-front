@@ -94,6 +94,7 @@ const ChatLists = ({
   setInChatRoom,
   setStompClient,
   setMessages,
+  setUnreadMessages,
   onLoading,
   errorHandler,
   tokenErrorHandler,
@@ -305,6 +306,7 @@ const ChatLists = ({
       if (isCurrentUserInRoom) {
         setCorrectSender(messageBody.senderId !== auth.memberId);
         setMessages(prev => [...prev, messageBody]);
+        setUnreadMessages(prev => [...prev, messageBody]);
         if (messageBody.senderId !== auth.memberId) {
           updateBadges(
             messageBody.read,
@@ -332,8 +334,15 @@ const ChatLists = ({
         });
       }
 
+      setRead(messageBody.read);
       setShowLatestMessage(latestMessages);
     } else {
+      setUnreadMessages(prev => {
+        return prev.filter(
+          unreadMsg => unreadMsg.chatRoomId === messageBody.chatRoomId,
+        );
+      });
+
       if (messageBody.senderId !== auth.memberId) {
         updateBadges(
           messageBody.read,
@@ -341,6 +350,7 @@ const ChatLists = ({
           messageBody.senderId,
         );
       }
+
       setRead(messageBody.read);
     }
   };

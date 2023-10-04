@@ -236,6 +236,7 @@ const MessageChat = ({
   stompClient,
   messages,
   setMessages,
+  unreadMessages,
   onLoading,
   errorHandler,
   tokenErrorHandler,
@@ -570,7 +571,14 @@ const MessageChat = ({
     return messages.map((msg, index) => {
       let read;
       if (msg.newMessage && !correctSender) {
-        read = readStatus;
+        const unreadMessagesByRecipient = unreadMessages.filter(
+          unread => unread.messageId === msg.messageId,
+        );
+
+        read = true;
+        unreadMessagesByRecipient.forEach(() => {
+          read = readStatus;
+        });
       } else if (msg.newMessage && correctSender) {
         read = readMessage(msg);
       }
