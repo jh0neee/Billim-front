@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -500,13 +500,13 @@ const EditMember = () => {
               disabled={true}
             />
           </EditMemberBox>
-            <hr />
-            <EditMemberBox password>
-                <p>소셜연동</p>
-                <KakaoButton type="button" kakao>
-                    K
-                </KakaoButton>
-            </EditMemberBox>
+          <hr />
+          <EditMemberBox password>
+            <p>소셜연동</p>
+            <KakaoButton type="button" kakao>
+              K
+            </KakaoButton>
+          </EditMemberBox>
           <hr />
           <FormBtnBox>
             <Button type="submit" width="10rem">
