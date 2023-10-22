@@ -127,17 +127,13 @@ const ExtraButton = styled(Button)`
   }
 `;
 
-const KakaoButton = styled(Button)`
-  width: 35px;
-  height: 35px;
-  border-radius: 2rem;
+const KakaoExitButton = styled(EnrollButton)`
   color: black;
   background-color: #fee500;
-  font-weight: 600;
-  justify-self: center;
+  font-weight: 500;
 
-  @media ${theme.mobile} {
-    margin: 0 0 0 1.5rem;
+  &:hover {
+    background: #f2da00;
   }
 `;
 
@@ -378,9 +374,13 @@ const EditMember = () => {
       />
       <EditHeader>
         <p>회원정보수정</p>
-        <EnrollButton type="button" onClick={() => setCancelModal(true)}>
-          회원 탈퇴
-        </EnrollButton>
+        {loadedMember?.type !== 'KAKAO' ? (
+          <EnrollButton type="button" onClick={() => setCancelModal(true)}>
+            회원 탈퇴
+          </EnrollButton>
+        ) : (
+          <KakaoExitButton type="button">연결 끊기</KakaoExitButton>
+        )}
       </EditHeader>
       <hr />
       {!isLoading && loadedMember && (
@@ -417,21 +417,25 @@ const EditMember = () => {
             />
           </EditMemberBox>
           <hr />
-          <EditMemberBox password>
-            <p>비밀번호 변경</p>
-            {passwordChanged && <span>비밀번호가 변경되었습니다.</span>}
-            {!passwordChanged && (
-              <ExtraButton
-                password
-                type="button"
-                sub
-                onClick={() => setEditPasswordModal(true)}
-              >
-                재설정하기
-              </ExtraButton>
-            )}
-          </EditMemberBox>
-          <hr />
+          {loadedMember?.type !== 'KAKAO' && (
+            <>
+              <EditMemberBox password>
+                <p>비밀번호 변경</p>
+                {passwordChanged && <span>비밀번호가 변경되었습니다.</span>}
+                {!passwordChanged && (
+                  <ExtraButton
+                    password
+                    type="button"
+                    sub
+                    onClick={() => setEditPasswordModal(true)}
+                  >
+                    재설정하기
+                  </ExtraButton>
+                )}
+              </EditMemberBox>
+              <hr />
+            </>
+          )}
           <EditMemberBox mainInput>
             <p>주소</p>
             <MainInput
@@ -499,13 +503,6 @@ const EditMember = () => {
               onInput={inputHandler}
               disabled={true}
             />
-          </EditMemberBox>
-          <hr />
-          <EditMemberBox password>
-            <p>소셜연동</p>
-            <KakaoButton type="button" kakao>
-              K
-            </KakaoButton>
           </EditMemberBox>
           <hr />
           <FormBtnBox>
