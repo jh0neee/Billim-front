@@ -65,7 +65,7 @@ const EditPassword = ({
 
     axios
       .put(
-        `${url}/member/my/password`,
+        `${url}/member/info/password`,
         {
           newPassword: formState.inputs.newPassword.value,
           password: formState.inputs.password.value,
