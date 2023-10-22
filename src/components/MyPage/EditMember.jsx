@@ -364,7 +364,12 @@ const EditMember = () => {
       >
         닉네임 중복 체크를 먼저 해 주세요
       </Modal>
-      <CancelMember showModal={cancelModal} closeModal={closeCancel} />
+      <CancelMember
+        url={url}
+        auth={auth}
+        showModal={cancelModal}
+        closeModal={closeCancel}
+      />
       <EditPassword
         url={url}
         auth={auth}
