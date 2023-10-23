@@ -524,7 +524,7 @@ const MessageChat = ({
                   <ChatImageMessage src={msg.message} alt="채팅이미지" />
                 ) : (
                   <ChatMessageBox isSent={isSentByUser}>
-                    <p>{`[${msg.messageId}] ${msg.message}`}</p>
+                    <p>{msg.message}</p>
                   </ChatMessageBox>
                 )}
                 {!isSentByUser && (
@@ -597,6 +597,10 @@ const MessageChat = ({
       setResetInput(true);
     }
   };
+
+  const exitMessage = pastMessages.find(msg =>
+    msg.message.includes('나갔습니다.'),
+  );
 
   return (
     <>
@@ -674,6 +678,7 @@ const MessageChat = ({
             validators={[VALIDATOR_REQUIRE()]}
             errorText={null}
             onInput={inputHandler}
+            disabled={exitMessage}
           />
           <MessageButton type="submit">
             <PiPaperPlaneRightLight size="30px" />
