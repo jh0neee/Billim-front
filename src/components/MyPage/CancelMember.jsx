@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from 'axios';
@@ -50,6 +51,7 @@ const CancelConfirmLabel = styled.label`
 `;
 
 const CancelMember = ({ url, auth, showModal, closeModal }) => {
+  const navigate = useNavigate();
   const [checkCancel, setCheckCancel] = useState(false);
   const [showContents, setShowContents] = useState(true);
   const { error, clearError, errorHandler } = useLoadingError();
@@ -66,10 +68,10 @@ const CancelMember = ({ url, auth, showModal, closeModal }) => {
     setCheckCancel(false);
   };
 
-  const closePasswordModal = () => {
-    const password = formState.inputs.password.value;
-    const confirmPassword = formState.inputs.confirmPassword.value;
+  const password = formState.inputs.password?.value;
+  const confirmPassword = formState.inputs.confirmPassword?.value;
 
+  const closePasswordModal = () => {
     if (password !== confirmPassword) {
       return;
     }
@@ -108,10 +110,39 @@ const CancelMember = ({ url, auth, showModal, closeModal }) => {
       alert('유의사항에 동의해야만 탈퇴가 가능합니다.');
       return;
     }
-    closeModal();
-    setShowContents(true);
-    setCheckCancel(false);
-    console.log('탈퇴 완료');
+
+    axios
+      .post(
+        `${url}/member/unregister`,
+        {
+          password,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${auth.token}`,
+          },
+          params: {
+            memberId: auth.memberId,
+          },
+        },
+      )
+      .then(() => {
+        handleCloseModal();
+        auth.logout(false);
+        navigate('/');
+      })
+      .catch(err => {
+        closeModal();
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+        } else {
+          errorHandler(err);
+        }
+      });
   };
 
   return (
