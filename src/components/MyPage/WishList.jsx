@@ -220,6 +220,10 @@ const WishList = () => {
   };
 
   useEffect(() => {
+    if (interestItems.length === 0 && currentPage === 1) {
+      return;
+    }
+
     if (currentPage !== totalPage && interestItems.length < 9) {
       // 현재페이지(마지막페이지제외)에서 아이템 삭제했을 때 다음페이지에서 가져옴
       axiosToWishListItem();
