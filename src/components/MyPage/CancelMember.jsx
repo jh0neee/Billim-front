@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from 'axios';
@@ -50,8 +49,7 @@ const CancelConfirmLabel = styled.label`
   font-size: 0.7rem;
 `;
 
-const CancelMember = ({ url, auth, showModal, closeModal }) => {
-  const navigate = useNavigate();
+const CancelMember = ({ url, auth, navigate, showModal, closeModal }) => {
   const [checkCancel, setCheckCancel] = useState(false);
   const [showContents, setShowContents] = useState(true);
   const { error, clearError, errorHandler } = useLoadingError();

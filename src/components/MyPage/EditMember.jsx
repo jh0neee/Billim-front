@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 import axios from 'axios';
@@ -167,6 +168,7 @@ const MainInput = styled(Input)`
 const EditMember = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
+  const navigate = useNavigate();
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
@@ -333,6 +335,37 @@ const EditMember = () => {
     }
   };
 
+  const kakaoLogoutHandler = () => {
+    onLoading(true);
+    axios
+      .post(
+        `${url}/oauth/disconnect`,
+        { accessToken: auth.token },
+        {
+          headers: {
+            Authorization: 'Bearer ' + auth.token,
+          },
+        },
+      )
+      .then(() => {
+        localStorage.removeItem('userData');
+        navigate('/');
+        onLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        if (
+          err.response.status === 401 &&
+          err.response.data.code !== 'INVALID_EMAIL_PASSWORD'
+        ) {
+          tokenErrorHandler(err);
+          onLoading(false);
+        } else {
+          errorHandler(err);
+        }
+      });
+  };
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -367,6 +400,7 @@ const EditMember = () => {
       <CancelMember
         url={url}
         auth={auth}
+        navigate={navigate}
         showModal={cancelModal}
         closeModal={closeCancel}
       />
@@ -384,7 +418,9 @@ const EditMember = () => {
             회원 탈퇴
           </EnrollButton>
         ) : (
-          <KakaoExitButton type="button">연결 끊기</KakaoExitButton>
+          <KakaoExitButton type="button" onClick={kakaoLogoutHandler}>
+            연결 끊기
+          </KakaoExitButton>
         )}
       </EditHeader>
       <hr />
