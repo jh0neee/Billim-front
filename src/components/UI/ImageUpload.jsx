@@ -101,10 +101,8 @@ const ImageBox = styled.div`
 `;
 
 export const ImageFile = styled.img`
-  width: ${({ imageSize, profile }) =>
-    profile ? '100%' : imageSize || '58px'};
-  height: ${({ imageSize, profile }) =>
-    profile ? '100%' : imageSize || '58px'};
+  width: ${({ profile }) => (profile ? '100%' : '58px')};
+  height: ${({ profile }) => (profile ? '100%' : '58px')};
   object-fit: ${({ profile }) => (profile ? 'cover' : null)};
 `;
 
@@ -216,7 +214,7 @@ const ImageUpload = props => {
             <>
               <ImageBox size={props.size}>
                 <ImageFile
-                  profile
+                  profile="true"
                   src={props.src || defaultProfileImageUrl}
                   alt="기본 이미지"
                 />
@@ -225,7 +223,7 @@ const ImageUpload = props => {
           ) : (
             <>
               <ImageBox size={props.size}>
-                <ImageFile profile src={preview} alt="profileImage" />
+                <ImageFile profile="true" src={preview} alt="profileImage" />
               </ImageBox>
             </>
           )}
