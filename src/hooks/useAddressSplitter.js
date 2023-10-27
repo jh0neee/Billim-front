@@ -1,13 +1,14 @@
 export const useAddressSplitter = address => {
-  if (!address) {
-    return { road: '', legal: '', detail: '' };
-  }
-
   const roadAddressPattern =
     /^(.*?[서울시도])(.*?[구군])(.*?((?:로|길).*?) [0-9]+).*$/;
   const legalPattern1 = /([^ ]+)$/;
 
   const roadResult = address.match(roadAddressPattern);
+
+  if (!roadResult) {
+    return { road: '', legal: '', detail: '' };
+  }
+
   const road = roadResult[1] + roadResult[2] + roadResult[3];
 
   let legalResult, legal;
