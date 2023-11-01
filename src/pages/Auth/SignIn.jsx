@@ -131,7 +131,7 @@ const SignIn = () => {
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
 
-  const KAKAO_AUTH_URL = `http://3.36.154.178:8080/oauth2/authorization/kakao`;
+  const KAKAO_AUTH_URL = `http://localhost:8080/oauth2/authorization/kakao`;
 
   const KakaoLoginHandler = () => {
     window.location.href = KAKAO_AUTH_URL;
