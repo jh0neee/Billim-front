@@ -321,6 +321,8 @@ const ChatLists = ({
           ? '사진을 보냈습니다.'
           : messageBody.message;
 
+      const latestMessageTime = messageBody.sendAt;
+
       const findMsgObjectIdx = latestMessages.findIndex(
         obj => obj.chatRoomId === messageBody.chatRoomId,
       );
@@ -331,6 +333,7 @@ const ChatLists = ({
         latestMessages.push({
           chatRoomId: messageBody.chatRoomId,
           message: latestMessage,
+          date: latestMessageTime,
         });
       }
 
@@ -360,19 +363,26 @@ const ChatLists = ({
       obj => chat.chatRoomId === obj.chatRoomId,
     );
 
-    let message;
+    let message, date;
     if (findMsgObject) {
       message = findMsgObject.message;
+      date = findMsgObject.date;
     } else {
       if (chat.latestMessage.includes('billim.s3')) {
         message = '사진을 보냈습니다.';
       } else {
         message = chat.latestMessage;
+        date = chat.latestMessageTime;
       }
     }
-
-    return message;
+    return { message, date };
   };
+
+  chatList.sort((a, b) => {
+    const dateA = renderShowLatestMessage(a).date;
+    const dateB = renderShowLatestMessage(b).date;
+    return new Date(dateB) - new Date(dateA);
+  });
 
   return (
     <ChatList>
@@ -409,9 +419,9 @@ const ChatLists = ({
                       </p>
                     </Unread>
                   </NameBox>
-                  <p>{chat.latestMessageTime.slice(0, 10)}</p>
+                  <p>{renderShowLatestMessage(chat).date.slice(0, 10)}</p>
                 </div>
-                <p>{renderShowLatestMessage(chat)}</p>
+                <p>{renderShowLatestMessage(chat).message}</p>
               </DetailBox>
             </ReceiverList>
           );
