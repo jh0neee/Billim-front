@@ -384,6 +384,15 @@ const ChatLists = ({
     return new Date(dateB) - new Date(dateA);
   });
 
+  chatList.forEach(chat => {
+    const { message, date } = renderShowLatestMessage(chat);
+
+    if (chat.latestMessage !== message) {
+      chat.latestMessage = message;
+      chat.latestMessageTime = date;
+    }
+  });
+
   return (
     <ChatList>
       {!chatList && (
