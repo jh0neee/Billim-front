@@ -16,6 +16,7 @@
     "react-datepicker": "^4.11.0",
     "react-daum-postcode": "^3.1.1",
     "react-dom": "^18.2.0",
+    "react-fullpage": "^0.1.19",
     "react-icons": "^4.8.0",
     "react-js-pagination": "^3.0.3",
     "react-redux": "^8.0.5",

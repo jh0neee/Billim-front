@@ -6,6 +6,7 @@ import theme from '../styles/theme';
 import Carousel from '../components/UI/Carousel';
 import ErrorModal from '../util/ErrorModal';
 import { useLoadingError } from '../hooks/useLoadingError';
+import { SectionsContainer, Section } from 'react-fullpage';
 
 import mainImage from '../asset/image/메인이미지1.png';
 import mainImage2 from '../asset/image/22.png';
@@ -68,21 +69,33 @@ const Home = () => {
       .catch(err => errorHandler(err));
   }, []);
 
+  const settings = {
+    anchors: ['sectionOne', 'sectionTwo', 'sectionThree'],
+  };
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
-      <ContentBox>
-        <img src={mainImage} alt="메인이미지1" width="100%" />
-        <img src={mainImage2} alt="메인이미지2" width="100%" />
-        <CarouselBox isEmpty={recentItems.length === 0}>
-          <p>인기 상품</p>
-          {recentItems.length === 0 ? (
-            <CarouselText>최근 내역이 없습니다.</CarouselText>
-          ) : (
-            <Carousel items={recentItems} />
-          )}
-        </CarouselBox>
-      </ContentBox>
+      <SectionsContainer {...settings}>
+        <ContentBox>
+          <Section>
+            <img src={mainImage} alt="메인이미지1" width="100%" />
+          </Section>
+          <Section>
+            <img src={mainImage2} alt="메인이미지2" width="100%" />
+          </Section>
+          <Section>
+            <CarouselBox isEmpty={recentItems.length === 0}>
+              <p>인기 상품</p>
+              {recentItems.length === 0 ? (
+                <CarouselText>최근 내역이 없습니다.</CarouselText>
+              ) : (
+                <Carousel items={recentItems} />
+              )}
+            </CarouselBox>
+          </Section>
+        </ContentBox>
+      </SectionsContainer>
       <Footer>푸터</Footer>
     </React.Fragment>
   );
