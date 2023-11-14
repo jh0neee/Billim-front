@@ -8,9 +8,8 @@ import 'slick-carousel/slick/slick-theme.css';
 import theme from '../../styles/theme';
 
 const CarouselSlider = styled(Slider)`
-  margin-top: 4rem;
-  margin-left: 13%;
-  width: 80%;
+  margin: 4rem auto 0px;
+  width: 95%;
   text-align: center;
 
   .slick-list {
@@ -20,111 +19,64 @@ const CarouselSlider = styled(Slider)`
 
   .slick-dots {
     bottom: -55px;
-    right: 38px;
   }
 
   ${({ lengthofslide }) =>
     lengthofslide === 2 &&
     css`
-      margin: 2rem auto;
-      padding-left: 2.8rem;
       width: 50%;
     `}
+
   ${({ lengthofslide }) =>
     lengthofslide === 1 &&
     css`
-      margin-left: 40%;
       width: 27%;
     `}
 
   @media ${theme.desktop} {
-    margin-top: 2rem;
-    margin-left: 20%;
     width: 69%;
-
-    .slick-dots {
-      right: 60px;
-    }
 
     ${({ lengthofslide }) =>
       lengthofslide === 2 &&
       css`
-        margin: 2rem auto;
-        padding-left: 4rem;
         width: 40%;
       `}
+
     ${({ lengthofslide }) =>
       lengthofslide === 1 &&
       css`
-        margin-left: 43%;
         width: 23%;
       `}
   }
   @media ${theme.laptop} {
-    margin: 2rem auto;
-    padding-left: 2.8rem;
     width: 67%;
 
-    .slick-dots {
-      right: -8px;
-    }
     ${({ lengthofslide }) =>
       lengthofslide === 1 &&
       css`
-        margin: 2rem auto;
-        padding-left: 1.8rem;
         width: 34%;
       `}
   }
-  @media ${theme.tablet}, ${theme.mobile} {
-    padding-left: 1.8rem;
-    width: 66%;
 
-    .slick-dots {
-      right: -2px;
-    }
+  @media ${theme.tablet}, ${theme.mobile} {
+    width: 66%;
   }
 `;
 
 const CarouselImgBox = styled(Link)`
   cursor: pointer;
 
+  flex-direction: column;
+  align-items: center;
+  display: flex !important;
+
   > p {
     font-family: 'SCDream';
     padding-top: 10px;
-    padding-right: 29%;
     text-align: center;
 
     &:hover {
       text-decoration: underline;
-    }
-
-    ${({ lengthofslide }) =>
-      lengthofslide === 2 &&
-      css`
-        padding-right: 15%;
-      `}
-  }
-
-  @media ${theme.desktop} {
-    > p {
-      padding-right: 41%;
-
-      ${({ lengthofslide }) =>
-        lengthofslide === 2 &&
-        css`
-          padding-right: 24%;
-        `}
-    }
-  }
-  @media ${theme.laptop} {
-    > p {
-      padding-right: 16%;
-    }
-  }
-  @media ${theme.tablet}, ${theme.mobile} {
-    > p {
-      padding-right: 12%;
     }
   }
 `;
@@ -172,13 +124,10 @@ const Carousel = ({ items }) => {
   };
 
   return (
-    <CarouselSlider {...carouselSetting}>
+    <CarouselSlider {...carouselSetting} lengthofslide={items.length}>
       {items.map(item => (
         <div key={item.productId}>
-          <CarouselImgBox
-            to={`/${item.productId}/detail`}
-            lengthofslide={items.length}
-          >
+          <CarouselImgBox to={`/${item.productId}/detail`}>
             <CarouselImage src={item.imageUrl} alt="상품이미지" />
             <p>{item.productName}</p>
           </CarouselImgBox>
