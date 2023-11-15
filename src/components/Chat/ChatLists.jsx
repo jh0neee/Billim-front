@@ -14,8 +14,12 @@ const ChatList = styled.ul`
   background-color: #f1f3f5;
   border: 1px solid #dee2e6;
 
+  &.noneDisplay {
+    display: none;
+  }
+
   @media ${theme.tablet} {
-    height: 73vh;
+    height: 78vh;
   }
 `;
 
@@ -86,6 +90,7 @@ const Unread = styled.div`
 const ChatLists = ({
   url,
   auth,
+  setHasChatRoom,
   exitStatus,
   setRead,
   setCorrectSender,
@@ -169,6 +174,8 @@ const ChatLists = ({
           );
           return updatedChatList;
         });
+
+        setHasChatRoom(responseData.length === 0);
 
         responseData.forEach(chatRoom => {
           client.current.subscribe(
@@ -394,11 +401,7 @@ const ChatLists = ({
   });
 
   return (
-    <ChatList>
-      {!chatList && (
-        <ReceiverList>채팅 내역이 없습니다! 시작해보세요!</ReceiverList>
-      )}
-
+    <ChatList className={chatList.length === 0 ? 'noneDisplay' : ''}>
       {chatList &&
         chatList.map(chat => {
           return (

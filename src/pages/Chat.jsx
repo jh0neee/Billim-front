@@ -32,6 +32,10 @@ const ChatLayout = styled.div`
   display: grid;
   grid-template-columns: 0.5fr 2fr;
 
+  &.fullWidth {
+    grid-template-columns: 1fr;
+  }
+
   @media ${theme.tablet} {
     margin-top: 150px;
     height: 78vh;
@@ -79,6 +83,7 @@ const Chat = () => {
   const navigate = useNavigate();
   const roomId = Number(useLocation().pathname.slice(15));
   const prevChatPage = useSelector(state => state.pages.currentPage);
+  const [hasChatRoom, setHasChatRoom] = useState(false);
   const [messages, setMessages] = useState([]);
   const [unreadMessages, setUnreadMessages] = useState(messages);
   const [enteredUsers, setEnteredUsers] = useState({});
@@ -160,11 +165,12 @@ const Chat = () => {
         </ChatHeaderBox>
       </ChatHeaderContainer>
       <ChatContainer>
-        <ChatLayout>
+        <ChatLayout className={hasChatRoom ? 'fullWidth' : ''}>
           {isLoading && <LoadingSpinner asOverlay />}
           <ChatLists
             url={url}
             auth={auth}
+            setHasChatRoom={setHasChatRoom}
             exitStatus={exitStatus}
             setRead={setReadStatus}
             setCorrectSender={setCorrectSender}
@@ -180,7 +186,7 @@ const Chat = () => {
           />
           <ChatContent>
             {!roomId ? (
-              <BlockChat />
+              <BlockChat hasChatRoom={hasChatRoom} />
             ) : (
               <MessageChat
                 url={url}
