@@ -109,11 +109,13 @@ const ChatLists = ({
     const initializeStompClient = () => {
       client.current = new StompJS.Client({
         brokerURL: `ws://localhost:8080/stomp/chat`,
+        // brokerURL: `ws://13.209.246.59:8080/stomp/chat`,
         debug: str => {},
       });
 
       client.current.webSocketFactory = function () {
-        return new SockJS('http://localhost:8080/stomp/chat');
+        // return new SockJS('http://localhost:8080/stomp/chat');
+        return new SockJS('http://13.209.246.59:8080/stomp/chat');
       };
 
       client.current.onConnect = async () => {
