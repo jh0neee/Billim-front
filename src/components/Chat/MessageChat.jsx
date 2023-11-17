@@ -4,9 +4,7 @@ import styled from 'styled-components';
 
 import axios from 'axios';
 import Input from '../UI/Input';
-import parseISO from 'date-fns/parseISO';
 import AWS from 'aws-sdk';
-import { format } from 'date-fns';
 
 import theme from '../../styles/theme';
 import Modal from '../UI/Modal';
@@ -49,7 +47,7 @@ const MessageDate = styled.p`
 `;
 
 const StartMessage = styled.p`
-  margin-top: 1rem;
+  margin: 1rem 0 0.375rem;
   text-align: center;
   color: #343a40;
   font-size: 0.85rem;
@@ -301,12 +299,9 @@ const MessageChat = ({
       .then(response => {
         const messageData = response.data;
         getProductInfo();
-        const firstDate = format(
-          parseISO(messageData[0].sendAt),
-          'yyyy년 MM월 dd일',
-        );
+
         setInRoomId(messageData[0].chatRoomId);
-        setCurrentDate(firstDate);
+        setCurrentDate(messageData[0].sendAt);
         setStartMessage(messageData[0].message);
         setPastMessages(messageData.slice(1));
       })
@@ -466,7 +461,14 @@ const MessageChat = ({
     return read;
   };
 
-  const MessageLists = (messages, msg, index, messageType, read) => {
+  const MessageLists = (
+    messages,
+    msg,
+    index,
+    messageType,
+    read,
+    allMsg = pastMessages,
+  ) => {
     const isSentByRoom = msg.chatRoomId === Number(chatRoomId);
     const isSentByUser = msg.senderId === auth.memberId;
     const timeValue = convertToAmPmFormat(msg.sendAt);
@@ -484,9 +486,23 @@ const MessageChat = ({
       nextMessage &&
       msg.sendAt.slice(11, 16) === nextMessage.sendAt.slice(11, 16);
 
-    const isSameDateAsNext =
-      prevMessage &&
-      msg.sendAt.slice(0, 10) !== prevMessage?.sendAt.slice(0, 10);
+    let compareDate;
+    if (messageType === 'pastMessage') {
+      const findPrevMsgIndex = allMsg.indexOf(msg);
+      if (findPrevMsgIndex === 0) {
+        compareDate = currentDate.slice(0, 10);
+      } else {
+        compareDate = allMsg[findPrevMsgIndex - 1]?.sendAt.slice(0, 10);
+      }
+    } else if (messageType === 'currentMessage') {
+      if (msg === messages[0]) {
+        compareDate = allMsg[allMsg.length - 1]?.sendAt.slice(0, 10);
+      } else {
+        compareDate = prevMessage && prevMessage?.sendAt.slice(0, 10);
+      }
+    }
+
+    const isSameDateAsNext = msg.sendAt.slice(0, 10) !== compareDate;
 
     const renderChatMessage = () => {
       return (
@@ -498,9 +514,7 @@ const MessageChat = ({
           ) : (
             <React.Fragment>
               {isSameDateAsNext && (
-                <MessageDate>
-                  {formatDate(prevMessage?.sendAt.slice(0, 10))}
-                </MessageDate>
+                <MessageDate>{formatDate(msg.sendAt.slice(0, 10))}</MessageDate>
               )}
               <MessageContainer isSent={isSentByUser}>
                 {isSentByUser && (
@@ -651,7 +665,7 @@ const MessageChat = ({
           </div>
         </ProductBox>
         <MessageBox id="message-box">
-          <MessageDate>{currentDate}</MessageDate>
+          <MessageDate>{formatDate(currentDate.slice(0, 10))}</MessageDate>
           <StartMessage>{startMessage}</StartMessage>
           <ChatBoxLayout>
             {renderPastMessages()}
