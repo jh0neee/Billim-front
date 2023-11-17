@@ -14,10 +14,10 @@ const DetailImage = styled.div`
   display: grid;
   justify-items: center;
   grid-template-columns: repeat(2, 1fr);
-  column-gap: 30px;
+  column-gap: 10px;
 
   > img {
-    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
   }
 `;
 
@@ -25,23 +25,28 @@ const SubImageBox = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  grid-gap: 10px;
+  grid-gap: 5px;
 `;
 
 const MainImage = styled.img`
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: contain;
+
+  &.resizeImage {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    object-fit: fill;
+  }
 `;
 
 const SubImage = styled.img`
   display: block;
   margin: auto;
-  width: 95%;
-  height: 95%;
-  object-fit: fill;
-  border-radius: 20px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 1px solid rgba(0, 0, 0, 0.06);
 `;
 
 const StyledSlider = styled(Slider)`
@@ -128,7 +133,7 @@ const Next = styled(SliderButton)`
 
 const DetailImageGallery = ({ images }) => {
   const imageCount = images.length;
-  const { resize } = useResize(925, '>');
+  const resize = useResize(925, '>', true);
 
   const setting = {
     dots: true,
@@ -153,7 +158,7 @@ const DetailImageGallery = ({ images }) => {
     <>
       {resize && imageCount === 5 ? (
         <DetailImage>
-          <MainImage src={images[0]} alt="상품이미지" />
+          <MainImage src={images[0]} className="resizeImage" alt="상품이미지" />
           <SubImageBox>
             <SubImage src={images[1]} alt="상품예시이미지" />
             <SubImage src={images[3]} alt="상품예시이미지" />

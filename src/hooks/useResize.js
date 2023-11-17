@@ -8,7 +8,13 @@ export const useResize = (width, operator, maxWidth = null) => {
     let result;
 
     if (maxWidth === null) {
-      result = operator === '<' ? windowWidth < width : windowWidth > width;
+      if (operator === '<') {
+        result = windowWidth < width;
+        console.log('1번');
+      } else if (operator === '>') {
+        result = windowWidth > width;
+        console.log('2번');
+      }
     } else {
       if (operator === '<=') {
         result = width < windowWidth && windowWidth <= maxWidth;
