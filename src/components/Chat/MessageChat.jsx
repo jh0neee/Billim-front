@@ -46,6 +46,12 @@ const MessageDate = styled.p`
   font-size: 0.85rem;
 `;
 
+const SystemBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const StartMessage = styled.p`
   margin: 1rem 0 0.375rem;
   text-align: center;
@@ -221,6 +227,16 @@ const ExitIcon = styled.button`
   > p {
     font-size: 10px;
   }
+`;
+
+const ExitButton = styled.button`
+  all: unset;
+  font-size: 0.8rem;
+  color: dimgray;
+  margin-bottom: 0.375rem;
+  text-decoration: underline;
+  text-underline-position: under;
+  cursor: pointer;
 `;
 
 const MessageChat = ({
@@ -508,9 +524,12 @@ const MessageChat = ({
       return (
         <>
           {msg.type === 'SYSTEM' ? (
-            <div>
+            <SystemBox>
               <StartMessage>{msg.message}</StartMessage>
-            </div>
+              <ExitButton type="button" onClick={() => setOpenExitModal(true)}>
+                채팅방 나가기
+              </ExitButton>
+            </SystemBox>
           ) : (
             <React.Fragment>
               {isSameDateAsNext && (
