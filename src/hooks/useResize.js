@@ -1,11 +1,23 @@
 import { useCallback, useEffect, useState } from 'react';
 
-export const useResize = (width, operator) => {
+export const useResize = (width, operator, maxWidth = null) => {
   const [resize, setResize] = useState(false);
 
   const handleResize = useCallback(() => {
     const windowWidth = window.innerWidth;
-    const result = operator === '<' ? windowWidth < width : windowWidth > width;
+    let result;
+
+    if (maxWidth === null) {
+      result = operator === '<' ? windowWidth < width : windowWidth > width;
+    } else {
+      if (operator === '<=') {
+        result = width < windowWidth && windowWidth <= maxWidth;
+      } else if (operator === '>') {
+        result = windowWidth > width;
+      } else if (operator === '<') {
+        result = windowWidth <= width;
+      }
+    }
     setResize(result);
   }, []);
 
@@ -18,5 +30,5 @@ export const useResize = (width, operator) => {
     };
   }, [handleResize]);
 
-  return { resize };
+  return resize;
 };

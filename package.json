@@ -16,6 +16,7 @@
     "react-datepicker": "^4.11.0",
     "react-daum-postcode": "^3.1.1",
     "react-dom": "^18.2.0",
+    "react-fullpage": "^0.1.19",
     "react-icons": "^4.8.0",
     "react-js-pagination": "^3.0.3",
     "react-redux": "^8.0.5",
@@ -66,5 +67,5 @@
     "eslint-plugin-react": "^7.32.2",
     "prettier": "^2.8.8"
   },
-  "proxy": "http://localhost:8080"
+  "proxy": "http://13.209.246.59:8080"
 }

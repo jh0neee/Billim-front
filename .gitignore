@@ -28,3 +28,6 @@ public/
 
 # env
 .env
+
+# pem
+billim_front.pem

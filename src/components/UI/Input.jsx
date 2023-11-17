@@ -50,7 +50,7 @@ const StyledTextArea = styled.textarea`
 const ErrorText = styled.p`
   padding-top: 8px;
   padding-left: 6px;
-  font-size: 0.5rem;
+  font-size: 0.7rem;
   color: red;
 
   ${props =>

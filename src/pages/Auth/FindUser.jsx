@@ -45,7 +45,7 @@ const FindUserLayout = styled.div`
 `;
 
 const NotificationText = styled.p`
-  font-size: 0.5rem;
+  font-size: 0.7rem;
   font-weight: 400;
   color: #495057;
 `;

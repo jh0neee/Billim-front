@@ -14,8 +14,12 @@ const ChatList = styled.ul`
   background-color: #f1f3f5;
   border: 1px solid #dee2e6;
 
+  &.noneDisplay {
+    display: none;
+  }
+
   @media ${theme.tablet} {
-    height: 73vh;
+    height: 78vh;
   }
 `;
 
@@ -86,6 +90,7 @@ const Unread = styled.div`
 const ChatLists = ({
   url,
   auth,
+  setHasChatRoom,
   exitStatus,
   setRead,
   setCorrectSender,
@@ -109,13 +114,11 @@ const ChatLists = ({
     const initializeStompClient = () => {
       client.current = new StompJS.Client({
         brokerURL: `ws://localhost:8080/stomp/chat`,
-        // brokerURL: `ws://13.209.246.59:8080/stomp/chat`,
         debug: str => {},
       });
 
       client.current.webSocketFactory = function () {
-        // return new SockJS('http://localhost:8080/stomp/chat');
-        return new SockJS('http://13.209.246.59:8080/stomp/chat');
+        return new SockJS(`${url}/stomp/chat`);
       };
 
       client.current.onConnect = async () => {
@@ -171,6 +174,8 @@ const ChatLists = ({
           );
           return updatedChatList;
         });
+
+        setHasChatRoom(responseData.length === 0);
 
         responseData.forEach(chatRoom => {
           client.current.subscribe(
@@ -396,11 +401,7 @@ const ChatLists = ({
   });
 
   return (
-    <ChatList>
-      {!chatList && (
-        <ReceiverList>채팅 내역이 없습니다! 시작해보세요!</ReceiverList>
-      )}
-
+    <ChatList className={chatList.length === 0 ? 'noneDisplay' : ''}>
       {chatList &&
         chatList.map(chat => {
           return (
