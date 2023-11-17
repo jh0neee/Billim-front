@@ -22,6 +22,7 @@ const ChatContainer = styled.div`
   display: flex;
   justify-content: center;
   height: 100vh;
+  font-family: 'SCDream';
 `;
 
 const ChatLayout = styled.div`

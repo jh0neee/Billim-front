@@ -35,37 +35,42 @@ const DetailBox = styled.div`
   margin: auto;
   margin-left: 0.3rem;
 
-  > div {
+  > div:first-child {
     display: flex;
     justify-content: space-between;
-    > p:first-child {
-      font-weight: 600;
-    }
+    align-items: center;
     > p:last-child {
-      font-size: 0.85rem;
+      font-size: 0.7rem;
       color: #868e96;
     }
   }
 
-  > p {
-    margin-top: 0.575rem;
-    margin-left: 0.1rem;
-    font-size: 0.85rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  > div:last-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+
+    > p {
+      margin-left: 0.1rem;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 `;
 
 const NameBox = styled.div`
-  display: flex;
-  align-items: center;
+  margin-left: 0.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
 `;
 
 const Unread = styled.div`
   margin-left: 0.2rem;
-  padding: 4px;
-  border-radius: 10px;
+  padding: 4px 6px;
+  border-radius: 12px;
   background-color: ${({ unreadCount, updatedUnread, inChatRoom }) =>
     (unreadCount === 0 && updatedUnread === undefined) ||
     updatedUnread === 0 ||
@@ -80,10 +85,9 @@ const Unread = styled.div`
       inChatRoom
         ? 'hidden'
         : 'visible'};
-    font-family: TRoundWind;
-    font-size: 0.5rem;
+    font-weight: 600;
+    font-size: 0.7rem;
     color: white;
-    margin: 0 1.5px;
   }
 `;
 
@@ -414,26 +418,25 @@ const ChatLists = ({
               <DetailBox>
                 <div>
                   <NameBox>
-                    <p>
-                      {chat.receiverNickname}({chat.chatRoomId})
-                    </p>
-
-                    <Unread
-                      unreadCount={chat.unreadCount}
-                      updatedUnread={chat.updatedUnreadCount}
-                      inChatRoom={chat.chatRoomId === activeRoomId}
-                    >
-                      <p>
-                        {chat.chatRoomId !== activeRoomId &&
-                        chat.updatedUnreadCount !== undefined
-                          ? chat.updatedUnreadCount
-                          : chat.unreadCount}
-                      </p>
-                    </Unread>
+                    <p>{chat.receiverNickname}</p>
                   </NameBox>
                   <p>{renderShowLatestMessage(chat).date.slice(0, 10)}</p>
                 </div>
-                <p>{renderShowLatestMessage(chat).message}</p>
+                <div>
+                  <p>{renderShowLatestMessage(chat).message}</p>
+                  <Unread
+                    unreadCount={chat.unreadCount}
+                    updatedUnread={chat.updatedUnreadCount}
+                    inChatRoom={chat.chatRoomId === activeRoomId}
+                  >
+                    <p>
+                      {chat.chatRoomId !== activeRoomId &&
+                      chat.updatedUnreadCount !== undefined
+                        ? chat.updatedUnreadCount
+                        : chat.unreadCount}
+                    </p>
+                  </Unread>
+                </div>
               </DetailBox>
             </ReceiverList>
           );
