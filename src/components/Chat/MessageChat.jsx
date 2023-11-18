@@ -32,7 +32,7 @@ const MessageBox = styled.div`
   overflow-x: hidden;
 
   @media ${theme.tablet} {
-    height: calc(100vh - 299.8px);
+    height: calc(100vh - 237.8px);
   }
 `;
 

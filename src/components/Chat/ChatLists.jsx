@@ -19,7 +19,7 @@ const ChatList = styled.ul`
   }
 
   @media ${theme.tablet} {
-    height: 78vh;
+    height: 87vh;
   }
 `;
 
@@ -34,6 +34,10 @@ const DetailBox = styled.div`
   width: 10.5rem;
   margin: auto;
   margin-left: 0.3rem;
+
+  &.fullWidth {
+    width: calc(100% - 50px);
+  }
 
   > div:first-child {
     display: flex;
@@ -94,6 +98,7 @@ const Unread = styled.div`
 const ChatLists = ({
   url,
   auth,
+  responsiveResize,
   setHasChatRoom,
   exitStatus,
   setRead,
@@ -415,7 +420,7 @@ const ChatLists = ({
               onClick={() => openChatRoomHandler(chat, chat.chatRoomId)}
             >
               <Profile size="50px" src={chat.receiverProfileImageUrl} />
-              <DetailBox>
+              <DetailBox className={responsiveResize ? 'fullWidth' : ''}>
                 <div>
                   <NameBox>
                     <p>{chat.receiverNickname}</p>

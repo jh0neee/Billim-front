@@ -14,6 +14,7 @@ import ErrorModal from '../util/ErrorModal';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import { useLoadingError } from '../hooks/useLoadingError';
 import { useAuth } from '../hooks/useAuth';
+import { useResize } from '../hooks/useResize';
 import { HeaderBox } from '../components/Navigation/Header';
 import { HiChevronLeft } from 'react-icons/hi';
 import { useTokenRefresher } from '../hooks/useTokenRefresher';
@@ -37,9 +38,14 @@ const ChatLayout = styled.div`
     grid-template-columns: 1fr;
   }
 
+  &.responsiveStyle {
+    display: block;
+  }
+
   @media ${theme.tablet} {
-    margin-top: 150px;
-    height: 78vh;
+    margin-top: 85px;
+    height: 87vh;
+    z-index: 10;
   }
 `;
 
@@ -49,6 +55,15 @@ const ChatContent = styled.div`
 
   &.fullHeight {
     height: 84vh;
+
+    @media ${theme.tablet} {
+      height: 75vh;
+    }
+  }
+
+  &.chatHeight {
+    overflow: hidden;
+    height: 87vh;
   }
 
   @media ${theme.tablet} {
@@ -59,10 +74,12 @@ const ChatContent = styled.div`
 const ChatHeaderContainer = styled(HeaderBox)`
   display: flex;
   justify-content: center;
+  height: 85px;
 `;
 
 const ChatHeaderBox = styled(HeaderBox)`
   max-width: 1250px;
+  height: 85px;
   width: 100%;
   display: block;
 `;
@@ -73,6 +90,7 @@ const ChatHeaderContent = styled.div`
   align-items: center;
 
   > p {
+    font-family: 'TRoundWind';
     font-size: 1.5rem;
     font-weight: 600;
   }
@@ -86,6 +104,7 @@ const Chat = () => {
   const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const navigate = useNavigate();
+  const resize = useResize(768, '<');
   const roomId = Number(useLocation().pathname.slice(15));
   const prevChatPage = useSelector(state => state.pages.currentPage);
   const [hasChatRoom, setHasChatRoom] = useState(false);
@@ -135,9 +154,53 @@ const Chat = () => {
   };
 
   const clickToBack = () => {
-    // 채팅페이지 나갈 때
-    navigate(prevChatPage);
+    if (resize) {
+      navigate(-1);
+    } else {
+      navigate(prevChatPage);
+    }
   };
+
+  const renderChatLists = () => (
+    <ChatLists
+      url={url}
+      auth={auth}
+      responsiveResize={resize}
+      setHasChatRoom={setHasChatRoom}
+      exitStatus={exitStatus}
+      setRead={setReadStatus}
+      setCorrectSender={setCorrectSender}
+      setUserInfo={setUserInfo}
+      setEnteredUsers={setEnteredUsers}
+      setInChatRoom={setInChatRoom}
+      setStompClient={setStompClient}
+      setMessages={setMessages}
+      setUnreadMessages={setUnreadMessages}
+      onLoading={onLoading}
+      errorHandler={errorHandler}
+      tokenErrorHandler={tokenErrorHandler}
+    />
+  );
+
+  const renderMessageChat = () => (
+    <MessageChat
+      url={url}
+      auth={auth}
+      setOpenExitModal={setOpenExitModal}
+      readStatus={readStatus}
+      correctSender={correctSender}
+      userInfo={userInfo}
+      enteredUsers={enteredUsers}
+      inChatRoom={inChatRoom}
+      stompClient={stompClient}
+      messages={messages}
+      unreadMessages={unreadMessages}
+      setMessages={setMessages}
+      onLoading={onLoading}
+      errorHandler={errorHandler}
+      tokenErrorHandler={tokenErrorHandler}
+    />
+  );
 
   return (
     <>
@@ -165,54 +228,42 @@ const Chat = () => {
         <ChatHeaderBox>
           <ChatHeaderContent>
             <GoBack size="45px" onClick={() => clickToBack()} />
-            <p>채팅</p>
+            {resize && roomId ? <p>채팅목록</p> : <p>채팅</p>}
           </ChatHeaderContent>
         </ChatHeaderBox>
       </ChatHeaderContainer>
       <ChatContainer>
-        <ChatLayout className={hasChatRoom ? 'fullWidth' : ''}>
-          {isLoading && <LoadingSpinner asOverlay />}
-          <ChatLists
-            url={url}
-            auth={auth}
-            setHasChatRoom={setHasChatRoom}
-            exitStatus={exitStatus}
-            setRead={setReadStatus}
-            setCorrectSender={setCorrectSender}
-            setUserInfo={setUserInfo}
-            setEnteredUsers={setEnteredUsers}
-            setInChatRoom={setInChatRoom}
-            setStompClient={setStompClient}
-            setMessages={setMessages}
-            setUnreadMessages={setUnreadMessages}
-            onLoading={onLoading}
-            errorHandler={errorHandler}
-            tokenErrorHandler={tokenErrorHandler}
-          />
-          <ChatContent className={hasChatRoom ? 'fullHeight' : ''}>
-            {!roomId ? (
-              <BlockChat hasChatRoom={hasChatRoom} />
-            ) : (
-              <MessageChat
-                url={url}
-                auth={auth}
-                setOpenExitModal={setOpenExitModal}
-                readStatus={readStatus}
-                correctSender={correctSender}
-                userInfo={userInfo}
-                enteredUsers={enteredUsers}
-                inChatRoom={inChatRoom}
-                stompClient={stompClient}
-                messages={messages}
-                unreadMessages={unreadMessages}
-                setMessages={setMessages}
-                onLoading={onLoading}
-                errorHandler={errorHandler}
-                tokenErrorHandler={tokenErrorHandler}
-              />
+        {isLoading && <LoadingSpinner asOverlay />}
+        {resize && (
+          <ChatLayout className={resize ? 'responsiveStyle' : ''}>
+            {roomId === 0 &&
+              (hasChatRoom ? (
+                <ChatContent className={hasChatRoom ? 'fullHeight' : ''}>
+                  <BlockChat hasChatRoom={hasChatRoom} />
+                </ChatContent>
+              ) : (
+                renderChatLists()
+              ))}
+            {roomId !== 0 && (
+              <ChatContent className={resize ? 'chatHeight' : ''}>
+                {renderMessageChat()}
+                <div style={{ display: 'none' }}>{renderChatLists()}</div>
+              </ChatContent>
             )}
-          </ChatContent>
-        </ChatLayout>
+          </ChatLayout>
+        )}
+        {!resize && (
+          <ChatLayout className={hasChatRoom ? 'fullWidth' : ''}>
+            {renderChatLists()}
+            <ChatContent className={hasChatRoom ? 'fullHeight' : ''}>
+              {!roomId ? (
+                <BlockChat hasChatRoom={hasChatRoom} />
+              ) : (
+                renderMessageChat()
+              )}
+            </ChatContent>
+          </ChatLayout>
+        )}
       </ChatContainer>
     </>
   );
