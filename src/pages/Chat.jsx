@@ -47,6 +47,10 @@ const ChatContent = styled.div`
   background-color: #f1f3f5;
   border: 1px solid #dee2e6;
 
+  &.fullHeight {
+    height: 84vh;
+  }
+
   @media ${theme.tablet} {
     overflow: hidden;
   }
@@ -185,7 +189,7 @@ const Chat = () => {
             errorHandler={errorHandler}
             tokenErrorHandler={tokenErrorHandler}
           />
-          <ChatContent>
+          <ChatContent className={hasChatRoom ? 'fullHeight' : ''}>
             {!roomId ? (
               <BlockChat hasChatRoom={hasChatRoom} />
             ) : (

@@ -4,12 +4,13 @@ import { HiOutlineChatBubbleLeftRight } from 'react-icons/hi2';
 import { PiWechatLogoDuotone as ChatIcon } from 'react-icons/pi';
 
 const BlankChatBox = styled.div`
-  margin: 15.8rem auto;
+  margin: auto;
+  display: flex;
   text-align: center;
-
-  &.marginAuto {
-    margin: 17.8rem auto;
-  }
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 `;
 
 const MainText = styled.span`
@@ -39,7 +40,7 @@ const HilightText = styled.span`
 
 const BlockChat = ({ hasChatRoom }) => {
   return (
-    <BlankChatBox className={hasChatRoom ? 'marginAuto' : ''}>
+    <BlankChatBox>
       {hasChatRoom ? (
         <NoListText>
           <MainText>채팅 내역이 없습니다!</MainText> <br />
