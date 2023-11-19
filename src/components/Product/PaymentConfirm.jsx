@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 
 import Button from '../../components/UI/Button';
+import theme from '../../styles/theme';
 
 const ConfirmBox = styled.div`
   position: sticky;
@@ -26,18 +27,37 @@ const ConfirmBox = styled.div`
       font-size: 17.5px;
     }
   }
+
+  @media ${theme.tablet} {
+    position: static;
+    width: 97%;
+    margin: 1.3rem auto 0;
+
+    > * {
+      margin: 1.6rem 1rem;
+
+      &:last-child {
+        margin: 2rem 1rem 1rem 1.4rem;
+      }
+
+      &:nth-child(5) {
+        margin: 0 1.5rem;
+      }
+    }
+  }
 `;
 
 const ConfirmTop = styled.div`
-  column-count: 2;
+  display: flex;
 
   > img {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 90px;
   }
 
   > * {
     &:last-child {
+      margin-left: 1rem;
       font-size: 0.9rem;
       font-weight: 600;
       padding-top: 0.1px;
@@ -49,6 +69,10 @@ const ConfirmTop = styled.div`
         margin-top: 1.5rem;
       }
     }
+  }
+
+  @media ${theme.tablet} {
+    margin: 1.6rem 1.5rem;
   }
 `;
 

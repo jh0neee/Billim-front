@@ -16,11 +16,17 @@ import { useAuth } from '../../hooks/useAuth';
 import { HiChevronLeft } from 'react-icons/hi';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
+import theme from '../../styles/theme';
 
 const PaymentLayout = styled.form`
   width: 80%;
   margin: 120px auto 0;
+  max-width: 1140px;
   font-family: 'SCDream';
+
+  @media ${theme.tablet} {
+    margin: 150px auto 0;
+  }
 `;
 const PaymentTitle = styled.div`
   display: flex;
@@ -39,6 +45,15 @@ const PaymentBox = styled.div`
   grid-template-columns: 2fr 1fr;
   column-gap: 1.5rem;
   padding: 2.5rem 0px;
+
+  @media (min-width: 769px) and (max-width: 1140px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media ${theme.tablet} {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+  }
 `;
 
 const ProductPayment = () => {
