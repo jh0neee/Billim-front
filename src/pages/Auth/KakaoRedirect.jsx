@@ -19,7 +19,10 @@ const KakaoRedirect = () => {
   useEffect(() => {
     onLoading(true);
     axios
-      .get(`http://localhost:3000/oauth/kakao?code=${code}&state=${state}`)
+      .get(`http://localhost:8080/oauth/kakao?code=${code}&state=${state}`, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      })
       .then(response => {
         const { accessToken, refreshToken, memberId } = response.data;
         auth.login(accessToken, refreshToken, memberId);
