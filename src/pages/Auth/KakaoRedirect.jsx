@@ -7,6 +7,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
 
 const KakaoRedirect = () => {
+  const url = process.env.REACT_APP_URL;
   const auth = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -19,7 +20,10 @@ const KakaoRedirect = () => {
   useEffect(() => {
     onLoading(true);
     axios
-      .get(`http://localhost:3000/oauth/kakao?code=${code}&state=${state}`)
+      .get(`${url}/oauth/kakao?code=${code}&state=${state}`, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      })
       .then(response => {
         const { accessToken, refreshToken, memberId } = response.data;
         auth.login(accessToken, refreshToken, memberId);
