@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import styled from 'styled-components';
+import * as S from '../styles/Pages.styles';
 
 import axios from 'axios';
 import Modal from '../../components/UI/Modal';
@@ -13,48 +13,8 @@ import PaymentConfirm from '../../components/Product/PaymentConfirm';
 import PaymentInformation from '../../components/Product/PaymentInformation';
 import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../hooks/useAuth';
-import { HiChevronLeft } from 'react-icons/hi';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
-import theme from '../../styles/theme';
-
-const PaymentLayout = styled.form`
-  width: 80%;
-  margin: 120px auto 0;
-  max-width: 1140px;
-  font-family: 'SCDream';
-
-  @media ${theme.tablet} {
-    margin: 150px auto 0;
-  }
-`;
-const PaymentTitle = styled.div`
-  display: flex;
-  align-items: center;
-  font-family: 'TRoundWind';
-  font-size: 1.65rem;
-  font-weight: 700;
-`;
-
-const GoBack = styled(HiChevronLeft)`
-  cursor: pointer;
-`;
-
-const PaymentBox = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  column-gap: 1.5rem;
-  padding: 2.5rem 0px;
-
-  @media (min-width: 769px) and (max-width: 1140px) {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  @media ${theme.tablet} {
-    grid-template-columns: 1fr;
-    column-gap: 0;
-  }
-`;
 
 const ProductPayment = () => {
   const url = process.env.REACT_APP_URL;
@@ -302,13 +262,13 @@ const ProductPayment = () => {
       >
         결제가 취소되었습니다.
       </Modal>
-      <PaymentLayout onSubmit={onSubmit}>
+      <S.PaymentLayout onSubmit={onSubmit}>
         {isLoading && <LoadingSpinner asOverlay />}
-        <PaymentTitle>
-          <GoBack size="45px" onClick={() => navigate(-1)} />
+        <S.PaymentTitle>
+          <S.GoBack size="45px" onClick={() => navigate(-1)} />
           확인 및 결제
-        </PaymentTitle>
-        <PaymentBox>
+        </S.PaymentTitle>
+        <S.PaymentBox>
           <PaymentInformation
             tradeMethod={tradeMethod}
             rentalDate={rentalDate}
@@ -339,8 +299,8 @@ const ProductPayment = () => {
               onInput={inputHandler}
             />
           </div>
-        </PaymentBox>
-      </PaymentLayout>
+        </S.PaymentBox>
+      </S.PaymentLayout>
     </>
   );
 };

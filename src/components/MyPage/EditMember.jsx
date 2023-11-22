@@ -16,7 +16,7 @@ import usePostalCode from '../../hooks/usePostalCode';
 import LoadingSpinner from '../UI/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
 import { useForm } from '../../hooks/useForm';
-import { FormBtnBox } from '../../pages/NewProduct';
+import { FormBtnBox } from '../../pages/styles/Pages.styles';
 import { useCheckNickname } from '../../hooks/useCheckedNickname';
 import { ToastContainer } from 'react-toastify';
 import { VALIDATOR_REQUIRE } from '../../util/validators';

@@ -1,15 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
+import * as C from './styles/Chat.styles';
 
 import axios from 'axios';
-import Input from '../UI/Input';
 import AWS from 'aws-sdk';
 
-import theme from '../../styles/theme';
 import Modal from '../UI/Modal';
 import Button from '../UI/Button';
-import { Profile } from '../UI/Profile';
 import { useForm } from '../../hooks/useForm';
 import { ImageInput } from '../UI/ImageUpload';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
@@ -18,226 +15,6 @@ import {
   PiPaperPlaneRightLight,
   PiSignOutLight,
 } from 'react-icons/pi';
-
-const MessageChatLayout = styled.form`
-  height: 84vh;
-`;
-
-const MessageBox = styled.div`
-  position: relative;
-  padding: 1rem;
-  height: calc(84vh - 145.6px);
-  background-color: white;
-  overflow-y: auto;
-  overflow-x: hidden;
-
-  @media ${theme.tablet} {
-    height: calc(100vh - 237.8px);
-  }
-`;
-
-const MessageDate = styled.p`
-  margin: 10px auto;
-  padding: 0.5rem;
-  width: 9.5rem;
-  border: 1px solid rgb(222, 226, 230);
-  border-radius: 2rem;
-  text-align: center;
-  font-size: 0.85rem;
-`;
-
-const SystemBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const StartMessage = styled.p`
-  margin: 1rem 0 0.375rem;
-  text-align: center;
-  color: #343a40;
-  font-size: 0.85rem;
-`;
-
-const ProductBox = styled.div`
-  display: flex;
-  padding: 0px 1rem 0 1.3rem;
-  align-items: center;
-  justify-content: space-between;
-  height: 75.6px;
-  background-color: white;
-  border-bottom: 1px solid rgb(222, 226, 230);
-
-  > div:first-child {
-    display: flex;
-    align-items: center;
-    > p {
-      margin-left: 0.3rem;
-    }
-  }
-  > div:last-child {
-    display: flex;
-  }
-`;
-
-const MessageInputBox = styled.div`
-  display: flex;
-  width: 100%;
-  height: 70px;
-  padding: 0 1.3rem;
-  align-items: center;
-  justify-content: space-between;
-  background-color: white;
-`;
-
-const MessageButton = styled.button`
-  width: 30px;
-  height: 30px;
-`;
-
-const ChatBoxLayout = styled.div`
-  display: flex;
-  flex-direction: column;
-  font-size: 0.8rem;
-`;
-
-const MessageContainer = styled.div`
-  width: fit-content;
-  align-self: ${props => (props.isSent ? 'flex-end' : 'flex-start')};
-  display: flex;
-  align-items: flex-end;
-  font-family: 'TRoundWind';
-
-  > p {
-    margin: 0 0 0.5rem;
-    font-size: 10px;
-  }
-`;
-
-const ChatMessageBox = styled.div`
-  padding: 0.8rem;
-  margin: 0.5rem;
-  border-radius: 20px;
-  background-color: ${props => (props.isSent ? '#9BBEE7' : '#FFF6E5')};
-  color: ${props => (props.isSent ? 'white' : 'black')};
-  align-self: ${props => (props.isSent ? 'flex-end' : 'flex-start')};
-  word-wrap: break-word;
-  max-width: 300px;
-  line-height: 1.5;
-`;
-
-const ChatReadTime = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: ${props => (props.isSent ? 'flex-end' : 'flex-start')};
-`;
-
-const ChatRead = styled.p`
-  margin: ${props => (props.hasTime ? '0 0 0.2rem' : '0 0 0.7rem')};
-  color: goldenrod;
-  font-size: 12px;
-`;
-
-const ChatTime = styled.p`
-  margin: 0 0 0.5rem;
-  font-size: 10px;
-`;
-
-const ChatUserProfile = styled.div`
-  align-self: center;
-`;
-
-const ChatImageMessage = styled.img`
-  width: 200px;
-  margin: 0.5rem;
-  border-radius: 15px;
-`;
-
-const PreviewBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ImagePreview = styled.img`
-  width: 100%;
-  height: 52vh;
-  object-fit: contain;
-`;
-
-const ProductInfoBox = styled(Link)`
-  display: flex;
-  cursor: pointer;
-`;
-
-const ProductInfoContent = styled.div`
-  margin-left: 0.5rem;
-  margin-top: 0.2rem;
-  > * {
-    font-size: 0.8rem;
-
-    &:last-child {
-      margin-top: 0.5rem;
-      font-weight: 600;
-    }
-  }
-`;
-
-const ProductInfoImage = styled.img`
-  width: 40px;
-  height: 40px;
-  object-fit: fill;
-  border-radius: 3px;
-`;
-
-const UserProfile = styled(Profile)`
-  border: 1px solid rgb(222, 226, 230);
-`;
-
-const MessageInput = styled(Input)`
-  max-width: auto;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-
-  > input {
-    width: 90%;
-    border-radius: 0px;
-    border-top: 1px solid rgb(222, 226, 230);
-    border-bottom: 1px solid rgb(222, 226, 230);
-    border-left: none;
-    border-right: none;
-  }
-`;
-
-const ExitIcon = styled.button`
-  all: unset;
-  align-self: center;
-  margin-left: 1rem;
-
-  &:hover {
-    cursor: pointer;
-  }
-
-  > svg {
-    width: 30px;
-    height: 20px;
-  }
-
-  > p {
-    font-size: 10px;
-  }
-`;
-
-const ExitButton = styled.button`
-  all: unset;
-  font-size: 0.8rem;
-  color: dimgray;
-  margin-bottom: 0.375rem;
-  text-decoration: underline;
-  text-underline-position: under;
-  cursor: pointer;
-`;
 
 const MessageChat = ({
   url,
@@ -524,51 +301,56 @@ const MessageChat = ({
       return (
         <>
           {msg.type === 'SYSTEM' ? (
-            <SystemBox>
-              <StartMessage>{msg.message}</StartMessage>
-              <ExitButton type="button" onClick={() => setOpenExitModal(true)}>
+            <C.SystemBox>
+              <C.StartMessage>{msg.message}</C.StartMessage>
+              <C.ExitButton
+                type="button"
+                onClick={() => setOpenExitModal(true)}
+              >
                 채팅방 나가기
-              </ExitButton>
-            </SystemBox>
+              </C.ExitButton>
+            </C.SystemBox>
           ) : (
             <React.Fragment>
               {isSameDateAsNext && (
-                <MessageDate>{formatDate(msg.sendAt.slice(0, 10))}</MessageDate>
+                <C.MessageDate>
+                  {formatDate(msg.sendAt.slice(0, 10))}
+                </C.MessageDate>
               )}
-              <MessageContainer isSent={isSentByUser}>
+              <C.MessageContainer isSent={isSentByUser}>
                 {isSentByUser && (
-                  <ChatReadTime isSent={isSentByUser}>
-                    <ChatRead hasTime={!isSameTimeAsNext}>
+                  <C.ChatReadTime isSent={isSentByUser}>
+                    <C.ChatRead hasTime={!isSameTimeAsNext}>
                       {!read && '1'}
-                    </ChatRead>
-                    {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
-                  </ChatReadTime>
+                    </C.ChatRead>
+                    {!isSameTimeAsNext && <C.ChatTime>{timeValue}</C.ChatTime>}
+                  </C.ChatReadTime>
                 )}
                 {!isSentByUser && (
-                  <ChatUserProfile>
+                  <C.ChatUserProfile>
                     {isDifferentUser || !isSameTimeAsNext ? (
-                      <UserProfile size="40px" src={userInfo.userProfile} />
+                      <C.UserProfile size="40px" src={userInfo.userProfile} />
                     ) : (
                       <div style={{ marginLeft: '40px' }} />
                     )}
-                  </ChatUserProfile>
+                  </C.ChatUserProfile>
                 )}
                 {msg.message.includes(`${BUCKET_NAME}.s3`) ? (
-                  <ChatImageMessage src={msg.message} alt="채팅이미지" />
+                  <C.ChatImageMessage src={msg.message} alt="채팅이미지" />
                 ) : (
-                  <ChatMessageBox isSent={isSentByUser}>
+                  <C.ChatMessageBox isSent={isSentByUser}>
                     <p>{msg.message}</p>
-                  </ChatMessageBox>
+                  </C.ChatMessageBox>
                 )}
                 {!isSentByUser && (
-                  <ChatReadTime isSent={isSentByUser}>
-                    <ChatRead hasTime={!isSameTimeAsNext}>
+                  <C.ChatReadTime isSent={isSentByUser}>
+                    <C.ChatRead hasTime={!isSameTimeAsNext}>
                       {!read && '1'}
-                    </ChatRead>
-                    {!isSameTimeAsNext && <ChatTime>{timeValue}</ChatTime>}
-                  </ChatReadTime>
+                    </C.ChatRead>
+                    {!isSameTimeAsNext && <C.ChatTime>{timeValue}</C.ChatTime>}
+                  </C.ChatReadTime>
                 )}
-              </MessageContainer>
+              </C.MessageContainer>
             </React.Fragment>
           )}
         </>
@@ -656,42 +438,42 @@ const MessageChat = ({
           </>
         }
       >
-        <PreviewBox>
-          <ImagePreview src={previewFile} alt="이미지프리뷰" />
-        </PreviewBox>
+        <C.PreviewBox>
+          <C.ImagePreview src={previewFile} alt="이미지프리뷰" />
+        </C.PreviewBox>
       </Modal>
-      <MessageChatLayout onSubmit={submitHandler}>
-        <ProductBox>
+      <C.MessageChatLayout onSubmit={submitHandler}>
+        <C.ProductBox>
           <div>
-            <UserProfile size="40px" src={userInfo.userProfile} />
+            <C.UserProfile size="40px" src={userInfo.userProfile} />
             <p>{userInfo.user}</p>
           </div>
           <div>
-            <ProductInfoBox to={`/${productInfo.productId}/detail`}>
-              <ProductInfoImage
+            <C.ProductInfoBox to={`/${productInfo.productId}/detail`}>
+              <C.ProductInfoImage
                 src={productInfo.productImageUrl}
                 alt="상품이미지"
               />
-              <ProductInfoContent>
+              <C.ProductInfoContent>
                 <p>{productInfo.productName}</p>
                 <p>{productInfo.price?.toLocaleString('ko-KR')}원</p>
-              </ProductInfoContent>
-            </ProductInfoBox>
-            <ExitIcon type="button" onClick={() => setOpenExitModal(true)}>
+              </C.ProductInfoContent>
+            </C.ProductInfoBox>
+            <C.ExitIcon type="button" onClick={() => setOpenExitModal(true)}>
               <PiSignOutLight />
               <p>나가기</p>
-            </ExitIcon>
+            </C.ExitIcon>
           </div>
-        </ProductBox>
-        <MessageBox id="message-box">
-          <MessageDate>{formatDate(currentDate.slice(0, 10))}</MessageDate>
-          <StartMessage>{startMessage}</StartMessage>
-          <ChatBoxLayout>
+        </C.ProductBox>
+        <C.MessageBox id="message-box">
+          <C.MessageDate>{formatDate(currentDate.slice(0, 10))}</C.MessageDate>
+          <C.StartMessage>{startMessage}</C.StartMessage>
+          <C.ChatBoxLayout>
             {renderPastMessages()}
             {renderMessages()}
-          </ChatBoxLayout>
-        </MessageBox>
-        <MessageInputBox>
+          </C.ChatBoxLayout>
+        </C.MessageBox>
+        <C.MessageInputBox>
           <PiImagesLight size="30px" onClick={pickImageHandler} />
           <ImageInput
             id="file-input"
@@ -699,7 +481,7 @@ const MessageChat = ({
             ref={fileRef}
             onChange={handleImageSelection}
           />
-          <MessageInput
+          <C.MessageInput
             element="input"
             type="text"
             id="message"
@@ -713,11 +495,11 @@ const MessageChat = ({
             onInput={inputHandler}
             disabled={exitMessage}
           />
-          <MessageButton type="submit">
+          <C.MessageButton type="submit">
             <PiPaperPlaneRightLight size="30px" />
-          </MessageButton>
-        </MessageInputBox>
-      </MessageChatLayout>
+          </C.MessageButton>
+        </C.MessageInputBox>
+      </C.MessageChatLayout>
     </>
   );
 };

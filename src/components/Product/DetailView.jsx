@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import * as P from './styles/Product.styles';
 
 import axios from 'axios';
-import theme from '../../styles/theme';
 import Modal from '../UI/Modal';
 import Button from '../UI/Button';
 import ErrorModal from '../../util/ErrorModal';
@@ -17,113 +16,6 @@ import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { PiWechatLogoDuotone as ChatIcon } from 'react-icons/pi';
-
-const DetailLayout = styled.div`
-  max-width: 1140px;
-  width: 70%;
-  margin: 120px auto 0;
-  font-family: 'SCDream';
-
-  @media (max-width: 925px) {
-    width: 100%;
-    overflow-x: hidden;
-  }
-  @media ${theme.tablet}, ${theme.mobile} {
-    margin: 150px auto 0;
-  }
-`;
-
-const DetailBox = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  column-gap: 1.5rem;
-  padding: 2.5rem 0px;
-
-  @media (max-width: 925px) {
-    width: 70%;
-    margin: 0 auto;
-    grid-template-columns: 1fr;
-    grid-template-rows: 2fr;
-    column-gap: 0;
-    row-gap: 1.5rem;
-  }
-  @media ${theme.mobile} {
-    width: 80%;
-    margin: 0 auto;
-    grid-template-columns: 1fr;
-    grid-template-rows: 2fr;
-    column-gap: 0;
-    row-gap: 1.5rem;
-  }
-  @media (max-width: 400px) {
-    width: 90%;
-  }
-`;
-
-const DetailReviewBox = styled.div`
-  margin: 2rem 1rem;
-  display: flex;
-  flex-direction: column;
-
-  @media (max-width: 925px) {
-    width: 70%;
-    margin: 2rem auto;
-  }
-  @media ${theme.mobile} {
-    width: 80%;
-    margin: 2rem auto;
-  }
-`;
-
-const ReviewTitle = styled.p`
-  margin-bottom: 1.5rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-`;
-
-const ButtonLayout = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding-right: 3rem;
-
-  > * {
-    margin-left: 1rem;
-    font-size: 12.5px;
-    font-weight: 600;
-    cursor: pointer;
-
-    &:hover {
-      text-decoration-line: underline;
-      text-underline-position: under;
-    }
-  }
-`;
-
-const StyledLine = styled.hr`
-  @media (max-width: 925px), ${theme.mobile} {
-    width: 90%;
-  }
-`;
-
-const ChatLink = styled(Link)`
-  display: flex;
-  align-items: center;
-
-  > svg {
-    color: darkgrey;
-    height: 15px;
-    width: 18px;
-    margin: 0 0 0.1rem 0.05rem;
-  }
-
-  &:hover > svg {
-    color: #ffc300;
-  }
-
-  &:hover {
-    text-decoration: none;
-  }
-`;
 
 const DetailView = ({ items, onDeleteProduct }) => {
   const url = process.env.REACT_APP_URL;
@@ -245,9 +137,9 @@ const DetailView = ({ items, onDeleteProduct }) => {
       >
         <p>삭제 후에는 취소할 수 없습니다.</p>
       </Modal>
-      <DetailLayout key={items.productId}>
+      <P.DetailLayout key={items.productId}>
         {isLoading && <LoadingSpinner asOverlay />}
-        <ButtonLayout>
+        <P.ButtonLayout>
           {auth.memberId === items.sellerMemberId && (
             <Link to={`/product/${items.productId}`}>수정하기</Link>
           )}
@@ -255,12 +147,12 @@ const DetailView = ({ items, onDeleteProduct }) => {
             <Link onClick={deleteWarningHandler}>삭제하기</Link>
           )}
           {auth.memberId !== items.sellerMemberId && (
-            <ChatLink onClick={EnterChatRoom}>
+            <P.ChatLink onClick={EnterChatRoom}>
               <ChatIcon />
               <p>채팅하기</p>
-            </ChatLink>
+            </P.ChatLink>
           )}
-        </ButtonLayout>
+        </P.ButtonLayout>
         <DetailHeader
           name={items.productName}
           scope={items.starRating.toFixed(1)}
@@ -268,7 +160,7 @@ const DetailView = ({ items, onDeleteProduct }) => {
           reviewCount={count}
         />
         <DetailImageGallery images={items.imageUrls} />
-        <DetailBox>
+        <P.DetailBox>
           <DetailContent
             name={items.sellerNickname}
             tradeMethod={items.tradeMethods}
@@ -289,10 +181,10 @@ const DetailView = ({ items, onDeleteProduct }) => {
             productId={items.productId}
             alreadyDates={items.alreadyDates}
           />
-        </DetailBox>
-        <StyledLine />
-        <DetailReviewBox>
-          <ReviewTitle>후기</ReviewTitle>
+        </P.DetailBox>
+        <P.StyledLine />
+        <P.DetailReviewBox>
+          <P.ReviewTitle>후기</P.ReviewTitle>
           <DetailReview
             reviewData={reviewData}
             count={count}
@@ -300,8 +192,8 @@ const DetailView = ({ items, onDeleteProduct }) => {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
           />
-        </DetailReviewBox>
-      </DetailLayout>
+        </P.DetailReviewBox>
+      </P.DetailLayout>
     </>
   );
 };

@@ -1,99 +1,12 @@
 /* eslint-disable prefer-const */
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import * as C from './styles/Chat.styles';
 
 import SockJS from 'sockjs-client';
 import * as StompJS from '@stomp/stompjs';
 
 import axios from 'axios';
-import theme from '../../styles/theme';
 import { Profile } from '../UI/Profile';
-
-const ChatList = styled.ul`
-  background-color: #f1f3f5;
-  border: 1px solid #dee2e6;
-
-  &.noneDisplay {
-    display: none;
-  }
-
-  @media ${theme.tablet} {
-    height: 87vh;
-  }
-`;
-
-const ReceiverList = styled(Link)`
-  color: #343a40;
-  display: flex;
-  padding: 0.8rem;
-  border-bottom: 1px solid #dee2e6;
-`;
-
-const DetailBox = styled.div`
-  width: 10.5rem;
-  margin: auto;
-  margin-left: 0.3rem;
-
-  &.fullWidth {
-    width: calc(100% - 50px);
-  }
-
-  > div:first-child {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    > p:last-child {
-      font-size: 0.7rem;
-      color: #868e96;
-    }
-  }
-
-  > div:last-child {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 0.5rem;
-
-    > p {
-      margin-left: 0.1rem;
-      font-size: 0.85rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-`;
-
-const NameBox = styled.div`
-  margin-left: 0.1rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-`;
-
-const Unread = styled.div`
-  margin-left: 0.2rem;
-  padding: 4px 6px;
-  border-radius: 12px;
-  background-color: ${({ unreadCount, updatedUnread, inChatRoom }) =>
-    (unreadCount === 0 && updatedUnread === undefined) ||
-    updatedUnread === 0 ||
-    inChatRoom
-      ? 'transparent'
-      : '#ff3932'};
-
-  > p {
-    visibility: ${({ unreadCount, updatedUnread, inChatRoom }) =>
-      (unreadCount === 0 && updatedUnread === undefined) ||
-      updatedUnread === 0 ||
-      inChatRoom
-        ? 'hidden'
-        : 'visible'};
-    font-weight: 600;
-    font-size: 0.7rem;
-    color: white;
-  }
-`;
 
 const ChatLists = ({
   url,
@@ -410,26 +323,26 @@ const ChatLists = ({
   });
 
   return (
-    <ChatList className={chatList.length === 0 ? 'noneDisplay' : ''}>
+    <C.ChatList className={chatList.length === 0 ? 'noneDisplay' : ''}>
       {chatList &&
         chatList.map(chat => {
           return (
-            <ReceiverList
+            <C.ReceiverList
               to={`/chat/messages/${chat.chatRoomId}`}
               key={chat.chatRoomId}
               onClick={() => openChatRoomHandler(chat, chat.chatRoomId)}
             >
               <Profile size="50px" src={chat.receiverProfileImageUrl} />
-              <DetailBox className={responsiveResize ? 'fullWidth' : ''}>
+              <C.DetailBox className={responsiveResize ? 'fullWidth' : ''}>
                 <div>
-                  <NameBox>
+                  <C.NameBox>
                     <p>{chat.receiverNickname}</p>
-                  </NameBox>
+                  </C.NameBox>
                   <p>{renderShowLatestMessage(chat).date.slice(0, 10)}</p>
                 </div>
                 <div>
                   <p>{renderShowLatestMessage(chat).message}</p>
-                  <Unread
+                  <C.Unread
                     unreadCount={chat.unreadCount}
                     updatedUnread={chat.updatedUnreadCount}
                     inChatRoom={chat.chatRoomId === activeRoomId}
@@ -440,13 +353,13 @@ const ChatLists = ({
                         ? chat.updatedUnreadCount
                         : chat.unreadCount}
                     </p>
-                  </Unread>
+                  </C.Unread>
                 </div>
-              </DetailBox>
-            </ReceiverList>
+              </C.DetailBox>
+            </C.ReceiverList>
           );
         })}
-    </ChatList>
+    </C.ChatList>
   );
 };
 

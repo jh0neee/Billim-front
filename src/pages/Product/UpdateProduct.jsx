@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import * as S from '../styles/Pages.styles';
 
 import axios from 'axios';
 import Button from '../../components/UI/Button';
@@ -16,18 +17,6 @@ import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { CategoryList, TradeMethod } from '../../data';
-import {
-  FormLayout,
-  FormBox,
-  ItemBox,
-  FormItem,
-  FormInput,
-  FormBtnBox,
-  PlaceBox,
-  TradeBox,
-  CategoryBox,
-  Line,
-} from '../NewProduct';
 
 const UpdateProduct = () => {
   const url = process.env.REACT_APP_URL;
@@ -189,9 +178,9 @@ const UpdateProduct = () => {
 
   if (!loadedProduct) {
     return (
-      <FormLayout>
+      <S.FormLayout>
         <p>상품을 찾을 수 없어요!</p>
-      </FormLayout>
+      </S.FormLayout>
     );
   }
 
@@ -210,11 +199,11 @@ const UpdateProduct = () => {
       >
         성공적으로 수정되었습니다!
       </Modal>
-      <FormLayout onSubmit={updateSubmitHandler}>
+      <S.FormLayout onSubmit={updateSubmitHandler}>
         {isLoading && <LoadingSpinner asOverlay />}
         <p>상품 등록</p>
-        <FormBox>
-          <FormItem image>
+        <S.FormBox>
+          <S.FormItem image>
             <p>상품 사진</p>
             <UpdateImageUpload
               id="images"
@@ -222,11 +211,11 @@ const UpdateProduct = () => {
               setDeleteImages={setDeleteImages}
               onInput={inputHandler}
             />
-          </FormItem>
-          <Line />
-          <FormItem>
+          </S.FormItem>
+          <S.Line />
+          <S.FormItem>
             <p>대여 상품명</p>
-            <FormInput
+            <S.FormInput
               id="rentalProduct"
               element="input"
               width="22rem"
@@ -237,11 +226,11 @@ const UpdateProduct = () => {
               initialValid={true}
               onInput={inputHandler}
             />
-          </FormItem>
-          <Line />
-          <FormItem>
+          </S.FormItem>
+          <S.Line />
+          <S.FormItem>
             <p>카테고리</p>
-            <CategoryBox>
+            <S.CategoryBox>
               {CategoryList.map(item => (
                 <Radio
                   key={item.id}
@@ -251,13 +240,13 @@ const UpdateProduct = () => {
                   disabled={true}
                 />
               ))}
-            </CategoryBox>
-          </FormItem>
-          <Line />
-          <FormItem>
+            </S.CategoryBox>
+          </S.FormItem>
+          <S.Line />
+          <S.FormItem>
             <p>대여 요금</p>
-            <ItemBox>
-              <FormInput
+            <S.ItemBox>
+              <S.FormInput
                 id="rentalFee"
                 element="input"
                 width="18.5rem"
@@ -269,12 +258,12 @@ const UpdateProduct = () => {
                 onInput={inputHandler}
               />
               <p>원/[일]</p>
-            </ItemBox>
-          </FormItem>
-          <Line />
-          <FormItem>
+            </S.ItemBox>
+          </S.FormItem>
+          <S.Line />
+          <S.FormItem>
             <p>거래 방법</p>
-            <TradeBox checkedTrade={checkedTrade}>
+            <S.TradeBox checkedTrade={checkedTrade}>
               <div>
                 {TradeMethod.map(item => (
                   <Radio
@@ -287,7 +276,7 @@ const UpdateProduct = () => {
                 ))}
               </div>
               {(checkedTrade === 'DIRECT' || checkedTrade === 'ALL') && (
-                <PlaceBox>
+                <S.PlaceBox>
                   <p>
                     거래
                     <br />
@@ -304,14 +293,14 @@ const UpdateProduct = () => {
                     initialValid={true}
                     onInput={inputHandler}
                   />
-                </PlaceBox>
+                </S.PlaceBox>
               )}
-            </TradeBox>
-          </FormItem>
-          <Line />
-          <FormItem>
+            </S.TradeBox>
+          </S.FormItem>
+          <S.Line />
+          <S.FormItem>
             <p>상품 설명</p>
-            <FormInput
+            <S.FormInput
               id="description"
               element="textarea"
               width="22rem"
@@ -322,15 +311,15 @@ const UpdateProduct = () => {
               initialValid={true}
               onInput={inputHandler}
             />
-          </FormItem>
-          <Line />
-        </FormBox>
-        <FormBtnBox>
+          </S.FormItem>
+          <S.Line />
+        </S.FormBox>
+        <S.FormBtnBox>
           <Button type="submit" disabled={!formState.isValid} width="10rem">
             수정하기
           </Button>
-        </FormBtnBox>
-      </FormLayout>
+        </S.FormBtnBox>
+      </S.FormLayout>
     </>
   );
 };
