@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import theme from '../../styles/theme';
 import Dropdown from '../../components/UI/DropDown';
 import Input from '../../components/UI/Input';
 import Button from '../../components/UI/Button';
@@ -21,6 +22,11 @@ const PayInformation = styled.div`
       margin-left: 0;
     }
   }
+
+  @media (max-width: 412px) {
+    width: 300px;
+    margin: 0 auto;
+  }
 `;
 
 const InformationTitle = styled.p`
@@ -38,41 +44,174 @@ const InformationBox = styled.div`
       margin-left: 3.5rem;
     }
   }
+  @media (max-width: 412px) {
+    > * {
+      margin: 1.3rem 0;
+
+      &:nth-child(n + 2) {
+        margin: 0;
+      }
+    }
+  }
 `;
 
 export const PayTitle = styled.div`
   display: flex;
   align-items: center;
+  color: ${props => (props.lyt ? 'white' : 'black')};
   font-size: 1.25rem;
   font-weight: 600;
 
   > p {
     margin-left: 0.5rem;
   }
+
+  @media (max-width: 1140px) {
+    margin-bottom: 0.3rem;
+  }
+
+  @media ${theme.tablet} {
+    display: ${props => props.lyt && 'none'};
+  }
 `;
 
 const TradeDropDown = styled(Dropdown)`
   margin-left: 4.2rem !important;
   width: 15rem;
+
+  @media (max-width: 412px) {
+    margin-left: 2rem !important;
+    width: 15.5rem;
+  }
 `;
 
 const PayDelivery = styled.div`
   margin: 2.5rem 0 2rem 2rem;
+
+  @media ${theme.tablet} {
+    margin: 2.5rem 2rem 2rem;
+  }
+
+  @media ${theme.mobile} {
+    margin: 2.5rem 1rem 2rem;
+  }
 `;
 
-export const DeliveryItems = styled.div`
+const DeliveryItems = styled.div`
   display: grid;
-  grid-template-columns: 2fr 5fr 2.5fr;
+  grid-template-columns: 2fr 4fr 3.5fr;
   align-items: center;
-  margin-top: 1rem;
+  margin: 2rem 0;
 
-  ${props =>
-    props.lyt &&
-    css`
-      margin-top: -0.45rem;
-      grid-template-columns: 4.6fr 1.8fr 0.5fr;
-      justify-items: end;
-    `}
+  * {
+    > input {
+      width: calc(100% + 136px);
+    }
+  }
+
+  @media (max-width: 1140px) {
+    grid-template-columns: 1fr;
+    * {
+      > input {
+        width: 100%;
+      }
+    }
+  }
+`;
+
+const DeliveryAddress = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 4fr 3.5fr;
+  align-items: center;
+  margin: 1rem 0;
+  margin-top: -0.45rem;
+
+  * {
+    > input {
+      width: ${props => (props.road ? 'calc(100% + 136px)' : '100%')};
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1140px) {
+    grid-template-columns: ${props =>
+      props.road ? '2fr 7.5fr' : '2fr 4fr 3.5fr'};
+
+    * {
+      > input {
+        width: 100%;
+      }
+    }
+  }
+
+  @media ${theme.tablet} {
+    ${props =>
+      props.postCode &&
+      css`
+        grid-template-rows: 0.5fr 1fr;
+        grid-template-columns: 2.5fr 0.5fr;
+        * {
+          &:first-child {
+            grid-area: ${props => props.postCode && '1/1/2/3'};
+          }
+
+          &:nth-child(2) {
+            grid-area: ${props => props.postCode && '2/1/3/2'};
+          }
+
+          &:last-child {
+            grid-area: ${props => props.postCode && '2/2/3/3'};
+          }
+        }
+      `}
+
+    ${props =>
+      props.road &&
+      css`
+        grid-template-columns: 1fr;
+        * {
+          > input {
+            width: 100%;
+          }
+        }
+      `};
+
+    ${props =>
+      props.detail &&
+      css`
+        grid-template-columns: 3fr 1fr;
+      `};
+  }
+
+  @media (max-width: 480px) {
+    ${props =>
+      props.detail &&
+      css`
+        grid-template-columns: 1fr;
+      `};
+  }
+`;
+
+const LegalInput = styled(Input)`
+  margin-left: 0.5rem;
+  width: 128px;
+
+  @media (min-width: 769px) and (max-width: 1140px) {
+    width: calc(100% - 8px);
+  }
+
+  @media ${theme.mobile} {
+    margin: 0;
+    width: 100%;
+  }
+`;
+
+const PostCodeButton = styled(Button)`
+  width: 120px;
+  margin-left: 1rem;
+
+  @media (min-width: 769px) and (max-width: 1140px) {
+    width: 88%;
+  }
 `;
 
 const TradeMethodOption = styled.p`
@@ -185,20 +324,18 @@ const ProductInformation = ({
               element="input"
               id="name"
               type="text"
-              width="17.5rem"
               placeholder="이름 입력해주세요"
               validators={[VALIDATOR_REQUIRE()]}
               errorText={null}
               onInput={onInput}
             />
           </DeliveryItems>
-          <DeliveryItems>
+          <DeliveryAddress postCode={true}>
             <PayTitle>주소</PayTitle>
             <Input
               element="input"
               id="address"
               type="text"
-              width="17.5rem"
               placeholder="우편번호"
               validators={[VALIDATOR_REQUIRE()]}
               value={postCode}
@@ -206,22 +343,21 @@ const ProductInformation = ({
               onInput={onInput}
               disabled={true}
             />
-            <Button
+            <PostCodeButton
               type="button"
               sub
               small
-              width="120px"
               onClick={postCodeOpenHandler}
             >
               우편번호 찾기
-            </Button>
-          </DeliveryItems>
-          <DeliveryItems lyt>
+            </PostCodeButton>
+          </DeliveryAddress>
+          <DeliveryAddress road={true}>
+            <PayTitle lyt>주소</PayTitle>
             <Input
               element="input"
               type="text"
               id="address"
-              width="17.5rem"
               placeholder="도로명주소"
               validators={[VALIDATOR_REQUIRE()]}
               value={address}
@@ -229,23 +365,22 @@ const ProductInformation = ({
               onInput={onInput}
               disabled={true}
             />
-          </DeliveryItems>
-          <DeliveryItems lyt>
+          </DeliveryAddress>
+          <DeliveryAddress detail={true}>
+            <PayTitle lyt>주소</PayTitle>
             <Input
               element="input"
               type="text"
               id="address_detail"
-              width="17.5rem"
               placeholder="상세주소 입력해주세요"
               validators={[VALIDATOR_REQUIRE()]}
               errorText={null}
               onInput={onInput}
             />
-            <Input
+            <LegalInput
               element="input"
               type="text"
               id="address_legal"
-              width="9.5rem"
               placeholder="(법정동)"
               validators={[VALIDATOR_REQUIRE()]}
               errorText={null}
@@ -253,14 +388,13 @@ const ProductInformation = ({
               onInput={onInput}
               disabled={true}
             />
-          </DeliveryItems>
+          </DeliveryAddress>
           <DeliveryItems>
             <PayTitle>전화번호</PayTitle>
             <Input
               element="input"
               id="phone"
               type="text"
-              width="17.5rem"
               placeholder="전화번호 입력해주세요"
               validators={[VALIDATOR_REQUIRE()]}
               errorText={null}

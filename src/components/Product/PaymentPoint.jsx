@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import axios from 'axios';
 import Input from '../../components/UI/Input';
@@ -20,6 +20,46 @@ const PointLayout = styled.div`
   justify-items: start;
   margin-top: 1rem;
   margin: 5px;
+
+  .usePointButton {
+    margin: 0.5rem;
+  }
+
+  @media (max-width: 412px) {
+    grid-template-columns: ${props => !props.use && '3fr 2fr 0.7fr 0.5fr'};
+    margin-bottom: ${props => !props.use && '2.5rem !important'};
+
+    * {
+      &:first-child {
+        margin-left: 1.5rem;
+      }
+    }
+
+    ${props =>
+      props.use &&
+      css`
+        grid-template-rows: 0.3fr 0.5fr;
+        grid-template-columns: 1fr 0.7fr 0.3fr;
+        justify-items: center;
+
+        .title {
+          grid-area: 1/1/2/4;
+          justify-self: start;
+        }
+        .second {
+          grid-area: 2/1/3/2;
+          margin: 0 0 0 1.5rem;
+        }
+        .usePointButton {
+          grid-area: 2/2/3/3;
+          width: 50px;
+        }
+        .reset {
+          grid-area: 2/3/3/4;
+          justify-self: start;
+        }
+      `}
+  }
 `;
 
 const ResetButton = styled(GrPowerReset)`
@@ -102,14 +142,15 @@ const PaymentPoint = ({ onInput, formState, total, discount }) => {
         <p>보유적립금</p>
         <p>{remainingPoints}</p>
       </PointLayout>
-      <PointLayout>
-        <p>사용</p>
+      <PointLayout use={true}>
+        <p className="title">사용</p>
         <Input
           bar
           id="usedPoint"
           element="input"
           width="8.5rem"
           height="20px"
+          className="second"
           reset={resetInput}
           setReset={setResetInput}
           validators={[VALIDATOR_REQUIRE()]}
@@ -121,12 +162,13 @@ const PaymentPoint = ({ onInput, formState, total, discount }) => {
           sub
           small
           width="80px"
+          className="usePointButton"
           onClick={applyUsageAmount}
           disabled={!isBtnEnabled}
         >
           사용
         </Button>
-        <ResetButton onClick={resetUsageAmount} />
+        <ResetButton onClick={resetUsageAmount} className="reset" />
         <ToastContainer
           position="top-center"
           limit={1}
