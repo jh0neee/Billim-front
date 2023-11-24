@@ -128,7 +128,10 @@ const Carousel = ({ items }) => {
       {items.map(item => (
         <div key={item.productId}>
           <CarouselImgBox to={`/${item.productId}/detail`}>
-            <CarouselImage src={item.imageUrl} alt="상품이미지" />
+            <CarouselImage
+              src={item.imageUrl}
+              alt={`[상품] ${item.productName}`}
+            />
             <p>{item.productName}</p>
           </CarouselImgBox>
         </div>

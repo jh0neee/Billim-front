@@ -244,7 +244,10 @@ const Review = () => {
             <ReviewItemList>
               <TopList>
                 <Link to={`/${item.productId}/detail`}>
-                  <ProductImage src={item.productImageUrl} alt="상품이미지" />
+                  <ProductImage
+                    src={item.productImageUrl}
+                    alt={`[상품] ${item.productName}`}
+                  />
                 </Link>
                 <ReviewItemTextBox>
                   <p>{item.productName}</p>

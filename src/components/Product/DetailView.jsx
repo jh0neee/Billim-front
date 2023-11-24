@@ -159,7 +159,10 @@ const DetailView = ({ items, onDeleteProduct }) => {
           grade={items.sellerGrade}
           reviewCount={count}
         />
-        <DetailImageGallery images={items.imageUrls} />
+        <DetailImageGallery
+          images={items.imageUrls}
+          productName={items.productName}
+        />
         <P.DetailBox>
           <DetailContent
             name={items.sellerNickname}

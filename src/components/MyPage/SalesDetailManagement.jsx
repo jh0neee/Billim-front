@@ -184,7 +184,10 @@ const SalesDetailManagement = () => {
       </DetailSalesTitle>
       <DetailSaleBox>
         <SaleTopBox>
-          <SalesImage src={salesItem.imageUrls} alt="상품이미지" />
+          <SalesImage
+            src={salesItem.imageUrls}
+            alt={`[상품] ${salesItem.productName}`}
+          />
           <TopTextBox rentalItem={rentalItem}>
             <ProductText to={`/${productId}/detail`}>
               {salesItem.productName}

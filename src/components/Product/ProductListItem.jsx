@@ -186,7 +186,10 @@ const ProductListItem = ({ items }) => {
         <ProductCard key={item.productId}>
           <Link to={`/${item.productId}/detail`}>
             <ImageBox>
-              <ProductImage src={item.imageUrls[0]} alt="상품이미지" />
+              <ProductImage
+                src={item.imageUrls[0]}
+                alt={`[상품] ${item.productName}`}
+              />
             </ImageBox>
           </Link>
           <LikeIcon onClick={() => handleInterestToggle(item)}>

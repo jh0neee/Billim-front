@@ -131,7 +131,7 @@ const Next = styled(SliderButton)`
   right: 3%;
 `;
 
-const DetailImageGallery = ({ images }) => {
+const DetailImageGallery = ({ images, productName }) => {
   const imageCount = images.length;
   const resize = useResize(925, '>', true);
 
@@ -158,12 +158,16 @@ const DetailImageGallery = ({ images }) => {
     <>
       {resize && imageCount === 5 ? (
         <DetailImage>
-          <MainImage src={images[0]} className="resizeImage" alt="상품이미지" />
+          <MainImage
+            src={images[0]}
+            className="resizeImage"
+            alt={`[상품] ${productName}_0`}
+          />
           <SubImageBox>
-            <SubImage src={images[1]} alt="상품예시이미지" />
-            <SubImage src={images[3]} alt="상품예시이미지" />
-            <SubImage src={images[2]} alt="상품예시이미지" />
-            <SubImage src={images[4]} alt="상품예시이미지" />
+            <SubImage src={images[1]} alt={`[상품] ${productName}_1`} />
+            <SubImage src={images[3]} alt={`[상품] ${productName}_3`} />
+            <SubImage src={images[2]} alt={`[상품] ${productName}_2`} />
+            <SubImage src={images[4]} alt={`[상품] ${productName}_4`} />
           </SubImageBox>
         </DetailImage>
       ) : (
@@ -173,7 +177,7 @@ const DetailImageGallery = ({ images }) => {
               imageCount={imageCount}
               key={idx}
               src={img}
-              alt="상품이미지"
+              alt={`[상품] ${productName}_${idx}`}
             />
           ))}
         </StyledSlider>

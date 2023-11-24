@@ -83,7 +83,7 @@ const Header = () => {
       <HeaderBox>
         <IconOpen onClick={openDrawerHandler} />
         <Link to="/">
-          <LogoImg src={logoImg} alt="logo" />
+          <LogoImg src={logoImg} alt="Billim_로고이미지(메인으로 이동)" />
         </Link>
         <NavLinks />
       </HeaderBox>

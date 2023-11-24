@@ -452,7 +452,7 @@ const MessageChat = ({
             <C.ProductInfoBox to={`/${productInfo.productId}/detail`}>
               <C.ProductInfoImage
                 src={productInfo.productImageUrl}
-                alt="상품이미지"
+                alt={`[상품] ${productInfo.productName}`}
               />
               <C.ProductInfoContent>
                 <p>{productInfo.productName}</p>

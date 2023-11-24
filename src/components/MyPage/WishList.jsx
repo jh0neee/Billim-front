@@ -247,7 +247,7 @@ const WishList = () => {
           {interestItems.map(item => (
             <ListBox key={item.productId}>
               <Link to={`/${item.productId}/detail`}>
-                <Image src={item.imageUrl} alt="상품예시이미지" />
+                <Image src={item.imageUrl} alt={`[상품] ${item.productName}`} />
               </Link>
               <LikeIcon onClick={() => handleInterestToggle(item)}>
                 {interestItems.some(

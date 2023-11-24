@@ -191,7 +191,7 @@ const PurchaseManagement = () => {
             <M.ProductBox>
               <M.PurchaseImage
                 src={item.imageUrl}
-                alt="구매상품이미지"
+                alt={`[상품] ${item.productName}`}
                 dateResize={DateResize}
               />
               <M.ParagraphBox>

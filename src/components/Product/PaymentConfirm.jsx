@@ -65,7 +65,7 @@ const ConfirmTop = styled.div`
       > p {
         margin: 0.5rem 0;
       }
-      .name {
+      .sellerName {
         margin-top: 1.5rem;
       }
     }
@@ -140,11 +140,11 @@ const PaymentConfirm = ({
   return (
     <ConfirmBox>
       <ConfirmTop>
-        <img src={imageUrl} alt="상품예시이미지" />
+        <img src={imageUrl} alt={`[상품] ${name}`} />
         <div>
           <p>[ {category} ]</p>
           <p>{name}</p>
-          <p className="name">{seller}</p>
+          <p className="sellerName">{seller}</p>
         </div>
       </ConfirmTop>
       <hr />

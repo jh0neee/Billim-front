@@ -171,7 +171,10 @@ const SalesManagement = () => {
           {loadedData.map(item => (
             <SaleBox key={item.productId}>
               <Link to={`/mypage/sales/${item.productId}`}>
-                <SaleImage src={item.imageUrl} alt="상품이미지" />
+                <SaleImage
+                  src={item.imageUrl}
+                  alt={`[상품] ${item.productName}`}
+                />
                 <TextOverlay>{item.productName}</TextOverlay>
               </Link>
             </SaleBox>
