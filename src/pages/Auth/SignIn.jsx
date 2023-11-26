@@ -7,7 +7,6 @@ import theme from '../../styles/theme';
 import Input from '../../components/UI/Input';
 import Button from '../../components/UI/Button';
 import ErrorModal from '../../util/ErrorModal';
-import kakaoMedium from '../../asset/image/kakao_login_medium_wide.png';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../hooks/useAuth';
@@ -39,50 +38,6 @@ const LoginButton = styled(Button)`
   font-size: 13px;
   font-weight: 400;
   letter-spacing: 0.5px;
-`;
-
-const KakaoLoginButton = styled.img`
-  cursor: pointer;
-`;
-
-const DividingLine = styled.span`
-  position: relative;
-  display: block;
-  width: 100%;
-  padding: 18px 0;
-  font-size: 0;
-  line-height: 0;
-
-  &::before {
-    display: inline-block;
-    width: calc(50% - 20px);
-    height: 1px;
-    margin: 8px 0;
-    background-color: rgba(0, 0, 0, 0.06);
-    vertical-align: top;
-    content: '';
-  }
-
-  &::after {
-    display: inline-block;
-    width: calc(50% - 20px);
-    height: 1px;
-    margin: 8px 0;
-    background-color: rgba(0, 0, 0, 0.06);
-    vertical-align: top;
-    content: '';
-  }
-`;
-
-const OrText = styled.span`
-  font-family: 'TRoundWind';
-  letter-spacing: 1.5px;
-  display: inline-block;
-  width: 40px;
-  font-size: 10px;
-  line-height: 18px;
-  text-align: center;
-  color: #828282;
 `;
 
 const FindButtonBox = styled.div`
@@ -130,12 +85,6 @@ const SignIn = () => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
-
-  const KAKAO_AUTH_URL = `${url}/oauth2/authorization/kakao`;
-
-  const KakaoLoginHandler = () => {
-    window.location.href = KAKAO_AUTH_URL;
-  };
 
   const SubmitHandler = e => {
     e.preventDefault();
@@ -204,10 +153,6 @@ const SignIn = () => {
           </p>
           <Link to="/emailverify">회원가입</Link>
         </SignUpBox>
-        <DividingLine>
-          <OrText>OR</OrText>
-        </DividingLine>
-        <KakaoLoginButton src={kakaoMedium} onClick={KakaoLoginHandler} />
       </SignInLayout>
     </>
   );
