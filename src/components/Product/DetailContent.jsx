@@ -65,6 +65,14 @@ const ContentDescription = styled.div`
       font-weight: 500;
       font-size: 1.1rem;
     }
+
+    &:last-child {
+      width: 95%;
+      line-height: 2;
+      overflow: auto;
+      white-space: pre-line;
+      max-height: 180px;
+    }
   }
 
   @media (max-width: 925px), ${theme.mobile} {
