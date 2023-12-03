@@ -288,7 +288,9 @@ const MessageChat = ({
         compareDate = allMsg[findPrevMsgIndex - 1]?.sendAt.slice(0, 10);
       }
     } else if (messageType === 'currentMessage') {
-      if (msg === messages[0]) {
+      if (allMsg.length === 0 && msg === messages[0]) {
+        compareDate = currentDate.slice(0, 10);
+      } else if (msg === messages[0]) {
         compareDate = allMsg[allMsg.length - 1]?.sendAt.slice(0, 10);
       } else {
         compareDate = prevMessage && prevMessage?.sendAt.slice(0, 10);
