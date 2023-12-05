@@ -12,18 +12,21 @@ const KakaoRedirect = () => {
   const searchParams = new URLSearchParams(location.search);
   const { isLoading, onLoading } = useLoadingError();
 
-  useEffect(() => {
+  const handleRedirect = async () => {
     onLoading(true);
 
     const access = searchParams.get('accessToken');
     const refresh = searchParams.get('refreshToken');
     const memberId = searchParams.get('memberId');
 
-    console.log(access, refresh, memberId);
-
     auth.login(access, refresh, memberId);
     navigate('/');
+
     onLoading(false);
+  };
+
+  useEffect(() => {
+    handleRedirect();
   }, []);
 
   if (isLoading) {
