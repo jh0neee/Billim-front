@@ -14,9 +14,9 @@ import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../hooks/useAuth';
 import { useCheckedInput } from '../../hooks/useCheckedInput';
 import { useLoadingError } from '../../hooks/useLoadingError';
-import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { CategoryList, TradeMethod } from '../../data';
+import { VALIDATOR_REQUIRE, VALIDATOR_NUMBER } from '../../util/validators';
 
 const UpdateProduct = () => {
   const url = process.env.REACT_APP_URL;
@@ -251,8 +251,11 @@ const UpdateProduct = () => {
                 element="input"
                 width="18.5rem"
                 height="30px"
-                validators={[VALIDATOR_REQUIRE()]}
-                errorText="대여할 상품의 일일 대여 요금을 입력해주세요."
+                validators={[
+                  VALIDATOR_REQUIRE(),
+                  VALIDATOR_NUMBER(formState.inputs?.rentalFee?.value),
+                ]}
+                errorText="대여할 상품의 일일 대여 요금을 입력해주세요.(숫자만)"
                 initialValue={loadedProduct.rentalFee}
                 initialValid={true}
                 onInput={inputHandler}

@@ -14,10 +14,10 @@ import LoadingSpinner from '../components/UI/LoadingSpinner';
 import { useAuth } from '../hooks/useAuth';
 import { useForm } from '../hooks/useForm';
 import { useCheckedInput } from '../hooks/useCheckedInput';
-import { VALIDATOR_REQUIRE } from '../util/validators';
-import { CategoryList, TradeMethod } from '../data';
 import { useLoadingError } from '../hooks/useLoadingError';
 import { useTokenRefresher } from '../hooks/useTokenRefresher';
+import { CategoryList, TradeMethod } from '../data';
+import { VALIDATOR_REQUIRE, VALIDATOR_NUMBER } from '../util/validators';
 
 const NewProduct = () => {
   const url = process.env.REACT_APP_URL;
@@ -162,8 +162,11 @@ const NewProduct = () => {
                 element="input"
                 width="18.5rem"
                 height="30px"
-                validators={[VALIDATOR_REQUIRE()]}
-                errorText="대여할 상품의 일일 대여 요금을 입력해주세요."
+                validators={[
+                  VALIDATOR_REQUIRE(),
+                  VALIDATOR_NUMBER(formState.inputs?.rentalFee?.value),
+                ]}
+                errorText="대여할 상품의 일일 대여 요금을 입력해주세요.(숫자만)"
                 onInput={inputHandler}
               />
               <p>원/[일]</p>
