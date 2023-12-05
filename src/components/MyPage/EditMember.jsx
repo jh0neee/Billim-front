@@ -24,6 +24,7 @@ import { useLoadingError } from '../../hooks/useLoadingError';
 import { useAddressSplitter } from '../../hooks/useAddressSplitter';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { SaleHeader as EditHeader, EnrollButton } from './SalesManagement';
+import 'react-toastify/dist/ReactToastify.css';
 
 const EditMemberLayout = styled.form`
   margin: 0 auto 3rem;
