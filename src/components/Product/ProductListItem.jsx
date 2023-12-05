@@ -61,6 +61,15 @@ const ProductParagraph = styled.p`
   font-weight: 600;
 
   ${props =>
+    props.productName &&
+    css`
+      white-space: nowrap;
+      width: 170px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    `}
+
+  ${props =>
     props.amount &&
     css`
       margin: 15px 10px 0;
@@ -204,7 +213,9 @@ const ProductListItem = ({ items }) => {
           <ProductInfoBox>
             <Link to={`/${item.productId}/detail`}>
               <ProductItemBox>
-                <ProductParagraph>{item.productName}</ProductParagraph>
+                <ProductParagraph productName={true}>
+                  {item.productName}
+                </ProductParagraph>
                 <ProductParagraph>
                   <RiStarSFill />
                   {item.starRating.toFixed(1)}
