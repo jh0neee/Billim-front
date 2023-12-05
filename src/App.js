@@ -29,7 +29,7 @@ const MyPageCoupon = React.lazy(() =>
   import('./components/MyPage/MyPageCoupon.jsx'),
 );
 const KakaoRedirect = React.lazy(() =>
-  import('./pages/Auth/KakaoRedirect.jsx'),
+  import('./pages/Auth/KaKaoRedirect.jsx'),
 );
 const UpdateProduct = React.lazy(() =>
   import('./pages/Product/UpdateProduct.jsx'),
@@ -106,7 +106,7 @@ function App() {
         <Route path="/emailverify" element={<EmailVerification />} />
         <Route path="/emailverify/confirm" element={<EmailConfirm />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/oauth/kakao" element={<KakaoRedirect />} />
+        <Route path="/login/callback" element={<KakaoRedirect />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     );
