@@ -186,10 +186,11 @@ const ImageUpload = props => {
   const handleAddImages = e => {
     const imageLists = e.target.files;
 
+    const currentImages = showImages || [];
     let pickedFile = [];
     let fileIsValid = isValid;
-    if (imageLists && imageLists.length < 6) {
-      pickedFile = Array.from(imageLists);
+    if (imageLists && imageLists.length + currentImages.length < 6) {
+      pickedFile = [...currentImages, ...Array.from(imageLists)];
       setShowImages(pickedFile);
       setIsValid(true);
       fileIsValid = true;
