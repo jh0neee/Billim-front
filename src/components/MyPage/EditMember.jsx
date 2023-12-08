@@ -17,14 +17,13 @@ import LoadingSpinner from '../UI/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
 import { useForm } from '../../hooks/useForm';
 import { FormBtnBox } from '../../pages/styles/Pages.styles';
+import { useToastAlert } from '../../hooks/useToastAlert';
 import { useCheckNickname } from '../../hooks/useCheckedNickname';
-import { ToastContainer } from 'react-toastify';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useAddressSplitter } from '../../hooks/useAddressSplitter';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { SaleHeader as EditHeader, EnrollButton } from './SalesManagement';
-import 'react-toastify/dist/ReactToastify.css';
 
 const EditMemberLayout = styled.form`
   margin: 0 auto 3rem;
@@ -172,6 +171,7 @@ const EditMember = () => {
   const navigate = useNavigate();
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
+  const { showToast, ToastWrapper } = useToastAlert();
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const [isCheckNickname, setIsCheckNickname] = useState(true);
   const [passwordChanged, setPasswordChanged] = useState(false);
@@ -300,7 +300,7 @@ const EditMember = () => {
     const hasChanges = checkForChanges(combinedAddress);
 
     if (!hasChanges) {
-      alert('수정할 정보가 없습니다.');
+      showToast('수정할 정보가 없습니다.', 'warning');
       return;
     }
 
@@ -450,13 +450,7 @@ const EditMember = () => {
             <ExtraButton type="button" sub onClick={checkNickname}>
               중복 확인
             </ExtraButton>
-            <ToastContainer
-              position="top-center"
-              limit={1}
-              autoClose={3000}
-              closeButton={false}
-              closeOnClick
-            />
+            {ToastWrapper('top-center')}
           </EditMemberBox>
           <hr />
           {loadedMember?.type !== 'KAKAO' && (

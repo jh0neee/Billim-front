@@ -9,6 +9,7 @@ import '../../styles/calendar.css';
 
 import Button from '../UI/Button';
 import differenceInDays from 'date-fns/differenceInDays';
+import { useToastAlert } from '../../hooks/useToastAlert';
 
 const ConfirmBox = styled.div`
   background: #ededed;
@@ -65,6 +66,7 @@ const DetailConfirm = ({
   const [endDate, setEndDate] = useState(null);
   const days = differenceInDays(endDate, startDate) + 1;
   const total = (amount * days).toLocaleString('ko-KR');
+  const { showToast } = useToastAlert();
 
   const onChangeCalendar = dates => {
     const [start, end] = dates;
@@ -93,12 +95,12 @@ const DetailConfirm = ({
 
   const handlePayment = () => {
     if (startDate === null || endDate === null) {
-      alert('날짜를 선택해주세요');
+      showToast('날짜를 선택해주세요', 'warning');
       return;
     }
 
     if (sellerId === buyerId) {
-      alert('판매자는 구입할 수 없는 상품입니다.');
+      showToast('판매자는 구입할 수 없는 상품입니다.', 'error');
       return;
     }
 
@@ -107,8 +109,9 @@ const DetailConfirm = ({
     });
 
     if (disabledDateExists) {
-      alert(
+      showToast(
         '예약할 수 없는 날짜가 선택되었습니다.\n확인 후 다시 선택해주세요.',
+        'warning',
       );
       return;
     }

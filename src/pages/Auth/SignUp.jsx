@@ -11,9 +11,8 @@ import ErrorModal from '../../util/ErrorModal';
 import Modal from '../../components/UI/Modal';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useForm } from '../../hooks/useForm';
+import { useToastAlert } from '../../hooks/useToastAlert';
 import { useLoadingError } from '../../hooks/useLoadingError';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const SignUpLayout = styled.form`
   width: 60%;
@@ -60,6 +59,7 @@ const SignUp = () => {
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
   const { address, address_detail, address_legal } = formState.inputs;
+  const { showToast, ToastWrapper } = useToastAlert();
 
   const [isCheckNickname, setIsCheckNickname] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -75,7 +75,7 @@ const SignUp = () => {
     e.preventDefault();
 
     if (!formState.isValid) {
-      alert('빈칸 없이 작성해주세요.');
+      showToast('빈칸 없이 작성해주세요.', 'warning');
       return;
     }
 
@@ -119,6 +119,7 @@ const SignUp = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      {ToastWrapper('top-center')}
       <Modal
         show={showModal}
         header="중복 확인"
@@ -144,13 +145,6 @@ const SignUp = () => {
         가입이 성공적으로 이루어졌습니다. <br />
         이제 로그인을 해주세요!
       </Modal>
-      <ToastContainer
-        position="top-center"
-        limit={1}
-        autoClose={3000}
-        closeButton={false}
-        closeOnClick
-      />
       <SignUpLayout onSubmit={signUpSubmitHandler}>
         {isLoading && <LoadingSpinner asOverlay />}
         <SignUpTitle>회원가입</SignUpTitle>

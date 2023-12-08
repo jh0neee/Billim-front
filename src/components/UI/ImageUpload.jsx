@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import theme from '../../styles/theme';
+import { useToastAlert } from '../../hooks/useToastAlert';
 import { FaPlus, FaTimes } from 'react-icons/fa';
 
 const ProfileUploadLayout = styled.div`
@@ -127,6 +128,7 @@ const ImageUpload = props => {
   const [preview, setPreview] = useState();
   const [showImages, setShowImages] = useState();
   const [isValid, setIsValid] = useState(false);
+  const { showToast } = useToastAlert();
   const defaultProfileImageUrl =
     'https://billim.s3.ap-northeast-2.amazonaws.com/profile/profile-default.png';
 
@@ -197,7 +199,7 @@ const ImageUpload = props => {
     } else {
       setIsValid(false);
       fileIsValid = false;
-      alert('파일은 최대 5개까지 선택할 수 있습니다.');
+      showToast('파일은 최대 5개까지 선택할 수 있습니다.', 'warning');
     }
 
     props.onInput(props.id, pickedFile, fileIsValid);

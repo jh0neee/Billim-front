@@ -15,6 +15,7 @@ import { NoneText } from './WishList';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
+import { useToastAlert } from '../../hooks/useToastAlert';
 
 const ReviewLayout = styled.div`
   background-color: #ededed;
@@ -145,6 +146,7 @@ const Review = () => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
+  const { showToast, ToastWrapper } = useToastAlert();
 
   useEffect(() => {
     getReview();
@@ -193,7 +195,7 @@ const Review = () => {
     e.preventDefault();
 
     if (!formState.isValid) {
-      alert('빈칸 없이 작성해주세요.');
+      showToast('빈칸 없이 작성해주세요.', 'warning');
       return;
     }
 
@@ -233,6 +235,7 @@ const Review = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      {ToastWrapper('top-center')}
       <p>구매 후기</p>
       {isLoading && <LoadingSpinner asOverlay />}
       {reviewList.length === 0 ? (

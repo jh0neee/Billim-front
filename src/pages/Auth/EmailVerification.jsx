@@ -13,6 +13,7 @@ import ErrorModal from '../../util/ErrorModal';
 import { emailAction } from '../../store/signup';
 import { Domain } from '../../data';
 import { useForm } from '../../hooks/useForm';
+import { useToastAlert } from '../../hooks/useToastAlert';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 
@@ -99,6 +100,7 @@ const EmailVerification = () => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
+  const { showToast, ToastWrapper } = useToastAlert();
 
   useEffect(() => {
     dispatch(
@@ -113,7 +115,7 @@ const EmailVerification = () => {
     e.preventDefault();
 
     if (!formState.isValid) {
-      alert('빈칸 없이 작성해주세요.');
+      showToast('빈칸 없이 작성해주세요.', 'warning');
       return;
     }
 
@@ -144,6 +146,7 @@ const EmailVerification = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      {ToastWrapper('top-center')}
       <VerificationLayout className="center" onSubmit={emailSubmitHandler}>
         {isLoading && <LoadingSpinner asOverlay />}
         <VerificationTitle>이메일 인증</VerificationTitle>

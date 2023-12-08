@@ -8,10 +8,10 @@ import Button from '../../components/UI/Button';
 import { useAuth } from '../../hooks/useAuth';
 import { pointAction } from '../../store/point';
 import { GrPowerReset } from 'react-icons/gr';
+import { useToastAlert } from '../../hooks/useToastAlert';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
-import { toast, ToastContainer } from 'react-toastify';
 
 const PointLayout = styled.div`
   display: grid;
@@ -77,6 +77,7 @@ const PaymentPoint = ({ onInput, formState, total, discount }) => {
   const [resetInput, setResetInput] = useState(false);
   const { onLoading, errorHandler } = useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
+  const { showToast, ToastWrapper } = useToastAlert();
 
   useEffect(() => {
     // 페이지 벗어나면 적립금 초기화
@@ -119,13 +120,13 @@ const PaymentPoint = ({ onInput, formState, total, discount }) => {
 
     if (usageAmount <= remainingPoints) {
       if (usageAmount > totalAmount) {
-        toast.error(`최대 ${totalAmount}적립금까지 사용가능합니다.`);
+        showToast(`최대 ${totalAmount}적립금까지 사용가능합니다.`, 'warning');
       } else {
         dispatch(pointAction.usePoints(usageAmount));
         setIsBtnEnabled(false);
       }
     } else {
-      toast.error('사용가능 적립금보다 많습니다.');
+      showToast('사용가능 적립금보다 많습니다.', 'error');
     }
   };
 
@@ -169,13 +170,7 @@ const PaymentPoint = ({ onInput, formState, total, discount }) => {
           사용
         </Button>
         <ResetButton onClick={resetUsageAmount} className="reset" />
-        <ToastContainer
-          position="top-center"
-          limit={1}
-          autoClose={3000}
-          pauseOnHover={false}
-          closeOnClick
-        />
+        {ToastWrapper('top-center')}
       </PointLayout>
     </>
   );

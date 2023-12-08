@@ -8,6 +8,7 @@ import Button from '../UI/Button';
 import ErrorModal from '../../util/ErrorModal';
 import { useForm } from '../../hooks/useForm';
 import { PasswordBox } from './EditPassword';
+import { useToastAlert } from '../../hooks/useToastAlert';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import {
@@ -55,6 +56,7 @@ const CancelMember = ({ url, auth, navigate, showModal, closeModal }) => {
   const { error, clearError, errorHandler } = useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const [formState, inputHandler] = useForm({}, false);
+  const { showToast } = useToastAlert();
 
   const handleToggleCheck = () => {
     setCheckCancel(!checkCancel);
@@ -105,7 +107,7 @@ const CancelMember = ({ url, auth, navigate, showModal, closeModal }) => {
 
   const closeCancelModal = () => {
     if (!checkCancel) {
-      alert('유의사항에 동의해야만 탈퇴가 가능합니다.');
+      showToast('유의사항에 동의해야만 탈퇴가 가능합니다.', 'warning');
       return;
     }
 

@@ -12,6 +12,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import UpdateImageUpload from '../../components/UI/UpdateImageUpload';
 import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../hooks/useAuth';
+import { useToastAlert } from '../../hooks/useToastAlert';
 import { useCheckedInput } from '../../hooks/useCheckedInput';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
@@ -31,6 +32,7 @@ const UpdateProduct = () => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
+  const { showToast, ToastWrapper } = useToastAlert();
   const [formState, inputHandler, setFormData] = useForm({}, true);
 
   const closeUpdate = () => {
@@ -123,7 +125,7 @@ const UpdateProduct = () => {
     e.preventDefault();
 
     if (!formState.isValid) {
-      alert('빈칸 없이 작성해주세요.');
+      showToast('빈칸 없이 작성해주세요.', 'warning');
       return;
     }
 
@@ -187,6 +189,7 @@ const UpdateProduct = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      {ToastWrapper('top-center')}
       <Modal
         show={updateModal}
         header="수정 완료!"

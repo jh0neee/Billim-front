@@ -9,6 +9,7 @@ import Modal from '../UI/Modal';
 import Button from '../UI/Button';
 import { useForm } from '../../hooks/useForm';
 import { ImageInput } from '../UI/ImageUpload';
+import { useToastAlert } from '../../hooks/useToastAlert';
 import { VALIDATOR_REQUIRE } from '../../util/validators';
 import {
   PiImagesLight,
@@ -43,6 +44,7 @@ const MessageChat = ({
   const [previewFile, setPreviewFile] = useState(null);
   const [productInfo, setProductInfo] = useState({});
   const [formState, inputHandler] = useForm({}, false);
+  const { showToast, ToastWrapper } = useToastAlert();
 
   const [sendImageModal, setSendImageModal] = useState(false);
   const cancelSendImage = () => {
@@ -169,7 +171,7 @@ const MessageChat = ({
 
   const sendMessage = imageUrl => {
     if (!formState.inputs.message.value && !selectedFile) {
-      alert('메시지 입력해주세요');
+      showToast('메시지를 입력해주세요!', 'warning');
       return;
     }
 
@@ -421,6 +423,7 @@ const MessageChat = ({
 
   return (
     <>
+      {ToastWrapper('top-center')}
       <Modal
         show={sendImageModal}
         header="이미지 전송"

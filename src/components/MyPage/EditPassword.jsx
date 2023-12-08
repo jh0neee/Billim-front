@@ -7,6 +7,7 @@ import Modal from '../UI/Modal';
 import Button from '../UI/Button';
 import ErrorModal from '../../util/ErrorModal';
 import { useForm } from '../../hooks/useForm';
+import { useToastAlert } from '../../hooks/useToastAlert';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import {
@@ -56,10 +57,13 @@ const EditPassword = ({
   const { error, clearError, errorHandler } = useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const [formState, inputHandler] = useForm({}, false);
-
+  const { showToast, ToastWrapper } = useToastAlert();
   const closeEditPasswordModal = () => {
     if (!formState.isValid) {
-      alert('영문, 숫자, 특수문자를 조합하여 8~16자로 입력해야 합니다.');
+      showToast(
+        '영문, 숫자, 특수문자를 조합하여 8~16자로 입력해야 합니다.',
+        'error',
+      );
       return;
     }
 
@@ -97,6 +101,7 @@ const EditPassword = ({
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      {ToastWrapper('top-center')}
       <ModalLayout
         show={showModal}
         header="비밀번호 변경"

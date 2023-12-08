@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useToastAlert } from '../../hooks/useToastAlert';
 import { FaPlus, FaTimes } from 'react-icons/fa';
 import {
   ImageLayout,
@@ -20,6 +21,7 @@ const UpdateImageUpload = props => {
   const [preview, setPreview] = useState([]);
   const [showImages, setShowImages] = useState([...imageUrls]);
   const [isValid, setIsValid] = useState(false);
+  const { showToast } = useToastAlert();
 
   useEffect(() => {
     if (!showImages || showImages.length === 0) {
@@ -85,12 +87,17 @@ const UpdateImageUpload = props => {
     } else {
       setIsValid(false);
       fileIsValid = false;
-      alert(`파일은 최대 ${5 - showImages.length}개까지 선택할 수 있습니다.`);
+      showToast(
+        `파일은 최대 ${5 - showImages.length}개까지 선택할 수 있습니다.`,
+        'warning',
+      );
     }
     onInput(id, pickedFile, fileIsValid);
   };
 
   return (
+    // <>
+    //   {ToastWrapper('top-center')}
     <ImageLayout>
       <label htmlFor={id} onChange={handleAddImages}>
         <ImageInput type="file" id={id} multiple={id !== 'profileImageUrl'} />
@@ -107,6 +114,7 @@ const UpdateImageUpload = props => {
           ))}
       </ImagesBox>
     </ImageLayout>
+    // </>
   );
 };
 

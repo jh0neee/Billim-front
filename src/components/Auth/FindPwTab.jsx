@@ -12,6 +12,7 @@ import LoadingSpinner from '../UI/LoadingSpinner';
 import { useForm } from '../../hooks/useForm';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { VALIDATOR_EMAIL, VALIDATOR_REQUIRE } from '../../util/validators';
+import { useToastAlert } from '../../hooks/useToastAlert';
 
 const FindUserBox = styled.form`
   width: 300px;
@@ -52,6 +53,7 @@ const FindPwTab = () => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
+  const { showToast, ToastWrapper } = useToastAlert();
 
   const [showModal, setShowModal] = useState(false);
   const closeModal = () => {
@@ -63,7 +65,7 @@ const FindPwTab = () => {
     e.preventDefault();
 
     if (!formState.isValid) {
-      alert('빈칸 없이 작성해주세요.');
+      showToast('빈칸 없이 작성해주세요.', 'warning');
       return;
     }
 
@@ -93,6 +95,7 @@ const FindPwTab = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      {ToastWrapper('top-center')}
       <Modal
         show={showModal}
         header="이메일 발송 성공!"

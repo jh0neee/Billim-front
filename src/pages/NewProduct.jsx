@@ -13,6 +13,7 @@ import LoadingSpinner from '../components/UI/LoadingSpinner';
 
 import { useAuth } from '../hooks/useAuth';
 import { useForm } from '../hooks/useForm';
+import { useToastAlert } from '../hooks/useToastAlert';
 import { useCheckedInput } from '../hooks/useCheckedInput';
 import { useLoadingError } from '../hooks/useLoadingError';
 import { useTokenRefresher } from '../hooks/useTokenRefresher';
@@ -28,6 +29,7 @@ const NewProduct = () => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
+  const { showToast, ToastWrapper } = useToastAlert();
   const [checkedCategory, onCheckedCategory] = useCheckedInput(
     null,
     inputHandler,
@@ -54,7 +56,7 @@ const NewProduct = () => {
 
       if (!notIsValid) {
         if (!formState.isValid) {
-          alert('빈칸 없이 작성해주세요.');
+          showToast('빈칸 없이 작성해주세요.', 'warning');
           return;
         }
       }
@@ -98,13 +100,14 @@ const NewProduct = () => {
           }
         });
     } else {
-      alert('모든 필드를 빠짐없이 작성해주세요.');
+      showToast('모든 필드를 빠짐없이 작성해주세요.', 'warning');
     }
   };
 
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      {ToastWrapper('top-center')}
       <Modal
         show={registerModal}
         header="등록 완료!"

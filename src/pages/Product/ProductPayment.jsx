@@ -15,6 +15,7 @@ import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
+import { useToastAlert } from '../../hooks/useToastAlert';
 
 const ProductPayment = () => {
   const url = process.env.REACT_APP_URL;
@@ -40,6 +41,7 @@ const ProductPayment = () => {
   const [couponSelectedOpt, setCouponSelectedOpt] = useState('');
   const [formState, inputHandler] = useForm({}, false);
   const { address, address_detail, address_legal } = formState.inputs;
+  const { showToast, ToastWrapper } = useToastAlert();
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
@@ -98,7 +100,7 @@ const ProductPayment = () => {
     e.preventDefault();
 
     if (!formState.inputs.tradeMethod.isValid) {
-      alert('거래방법을 선택해주세요');
+      showToast('거래방법을 선택해주세요', 'warning');
       return;
     }
 
@@ -123,7 +125,7 @@ const ProductPayment = () => {
         !address_detail?.isValid ||
         !address_legal?.isValid
       ) {
-        alert('배송을 위한 필수 입력란을 작성하세요.');
+        showToast('배송을 위한 필수 입력란을 작성하세요.', 'warning');
         return;
       } else {
         requestData.name = formState.inputs.name.value;
@@ -250,6 +252,7 @@ const ProductPayment = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
+      {ToastWrapper('top-center')}
       <Modal
         show={showCancelModal}
         header="결제 취소"

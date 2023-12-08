@@ -3,13 +3,14 @@ import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-import { TbBarbell, TbHanger, TbMicrowave, TbHome } from 'react-icons/tb';
+import theme from '../../styles/theme';
 import Button from '../../components/UI/Button';
 import Input from '../../components/UI/Input';
 import { useForm } from '../../hooks/useForm';
-import { VALIDATOR_REQUIRE } from '../../util/validators';
 import { searchAction } from '../../store/search';
-import theme from '../../styles/theme';
+import { useToastAlert } from '../../hooks/useToastAlert';
+import { VALIDATOR_REQUIRE } from '../../util/validators';
+import { TbBarbell, TbHanger, TbMicrowave, TbHome } from 'react-icons/tb';
 
 const CategoryBox = styled.div`
   margin-left: 3rem;
@@ -65,6 +66,7 @@ const ProductCategory = () => {
   const dispatch = useDispatch();
   const [resetInput, setResetInput] = useState(false);
   const [formState, inputHandler] = useForm({}, false);
+  const { showToast, ToastWrapper } = useToastAlert();
 
   const handleClearSearch = () => {
     dispatch(searchAction.CLEAR_SEARCH());
@@ -76,7 +78,7 @@ const ProductCategory = () => {
     const inputValue = formState.inputs.search?.value;
 
     if (!inputValue) {
-      alert('검색어를 입력해주세요!');
+      showToast('검색어를 입력해주세요!', 'warning');
       return;
     }
 
@@ -86,6 +88,7 @@ const ProductCategory = () => {
 
   return (
     <>
+      {ToastWrapper('top-center')}
       <CategoryBox>
         <NavLink to="/product/living" onClick={handleClearSearch}>
           <TbHome size="2.3rem" />

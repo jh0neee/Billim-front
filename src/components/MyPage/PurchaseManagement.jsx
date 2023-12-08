@@ -10,10 +10,11 @@ import LoadingSpinner from '../UI/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
 import { NoneText } from './WishList';
 import { Paginate } from '../UI/Pagination';
+import { useToastAlert } from '../../hooks/useToastAlert';
 import { useLoadingError } from '../../hooks/useLoadingError';
+import { useContentResize } from '../../hooks/useContentResize';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { useCancelReservation } from '../../hooks/useCancelReservation';
-import { useContentResize } from '../../hooks/useContentResize';
 
 const PurchaseManagement = () => {
   const url = process.env.REACT_APP_URL;
@@ -30,6 +31,8 @@ const PurchaseManagement = () => {
   const { isLoading, onLoading, error, errorHandler, clearError } =
     useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
+  const { showToast, ToastWrapper } = useToastAlert();
+
   const {
     showReservaionModal,
     cancelCancellationHandler,
@@ -104,7 +107,7 @@ const PurchaseManagement = () => {
 
   const toProduct = (isDeleted, id) => {
     if (isDeleted) {
-      return alert('삭제된 상품입니다.');
+      return showToast('삭제된 상품입니다.', 'warning');
     } else {
       return navigate(`/${id}/detail`);
     }
@@ -112,7 +115,7 @@ const PurchaseManagement = () => {
 
   const EnterChatRoom = (isDeleted, productId) => {
     if (isDeleted) {
-      alert('삭제된 상품에 대한 문의는 할 수 없습니다.');
+      showToast('삭제된 상품에 대한 문의는 할 수 없습니다.', 'error');
       return;
     }
 
@@ -153,6 +156,7 @@ const PurchaseManagement = () => {
     <>
       <ErrorModal error={error} onClear={clearError} />
       {isLoading && <LoadingSpinner asOverlay />}
+      {ToastWrapper('top-center')}
       <Modal
         show={showReservaionModal}
         onCancel={cancelCancellationHandler}
