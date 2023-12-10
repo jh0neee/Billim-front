@@ -77,7 +77,7 @@ const PaymentPoint = ({ onInput, formState, total, discount }) => {
   const [resetInput, setResetInput] = useState(false);
   const { onLoading, errorHandler } = useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
-  const { showToast, ToastWrapper } = useToastAlert();
+  const { showToast } = useToastAlert();
 
   useEffect(() => {
     // 페이지 벗어나면 적립금 초기화
@@ -170,7 +170,6 @@ const PaymentPoint = ({ onInput, formState, total, discount }) => {
           사용
         </Button>
         <ResetButton onClick={resetUsageAmount} className="reset" />
-        {ToastWrapper('top-center')}
       </PointLayout>
     </>
   );

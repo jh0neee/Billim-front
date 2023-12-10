@@ -97,10 +97,10 @@ const EmailVerification = () => {
 
   const email = useSelector(state => state.email);
   const [selectedOpt, setSelectedOpt] = useState('');
+  const { showToast } = useToastAlert();
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
-  const { showToast, ToastWrapper } = useToastAlert();
 
   useEffect(() => {
     dispatch(
@@ -146,7 +146,6 @@ const EmailVerification = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {ToastWrapper('top-center')}
       <VerificationLayout className="center" onSubmit={emailSubmitHandler}>
         {isLoading && <LoadingSpinner asOverlay />}
         <VerificationTitle>이메일 인증</VerificationTitle>

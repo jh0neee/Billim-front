@@ -96,8 +96,6 @@ const UpdateImageUpload = props => {
   };
 
   return (
-    // <>
-    //   {ToastWrapper('top-center')}
     <ImageLayout>
       <label htmlFor={id} onChange={handleAddImages}>
         <ImageInput type="file" id={id} multiple={id !== 'profileImageUrl'} />
@@ -114,7 +112,6 @@ const UpdateImageUpload = props => {
           ))}
       </ImagesBox>
     </ImageLayout>
-    // </>
   );
 };
 

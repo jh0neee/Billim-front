@@ -66,7 +66,7 @@ const ProductCategory = () => {
   const dispatch = useDispatch();
   const [resetInput, setResetInput] = useState(false);
   const [formState, inputHandler] = useForm({}, false);
-  const { showToast, ToastWrapper } = useToastAlert();
+  const { showToast } = useToastAlert();
 
   const handleClearSearch = () => {
     dispatch(searchAction.CLEAR_SEARCH());
@@ -88,7 +88,6 @@ const ProductCategory = () => {
 
   return (
     <>
-      {ToastWrapper('top-center')}
       <CategoryBox>
         <NavLink to="/product/living" onClick={handleClearSearch}>
           <TbHome size="2.3rem" />

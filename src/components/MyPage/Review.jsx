@@ -146,7 +146,7 @@ const Review = () => {
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
-  const { showToast, ToastWrapper } = useToastAlert();
+  const { showToast } = useToastAlert();
 
   useEffect(() => {
     getReview();
@@ -235,7 +235,6 @@ const Review = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {ToastWrapper('top-center')}
       <p>구매 후기</p>
       {isLoading && <LoadingSpinner asOverlay />}
       {reviewList.length === 0 ? (

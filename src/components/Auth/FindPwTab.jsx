@@ -50,10 +50,10 @@ const FindUserInput = styled(Input)`
 const FindPwTab = () => {
   const url = process.env.REACT_APP_URL;
   const navigate = useNavigate();
+  const { showToast } = useToastAlert();
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
-  const { showToast, ToastWrapper } = useToastAlert();
 
   const [showModal, setShowModal] = useState(false);
   const closeModal = () => {
@@ -95,7 +95,6 @@ const FindPwTab = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {ToastWrapper('top-center')}
       <Modal
         show={showModal}
         header="이메일 발송 성공!"

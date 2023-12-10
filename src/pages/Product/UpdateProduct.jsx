@@ -31,8 +31,8 @@ const UpdateProduct = () => {
   const [deleteImages, setDeleteImages] = useState([]);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
+  const { showToast } = useToastAlert();
   const { tokenErrorHandler } = useTokenRefresher(auth);
-  const { showToast, ToastWrapper } = useToastAlert();
   const [formState, inputHandler, setFormData] = useForm({}, true);
 
   const closeUpdate = () => {
@@ -189,7 +189,6 @@ const UpdateProduct = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {ToastWrapper('top-center')}
       <Modal
         show={updateModal}
         header="수정 완료!"

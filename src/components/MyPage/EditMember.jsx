@@ -171,7 +171,7 @@ const EditMember = () => {
   const navigate = useNavigate();
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
-  const { showToast, ToastWrapper } = useToastAlert();
+  const { showToast } = useToastAlert();
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const [isCheckNickname, setIsCheckNickname] = useState(true);
   const [passwordChanged, setPasswordChanged] = useState(false);
@@ -450,7 +450,6 @@ const EditMember = () => {
             <ExtraButton type="button" sub onClick={checkNickname}>
               중복 확인
             </ExtraButton>
-            {ToastWrapper('top-center')}
           </EditMemberBox>
           <hr />
           {loadedMember?.type !== 'KAKAO' && (

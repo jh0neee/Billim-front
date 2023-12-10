@@ -7,6 +7,8 @@ import Header from './components/Navigation/Header.jsx';
 import ScrollToTop from './util/ScrollToTop.js';
 import BackLocation from './util/BackLocation.js';
 import LoadingSpinner from './components/UI/LoadingSpinner.jsx';
+import { useToastAlert } from './hooks/useToastAlert.js';
+
 const Home = React.lazy(() => import('./pages/Home.jsx'));
 const Chat = React.lazy(() => import('./pages/Chat.jsx'));
 const SignIn = React.lazy(() => import('./pages/Auth/SignIn.jsx'));
@@ -55,6 +57,7 @@ const SalesDetailManagement = React.lazy(() =>
 
 function App() {
   const token = useSelector(state => state.auth.token);
+  const { ToastWrapper } = useToastAlert();
 
   let routes;
   if (token) {
@@ -120,7 +123,10 @@ function App() {
         <BackLocation />
         <Header />
         <main>
-          <Suspense fallback={<LoadingSpinner />}>{routes}</Suspense>
+          <Suspense fallback={<LoadingSpinner />}>
+            {ToastWrapper('top-center')}
+            {routes}
+          </Suspense>
         </main>
       </BrowserRouter>
     </React.Fragment>

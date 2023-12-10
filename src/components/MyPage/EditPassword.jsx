@@ -54,10 +54,10 @@ const EditPassword = ({
   closeModal,
   setPasswordChanged,
 }) => {
+  const { showToast } = useToastAlert();
   const { error, clearError, errorHandler } = useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const [formState, inputHandler] = useForm({}, false);
-  const { showToast, ToastWrapper } = useToastAlert();
   const closeEditPasswordModal = () => {
     if (!formState.isValid) {
       showToast(
@@ -101,7 +101,6 @@ const EditPassword = ({
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {ToastWrapper('top-center')}
       <ModalLayout
         show={showModal}
         header="비밀번호 변경"

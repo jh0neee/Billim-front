@@ -41,7 +41,7 @@ const ProductPayment = () => {
   const [couponSelectedOpt, setCouponSelectedOpt] = useState('');
   const [formState, inputHandler] = useForm({}, false);
   const { address, address_detail, address_legal } = formState.inputs;
-  const { showToast, ToastWrapper } = useToastAlert();
+  const { showToast } = useToastAlert();
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
@@ -252,7 +252,6 @@ const ProductPayment = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {ToastWrapper('top-center')}
       <Modal
         show={showCancelModal}
         header="결제 취소"

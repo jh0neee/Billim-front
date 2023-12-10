@@ -16,7 +16,6 @@ import { useAuth } from '../../hooks/useAuth';
 import { useLoadingError } from '../../hooks/useLoadingError';
 import { useTokenRefresher } from '../../hooks/useTokenRefresher';
 import { PiWechatLogoDuotone as ChatIcon } from 'react-icons/pi';
-import { useToastAlert } from '../../hooks/useToastAlert';
 
 const DetailView = ({ items, onDeleteProduct }) => {
   const url = process.env.REACT_APP_URL;
@@ -31,7 +30,6 @@ const DetailView = ({ items, onDeleteProduct }) => {
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const { tokenErrorHandler } = useTokenRefresher(auth);
-  const { ToastWrapper } = useToastAlert();
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
 
@@ -122,7 +120,6 @@ const DetailView = ({ items, onDeleteProduct }) => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {ToastWrapper('top-center')}
       <Modal
         show={showConfirmModal}
         onCancel={cancelDeleteHandler}

@@ -44,7 +44,7 @@ const MessageChat = ({
   const [previewFile, setPreviewFile] = useState(null);
   const [productInfo, setProductInfo] = useState({});
   const [formState, inputHandler] = useForm({}, false);
-  const { showToast, ToastWrapper } = useToastAlert();
+  const { showToast } = useToastAlert();
 
   const [sendImageModal, setSendImageModal] = useState(false);
   const cancelSendImage = () => {
@@ -423,7 +423,6 @@ const MessageChat = ({
 
   return (
     <>
-      {ToastWrapper('top-center')}
       <Modal
         show={sendImageModal}
         header="이미지 전송"

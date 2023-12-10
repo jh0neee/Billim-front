@@ -25,11 +25,11 @@ const NewProduct = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [registerModal, setRegisterModal] = useState(false);
+  const { showToast } = useToastAlert();
   const { tokenErrorHandler } = useTokenRefresher(auth);
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
-  const { showToast, ToastWrapper } = useToastAlert();
   const [checkedCategory, onCheckedCategory] = useCheckedInput(
     null,
     inputHandler,
@@ -107,7 +107,6 @@ const NewProduct = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {ToastWrapper('top-center')}
       <Modal
         show={registerModal}
         header="등록 완료!"

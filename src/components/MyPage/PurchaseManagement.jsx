@@ -31,7 +31,7 @@ const PurchaseManagement = () => {
   const { isLoading, onLoading, error, errorHandler, clearError } =
     useLoadingError();
   const { tokenErrorHandler } = useTokenRefresher(auth);
-  const { showToast, ToastWrapper } = useToastAlert();
+  const { showToast } = useToastAlert();
 
   const {
     showReservaionModal,
@@ -156,7 +156,6 @@ const PurchaseManagement = () => {
     <>
       <ErrorModal error={error} onClear={clearError} />
       {isLoading && <LoadingSpinner asOverlay />}
-      {ToastWrapper('top-center')}
       <Modal
         show={showReservaionModal}
         onCancel={cancelCancellationHandler}

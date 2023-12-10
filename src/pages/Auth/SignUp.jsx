@@ -55,11 +55,11 @@ const SignUp = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const userEmail = location?.state?.email;
+  const { showToast } = useToastAlert();
   const { isLoading, error, onLoading, clearError, errorHandler } =
     useLoadingError();
   const [formState, inputHandler] = useForm({}, false);
   const { address, address_detail, address_legal } = formState.inputs;
-  const { showToast, ToastWrapper } = useToastAlert();
 
   const [isCheckNickname, setIsCheckNickname] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -119,7 +119,6 @@ const SignUp = () => {
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
-      {ToastWrapper('top-center')}
       <Modal
         show={showModal}
         header="중복 확인"
