@@ -50,7 +50,7 @@ const BlockChat = ({ hasChatRoom }) => {
             채팅하기
           </HilightText>
           를 클릭해 <br />
-          대여/판매자와 채팅방을 생성할 수 있습니다.
+          공유/이용자와 채팅방을 생성할 수 있습니다.
         </NoListText>
       ) : (
         <>
