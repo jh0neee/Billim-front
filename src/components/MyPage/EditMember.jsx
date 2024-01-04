@@ -341,15 +341,11 @@ const EditMember = () => {
   const kakaoLogoutHandler = () => {
     onLoading(true);
     axios
-      .post(
-        `${url}/oauth/disconnect`,
-        { accessToken: auth.token },
-        {
-          headers: {
-            Authorization: 'Bearer ' + auth.token,
-          },
+      .delete(`${url}/member`, {
+        headers: {
+          Authorization: 'Bearer ' + auth.token,
         },
-      )
+      })
       .then(() => {
         localStorage.removeItem('userData');
         navigate('/');
