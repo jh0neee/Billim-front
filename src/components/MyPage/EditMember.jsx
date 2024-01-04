@@ -454,7 +454,7 @@ const EditMember = () => {
             </ExtraButton>
           </EditMemberBox>
           <hr />
-          {loadedMember?.type !== 'KAKAO' && (
+          {loadedMember?.memberType === 'GENERAL' && (
             <>
               <EditMemberBox password>
                 <p>비밀번호 변경</p>
