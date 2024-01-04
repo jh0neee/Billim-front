@@ -280,6 +280,8 @@ const EditMember = () => {
     return false;
   };
 
+  console.log(loadedMember);
+
   const EditSubmitHandler = e => {
     e.preventDefault();
 
@@ -414,7 +416,7 @@ const EditMember = () => {
       />
       <EditHeader>
         <p>회원정보수정</p>
-        {loadedMember?.type !== 'KAKAO' ? (
+        {loadedMember?.memberType === 'GENERAL' ? (
           <EnrollButton type="button" onClick={() => setCancelModal(true)}>
             회원 탈퇴
           </EnrollButton>
