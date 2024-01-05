@@ -347,6 +347,7 @@ const EditMember = () => {
         },
       })
       .then(() => {
+        console.log(localStorage.getItem('userData'));
         localStorage.removeItem('userData');
         navigate('/');
         onLoading(false);
