@@ -239,7 +239,6 @@ const UpdateProduct = () => {
                   item={item}
                   name="category"
                   checked={initialCategory}
-                  disabled={true}
                 />
               ))}
             </S.CategoryBox>
