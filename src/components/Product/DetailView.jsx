@@ -117,6 +117,9 @@ const DetailView = ({ items, onDeleteProduct }) => {
       });
   };
 
+  console.log(auth.memberId, items.sellerMemberId);
+  console.log(auth, items);
+
   return (
     <>
       <ErrorModal error={error} onClear={clearError} />
