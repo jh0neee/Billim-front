@@ -140,7 +140,7 @@ const DetailContent = ({ name, tradeMethod, detail, image, grade, place }) => {
           <div>
             <TbAward size="30px" color={getGradeIconColor()} />
             <p>
-              USER님은 <GradeSpan>{grade}</GradeSpan> 등급입니다.
+              {name}님은 <GradeSpan>{grade}</GradeSpan> 등급입니다.
             </p>
           </div>
         </ContentCategory>
