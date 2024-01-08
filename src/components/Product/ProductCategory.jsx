@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import theme from '../../styles/theme';
 import Button from '../../components/UI/Button';
 import Input from '../../components/UI/Input';
+import { useAuth } from '../../hooks/useAuth';
 import { useForm } from '../../hooks/useForm';
 import { searchAction } from '../../store/search';
 import { useToastAlert } from '../../hooks/useToastAlert';
@@ -82,6 +83,7 @@ const EnrollButton = styled(Button)`
 `;
 
 const ProductCategory = () => {
+  const auth = useAuth();
   const dispatch = useDispatch();
   const [resetInput, setResetInput] = useState(false);
   const [formState, inputHandler] = useForm({}, false);
@@ -144,9 +146,11 @@ const ProductCategory = () => {
             검색
           </SearchButton>
         </div>
-        <EnrollButton type="button" to="/product/new">
-          상품 등록
-        </EnrollButton>
+        {auth.memberId !== 0 && (
+          <EnrollButton type="button" to="/product/new">
+            상품 등록
+          </EnrollButton>
+        )}
       </SearchBox>
     </>
   );
