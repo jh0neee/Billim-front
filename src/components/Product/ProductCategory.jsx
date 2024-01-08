@@ -27,12 +27,12 @@ const CategoryBox = styled.div`
     cursor: pointer;
   }
 
-  @media ${theme.laptop} {
+  @media (max-width: 1100px) {
     > * {
       margin-left: 3rem;
     }
   }
-  @media (max-width: 890px) {
+  @media (max-width: 988px) {
     margin-left: 0;
 
     > * {
@@ -51,14 +51,33 @@ const SearchBox = styled.form`
   display: flex;
   align-items: center;
 
-  @media (max-width: 890px) {
+  > div {
+    display: flex;
+    align-items: center;
+  }
+
+  @media (max-width: 988px) {
     margin: 1rem 0 0;
+    flex-direction: column;
   }
 `;
 
 const SearchButton = styled(Button)`
-  @media (max-width: 890px) {
+  @media (max-width: 988px) {
     margin: 0.5rem 0.3rem 0;
+  }
+`;
+
+const EnrollButton = styled(Button)`
+  margin: 0px 0.5rem 0px 1.3rem;
+  width: 65px;
+  height: 33px;
+  font-size: 12px;
+  font-weight: 400;
+
+  @media (max-width: 988px) {
+    margin: 1rem 0 0;
+    width: 145px;
   }
 `;
 
@@ -107,22 +126,27 @@ const ProductCategory = () => {
         </NavLink>
       </CategoryBox>
       <SearchBox onSubmit={searchSubmitHandler}>
-        <Input
-          bar
-          id="search"
-          element="input"
-          type="text"
-          placeholder="검색어를 입력하세요"
-          width="14rem"
-          reset={resetInput}
-          setReset={setResetInput}
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText={null}
-          onInput={inputHandler}
-        />
-        <SearchButton sub small type="submit" width="45px">
-          검색
-        </SearchButton>
+        <div>
+          <Input
+            bar
+            id="search"
+            element="input"
+            type="text"
+            placeholder="검색어를 입력하세요"
+            width="14rem"
+            reset={resetInput}
+            setReset={setResetInput}
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText={null}
+            onInput={inputHandler}
+          />
+          <SearchButton sub small type="submit" width="45px">
+            검색
+          </SearchButton>
+        </div>
+        <EnrollButton type="button" to="/product/new">
+          상품 등록
+        </EnrollButton>
       </SearchBox>
     </>
   );

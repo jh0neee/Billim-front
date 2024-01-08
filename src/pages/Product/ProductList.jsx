@@ -28,7 +28,7 @@ const CategoryLayout = styled.div`
   @media ${theme.tablet}, ${theme.mobile} {
     margin-top: 150px;
   }
-  @media (max-width: 890px) {
+  @media (max-width: 988px) {
     flex-direction: column;
   }
 `;
