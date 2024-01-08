@@ -101,7 +101,7 @@ export const useAuth = () => {
   return {
     isLoggedIn,
     token,
-    memberId,
+    memberId: Number(memberId),
     login: handleLogin,
     logout: handleLogout,
   };
