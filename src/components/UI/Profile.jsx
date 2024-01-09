@@ -16,9 +16,11 @@ const Image = styled.img`
 
 export const Profile = props => {
   const { size } = props;
-  const defaultProfileImage =
-    'https://billim.s3.ap-northeast-2.amazonaws.com/profile/profile-default.png';
 
+  const BUCKET_NAME = process.env.REACT_APP_BUCKET_NAME;
+  const REGION = process.env.REACT_APP_REGION;
+
+  const defaultProfileImage = `https://${BUCKET_NAME}.s3.${REGION}.amazonaws.com/profile/profile-default.png`;
   return (
     <>
       <Box className={props.className} size={size}>

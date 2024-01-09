@@ -129,8 +129,11 @@ const ImageUpload = props => {
   const [showImages, setShowImages] = useState();
   const [isValid, setIsValid] = useState(false);
   const { showToast } = useToastAlert();
-  const defaultProfileImageUrl =
-    'https://billim.s3.ap-northeast-2.amazonaws.com/profile/profile-default.png';
+
+  const BUCKET_NAME = process.env.REACT_APP_BUCKET_NAME;
+  const REGION = process.env.REACT_APP_REGION;
+
+  const defaultProfileImageUrl = `https://${BUCKET_NAME}.s3.${REGION}.amazonaws.com/profile/profile-default.png`;
 
   const pickImageHandler = () => {
     fileInputRef.current.click();
