@@ -235,6 +235,11 @@ const MessageChat = ({
 
     for (const key in inChatRoom) {
       if (inChatRoom[key] && Number(key) === msg.chatRoomId) {
+        if (readStatus) {
+          read = true;
+          break;
+        }
+
         axios.post(
           `${url}/api/chat/message/read`,
           {
@@ -248,7 +253,9 @@ const MessageChat = ({
             },
           },
         );
-        return (read = true);
+
+        read = true;
+        break;
       } else {
         read = false;
       }
