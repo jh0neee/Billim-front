@@ -39,6 +39,11 @@ const UserItemBox = styled.div`
     }
   }
 
+  > a:hover {
+    text-decoration: underline;
+    text-underline-position: under;
+  }
+
   @media (max-width: 980px) {
     display: block;
     width: calc(100% / 3);
