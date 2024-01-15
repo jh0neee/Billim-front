@@ -245,7 +245,7 @@ const Review = () => {
             <OrderCreatedAt>{item.orderCreatedAt.slice(0, 19)}</OrderCreatedAt>
             <ReviewItemList>
               <TopList>
-                <Link to={`/${item.productId}/detail`}>
+                <Link to={`/${item.orderId}/detail`}>
                   <ProductImage
                     src={item.productImageUrl}
                     alt={`[상품] ${item.productName}`}
