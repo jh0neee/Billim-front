@@ -299,6 +299,7 @@ const ChatLists = ({
     } else {
       if (chat.latestMessage.includes('billim.s3')) {
         message = '사진을 보냈습니다.';
+        date = chat.latestMessageTime;
       } else {
         message = chat.latestMessage;
         date = chat.latestMessageTime;
