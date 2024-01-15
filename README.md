@@ -31,7 +31,7 @@
   |:---:|:---:|
   |![login](https://github.com/jh0neee/Billim-front/assets/108544145/f55d437f-2859-4d10-966f-eceed74e9be2)|![emailverify](https://github.com/jh0neee/Billim-front/assets/108544145/b2a66eb6-4354-4137-af53-e4e193d7a4ee)|
   | 일반 로그인과 SNS(카카오톡) 로그인 기능을 구현하였습니다. <br> 카카오 로그인 버튼은 디자인 가이드에 따라 적용하였습니다. | 회원가입 전 해당 이메일로 인증메일을 보내 인증 링크를 전송하도록 하였습니다. 이메일 주소의 형식이 유효하지 않거나 가입된 이메일일 경우 하단에 경고 문구가 표시됩니다. |
-  | 회원가입 | 로그아웃 |
+  | **회원가입** | **로그아웃** |
   |![signup](https://github.com/jh0neee/Billim-front/assets/108544145/a7d2b30e-fbaf-45d5-b2ca-23c8e31e4c50)|![logout](https://github.com/jh0neee/Billim-front/assets/108544145/7755b5b8-534d-4e68-ad2a-e1e5b4c57a1d)|
   | 회원가입 페이지에서 닉네임은 중복 확인 절차를 거치고, 주소는 Daum 우편번호 API로 도로명주소까지 받아오도록 구현했습니다.  | '우측 상단 프로필 - 로그아웃'을 누르면 로그아웃 할 수 있게 하였습니다. <br> 어디서든 접근할 수 있도록 헤더에 위치시켰습니다. |
   - 모든 입력창은 입력 후 바로 유효성 검사가 진행되며 통과하지 못한 경우 입력창 하단에 각 경고문구가 표시됩니다.
@@ -53,7 +53,7 @@
   |:---:|:---:|
   |![category](https://github.com/jh0neee/Billim-front/assets/108544145/cd896c7b-da99-4e1c-86d8-467cfa58d2a3)|![productList](https://github.com/jh0neee/Billim-front/assets/108544145/bcd317c9-4821-4c7f-8d17-460ce8341fb0)|
   | 상품에 등록된 카테고리 별로 상품을 확인할 수 있고, 키워드 검색을 하면 전체 목록에서 키워드 별로 검색된 상품을 반환해줍니다. | 등록 순으로 상품이 나열되고 한페이지에 최대 20개의 상품이 보여집니다. <br> Desktop ~ Mobile에 따라 한 줄의 상품 개수가 4개 ~ 1개로 반응형 작업을 완료하였습니다. |
-  | 상품 등록/수정 | 상품 삭제 |
+  | **상품 등록/수정** | **상품 삭제** |
   |![newUpdate](https://github.com/jh0neee/Billim-front/assets/108544145/c0719eb5-23fa-48d2-a0fd-c780f9b2a174)|![delete](https://github.com/jh0neee/Billim-front/assets/108544145/3bb7e989-f43e-47ac-ae1a-c8fe0f6f5c56)|
   | 등록 버튼은 상품 목록 페이지 상단과 판매관리(마이페이지)에서 찾을 수 있고, <br> 수정 버튼은 상세페이지에서 상품등록자에게만 활성화 됩니다. <br> 사진은 최대 5개까지 추가할 수 있습니다. | 삭제버튼은 상세페이지에서 상품 등록자에게만 활성화 됩니다. |
 
@@ -83,10 +83,10 @@
   |:---:|:---:|
   |![purchase](https://github.com/jh0neee/Billim-front/assets/108544145/4a82a700-086d-4bfd-815d-017330e2c28b)|![sales](https://github.com/jh0neee/Billim-front/assets/108544145/39426a19-71f2-4bd1-ae51-4e3b14112456)|
   | 구매한 상품을 보여줍니다. <br> 각 구매 상품에 대해 대여기간을 확인할 수 있습니다. | 등록한 상품을 보여줍니다. <br> 각 상품을 클릭하면 대여한 회원과 예약한 회원, 취소 또는 대여 완료한 회원의 기본정보와 대여기간을 확인할 수 있습니다. |
-  | 관심상품 | 후기 |
+  | **관심상품** | **후기** |
   |![favorite](https://github.com/jh0neee/Billim-front/assets/108544145/53a10bd4-5f2a-4095-ac68-12232fe9dbf4)|![review](https://github.com/jh0neee/Billim-front/assets/108544145/31a83531-f9b0-4e2f-8df3-78c7defbda2a)|
   |관심으로 등록한 상품을 볼 수 있습니다. <br> 상품 이미지 우측 상단의 아이콘을 누르면 관심상품 목록에서 바로 삭제가 가능합니다. | 리뷰를 등록할 수 있는 상품이 보여집니다. <br> 바로 리뷰를 등록할 수 있으며 작성된 리뷰는 후기 페이지 또는 상품의 상세페이지 하단에서 볼 수 있습니다. |
-  | 회원정보수정 |
+  | **회원정보수정** |
   |![memberInfo](https://github.com/jh0neee/Billim-front/assets/108544145/81dcd833-a773-424b-9ff2-d74ba80986bd)|
   | 본인의 정보를 수정 가능합니다. <br> 프로필 수정, 닉네임 변경, 비밀번호 재설정, 주소 변경 할 수 있습니다. |
   - 상단에 본인의 정보 및 적립금과 쿠폰을 확인할 수 있습니다.
