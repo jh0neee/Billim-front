@@ -19,16 +19,7 @@
 📦src
  ┣ 📂asset
  ┃ ┣ 📂font
- ┃ ┃ ┣ 📜SCDream4.woff
- ┃ ┃ ┣ 📜SCDream5.woff
- ┃ ┃ ┣ 📜SCDream6.woff
- ┃ ┃ ┣ 📜SCDream7.woff
- ┃ ┃ ┣ 📜TmoneyRoundWindExtraBold.woff
- ┃ ┃ ┗ 📜TmoneyRoundWindRegular.woff
  ┃ ┗ 📂image
- ┃ ┃ ┣ 📜kakao_login_medium_wide.png
- ┃ ┃ ┣ 📜logoImage.png
- ┃ ┃ ┗ 📜profileImage.png
  ┣ 📂components
  ┃ ┣ 📂Auth
  ┃ ┃ ┣ 📜FindPwTab.jsx
