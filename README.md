@@ -14,6 +14,142 @@
 
 <img width="1426" alt="스크린샷 2023-11-08 오전 10 30 34" src="https://github.com/HyunjeongJang/Billim-server/assets/113197284/2d740b7a-d049-4194-a26f-b4d080fe5bda">
 
+#### 폴더 구조
+```
+📦src
+ ┣ 📂asset
+ ┃ ┣ 📂font
+ ┃ ┃ ┣ 📜SCDream4.woff
+ ┃ ┃ ┣ 📜SCDream5.woff
+ ┃ ┃ ┣ 📜SCDream6.woff
+ ┃ ┃ ┣ 📜SCDream7.woff
+ ┃ ┃ ┣ 📜TmoneyRoundWindExtraBold.woff
+ ┃ ┃ ┗ 📜TmoneyRoundWindRegular.woff
+ ┃ ┗ 📂image
+ ┃ ┃ ┣ 📜kakao_login_medium_wide.png
+ ┃ ┃ ┣ 📜logoImage.png
+ ┃ ┃ ┗ 📜profileImage.png
+ ┣ 📂components
+ ┃ ┣ 📂Auth
+ ┃ ┃ ┣ 📜FindPwTab.jsx
+ ┃ ┃ ┣ 📜SignUpAddress.jsx
+ ┃ ┃ ┗ 📜SignUpItem.jsx
+ ┃ ┣ 📂Chat
+ ┃ ┃ ┣ 📂styles
+ ┃ ┃ ┃ ┗ 📜Chat.styles.jsx
+ ┃ ┃ ┣ 📜BlockChat.jsx
+ ┃ ┃ ┣ 📜ChatLists.jsx
+ ┃ ┃ ┗ 📜MessageChat.jsx
+ ┃ ┣ 📂MyPage
+ ┃ ┃ ┣ 📂styles
+ ┃ ┃ ┃ ┗ 📜MyPage.styles.jsx
+ ┃ ┃ ┣ 📜CancelMember.jsx
+ ┃ ┃ ┣ 📜EditMember.jsx
+ ┃ ┃ ┣ 📜EditPassword.jsx
+ ┃ ┃ ┣ 📜MyPageCoupon.jsx
+ ┃ ┃ ┣ 📜MyPageSideBar.jsx
+ ┃ ┃ ┣ 📜MyPageUser.jsx
+ ┃ ┃ ┣ 📜MyPageUserReward.jsx
+ ┃ ┃ ┣ 📜PurchaseManagement.jsx
+ ┃ ┃ ┣ 📜Review.jsx
+ ┃ ┃ ┣ 📜SalesDetailInfo.jsx
+ ┃ ┃ ┣ 📜SalesDetailManagement.jsx
+ ┃ ┃ ┣ 📜SalesManagement.jsx
+ ┃ ┃ ┣ 📜StarRating.jsx
+ ┃ ┃ ┗ 📜WishList.jsx
+ ┃ ┣ 📂Navigation
+ ┃ ┃ ┣ 📜Header.jsx
+ ┃ ┃ ┣ 📜NavLinks.jsx
+ ┃ ┃ ┣ 📜SideDrawer.jsx
+ ┃ ┃ ┗ 📜SideMenu.jsx
+ ┃ ┣ 📂Product
+ ┃ ┃ ┣ 📂styles
+ ┃ ┃ ┃ ┗ 📜Product.styles.jsx
+ ┃ ┃ ┣ 📜DetailConfirm.jsx
+ ┃ ┃ ┣ 📜DetailContent.jsx
+ ┃ ┃ ┣ 📜DetailHeader.jsx
+ ┃ ┃ ┣ 📜DetailImageGallery.jsx
+ ┃ ┃ ┣ 📜DetailReview.jsx
+ ┃ ┃ ┣ 📜DetailView.jsx
+ ┃ ┃ ┣ 📜PaymentConfirm.jsx
+ ┃ ┃ ┣ 📜PaymentInformation.jsx
+ ┃ ┃ ┣ 📜PaymentPoint.jsx
+ ┃ ┃ ┣ 📜ProductCategory.jsx
+ ┃ ┃ ┗ 📜ProductListItem.jsx
+ ┃ ┗ 📂UI
+ ┃ ┃ ┣ 📜BackDrop.jsx
+ ┃ ┃ ┣ 📜Button.jsx
+ ┃ ┃ ┣ 📜Card.jsx
+ ┃ ┃ ┣ 📜Carousel.jsx
+ ┃ ┃ ┣ 📜DropDown.jsx
+ ┃ ┃ ┣ 📜ImageUpload.jsx
+ ┃ ┃ ┣ 📜Input.jsx
+ ┃ ┃ ┣ 📜LoadingSpinner.jsx
+ ┃ ┃ ┣ 📜Modal.jsx
+ ┃ ┃ ┣ 📜Pagination.jsx
+ ┃ ┃ ┣ 📜Profile.jsx
+ ┃ ┃ ┣ 📜Radio.jsx
+ ┃ ┃ ┣ 📜SmallListPagination.jsx
+ ┃ ┃ ┗ 📜UpdateImageUpload.jsx
+ ┣ 📂hooks
+ ┃ ┣ 📜useAddressSplitter.js
+ ┃ ┣ 📜useAuth.js
+ ┃ ┣ 📜useCancelReservation.js
+ ┃ ┣ 📜useCheckedInput.js
+ ┃ ┣ 📜useCheckedNickname.js
+ ┃ ┣ 📜useContentResize.js
+ ┃ ┣ 📜useForm.js
+ ┃ ┣ 📜useLoadingError.js
+ ┃ ┣ 📜usePostalCode.js
+ ┃ ┣ 📜useResize.js
+ ┃ ┣ 📜useTimer.js
+ ┃ ┣ 📜useToastAlert.js
+ ┃ ┗ 📜useTokenRefresher.js
+ ┣ 📂pages
+ ┃ ┣ 📂Auth
+ ┃ ┃ ┣ 📜EmailConfirm.jsx
+ ┃ ┃ ┣ 📜EmailVerification.jsx
+ ┃ ┃ ┣ 📜FindUser.jsx
+ ┃ ┃ ┣ 📜KaKaoRedirect.jsx
+ ┃ ┃ ┣ 📜SignIn.jsx
+ ┃ ┃ ┗ 📜SignUp.jsx
+ ┃ ┣ 📂Product
+ ┃ ┃ ┣ 📜ProductDetail.jsx
+ ┃ ┃ ┣ 📜ProductList.jsx
+ ┃ ┃ ┣ 📜ProductPayment.jsx
+ ┃ ┃ ┗ 📜UpdateProduct.jsx
+ ┃ ┣ 📂styles
+ ┃ ┃ ┗ 📜Pages.styles.jsx
+ ┃ ┣ 📜Chat.jsx
+ ┃ ┣ 📜Home.jsx
+ ┃ ┣ 📜MyPage.jsx
+ ┃ ┗ 📜NewProduct.jsx
+ ┣ 📂store
+ ┃ ┣ 📂reducer
+ ┃ ┃ ┗ 📜inputReducer.js
+ ┃ ┣ 📜auth.js
+ ┃ ┣ 📜chat.js
+ ┃ ┣ 📜currentPage.js
+ ┃ ┣ 📜point.js
+ ┃ ┣ 📜search.js
+ ┃ ┣ 📜signup.js
+ ┃ ┗ 📜store.js
+ ┣ 📂styles
+ ┃ ┣ 📜calendar.css
+ ┃ ┣ 📜GlobalStyles.js
+ ┃ ┣ 📜pagination.css
+ ┃ ┗ 📜theme.js
+ ┣ 📂util
+ ┃ ┣ 📜BackLocation.js
+ ┃ ┣ 📜ErrorModal.js
+ ┃ ┣ 📜ScrollToTop.js
+ ┃ ┗ 📜validators.js
+ ┣ 📜App.js
+ ┣ 📜data.js
+ ┣ 📜index.css
+ ┗ 📜index.js
+```
+
 <br>
 
 # 구현 기능
