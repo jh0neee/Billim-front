@@ -14,6 +14,42 @@
 
 <img width="1426" alt="스크린샷 2023-11-08 오전 10 30 34" src="https://github.com/HyunjeongJang/Billim-server/assets/113197284/2d740b7a-d049-4194-a26f-b4d080fe5bda">
 
+<details>
+  <summary>폴더구조</summary>
+
+  ```
+ 📦src
+  ┣ 📂asset  // 이미지, 폰트 폴더
+  ┃ ┣ 📂font
+  ┃ ┗ 📂image
+  ┣ 📂components  // 페이지 관련 컴포넌트
+  ┃ ┣ 📂Auth
+  ┃ ┣ 📂Chat
+  ┃ ┃ ┣ 📂styles  // Chat 공통 Style
+  ┃ ┣ 📂MyPage
+  ┃ ┃ ┣ 📂styles  // MyPage 공통 Style
+  ┃ ┣ 📂Navigation
+  ┃ ┣ 📂Product
+  ┃ ┃ ┣ 📂styles  // Product 공통 Style
+  ┃ ┗ 📂UI  // 컴포넌트 공통 UI
+  ┣ 📂hooks  // customHook
+  ┣ 📂pages  // 페이지 컴포넌트
+  ┃ ┣ 📂Auth
+  ┃ ┣ 📂Product
+  ┃ ┣ 📂styles  // 페이지 컴포넌트 공통 Style
+  ┃ ┣ 📜Chat.jsx
+  ┃ ┣ 📜Home.jsx
+  ┃ ┣ 📜MyPage.jsx
+  ┃ ┗ 📜NewProduct.jsx
+  ┣ 📂store  // redux, reducer
+  ┃ ┣ 📂reducer
+  ┣ 📂styles  // 공통 style, css
+  ┣ 📂util 
+  ┣ 📜App.js
+  ┣ 📜data.js
+ ```
+</details>
+
 <br>
 
 # 구현 기능
@@ -93,6 +129,113 @@
   - 예약완료된 상품에 한해 구매/판매자에 관계없이 예약취소를 할 수 있습니다.
   - 대여한/대여하는 상품은 채팅 버튼을 통해 구매/판매자와의 채팅을 할 수 있습니다.
 
+
+# 문제해결과정
+<details>
+  <summary>토큰 갱신 처리</summary>
+ 
+- 재발급 받을 때 무한 로딩 이슈
+  - 토큰 갱신 기능 및 에러 처리를 custom Hook으로 추출하였습니다.
+  - 각 컴포넌트에서 axios 요청 실패 시 tokenErrorHandler를 호출하도록 하여 토큰 갱신 또는 로그아웃을 할 수 있게 처리하였습니다.
+
+- 에러 핸들링 무한 루프 이슈
+  - 업데이트 전 로직에서는 에러가 발생할 때마다 토큰 갱신을 시도하도록 했는데 여러 에러 상황에 대해 매번 토큰을 갱신하려고 동작하여 일관된 처리가 어렵다는 문제와 더불어 에러가 반복해서 발생하는 문제가 있었습니다.
+  - 응답 interceptor에서 응답 에러 직전에 token 갱신 로직이 실행되게 설정을 해두었는데, 이쪽의 에러 핸들링 로직이 반복적으로 호출되었습니다.
+  - 이를 방지하기 위해서 interceptor 로직을 분리하고 토큰 갱신 요청을 연속으로 호출하지 않기 위해서 debounce를 활용하였습니다.
+ 
+- 업데이트된 토큰 갱신 및 에러 핸들링 로직
+  - 현재는 refresh token 관련 로직을 custom hook 형태로 여러 컴포넌트에서 사용가능하도록 재사용성을 높이고, token error 처리 로직을 모듈화하여 가독성과 유지보수성을 높였으며, 토큰 갱신 요청이 발생할 때마다 자동으로 수행하도록 했습니다. 
+  - interceptor를 사용하여 토큰 갱신에 대한 요청을 useTokenRefresher hook에서 일관적으로 관리되도록 설정하였습니다.
+  - refresh 토큰 만료 중복 요청 이슈 발생하여 디바운싱을 활용해 중복 호출을 방지했습니다.
+
+
+  ```
+  useTokenRefresher.js
+
+  ...
+  
+  export const useTokenRefresher = auth => {
+    ...
+  
+    // 토큰 갱신 함수
+    const refreshTokenHandler = debounce(() => {
+      const refreshTokenData = localStorage.getItem('userData');
+  
+      if (refreshTokenData) {
+        // refresh token 가져오기
+        const { refresh } = JSON.parse(refreshTokenData);
+  
+        if (isRefresh) { // 이미 갱신 중일 때
+          return;
+        }
+  
+        setIsRefresh(true); 
+  
+        // 토큰 재발급 요청
+        axios
+          .post(
+            `${url}/auth/reIssue/token`,
+            { refreshToken: refresh },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          )
+          .then(response => { //  요청 성공 시 토큰 재발급하여 로그인 요청
+            const { memberId, accessToken, newRefreshToken } = response.data;
+            auth.login(accessToken, newRefreshToken, memberId);
+            setIsRefresh(false);
+            return response;
+          })
+          .catch(err => { //  리프레시 관련 에러 시 로그아웃 
+            if (
+              err.response.data.code === 'MISMATCH_REFRESH_TOKEN' ||
+              err.response.data.code === 'EXPIRED_REFRESH_TOKEN' ||
+              err.response.data.code === 'INVALID_REFRESH_TOKEN'
+            ) {
+              auth.logout(true);
+            }
+            setIsRefresh(false);
+          });
+      }
+    }, 500);
+  
+    // 토큰 에러 처리 함수
+    const tokenErrorHandler = err => {
+      if (err.response.data.error === 'EXPIRED_TOKEN') {
+        // 토큰 만료 시 refreshTokenHandelr 호출
+        refreshTokenHandler();
+      } else {
+        // 그 외 로그아웃 처리
+        auth.logout(true);
+      }
+    };
+  
+    // axios 응답 인터셉터 설정
+    // axios 응답 받아올 때 실행 
+    refreshAPI.interceptors.response.use(
+      response => response,
+      error => {
+        // 에러 발생 시 tokenErrorHandler 호출
+        if (error.response && error.response.status === 401) {
+          return tokenErrorHandler(error);
+        } else {
+          return Promise.reject(error);
+        }
+      },
+    );
+
+   ...
+  
+  };
+
+  ```
+
+</details>
+
+
+
 <br>
 <br>
 
@@ -105,133 +248,6 @@
 <img width="1292" alt="스크린샷 스웨거" src="https://github.com/HyunjeongJang/Billim-server/assets/113197284/62344be5-f669-4563-b1ca-957306ab2379">
 
 <br>
-
-## 폴더 구조
-```
-📦src
- ┣ 📂asset
- ┃ ┣ 📂font
- ┃ ┗ 📂image
- ┣ 📂components
- ┃ ┣ 📂Auth
- ┃ ┃ ┣ 📜FindPwTab.jsx
- ┃ ┃ ┣ 📜SignUpAddress.jsx
- ┃ ┃ ┗ 📜SignUpItem.jsx
- ┃ ┣ 📂Chat
- ┃ ┃ ┣ 📂styles
- ┃ ┃ ┃ ┗ 📜Chat.styles.jsx
- ┃ ┃ ┣ 📜BlockChat.jsx
- ┃ ┃ ┣ 📜ChatLists.jsx
- ┃ ┃ ┗ 📜MessageChat.jsx
- ┃ ┣ 📂MyPage
- ┃ ┃ ┣ 📂styles
- ┃ ┃ ┃ ┗ 📜MyPage.styles.jsx
- ┃ ┃ ┣ 📜CancelMember.jsx
- ┃ ┃ ┣ 📜EditMember.jsx
- ┃ ┃ ┣ 📜EditPassword.jsx
- ┃ ┃ ┣ 📜MyPageCoupon.jsx
- ┃ ┃ ┣ 📜MyPageSideBar.jsx
- ┃ ┃ ┣ 📜MyPageUser.jsx
- ┃ ┃ ┣ 📜MyPageUserReward.jsx
- ┃ ┃ ┣ 📜PurchaseManagement.jsx
- ┃ ┃ ┣ 📜Review.jsx
- ┃ ┃ ┣ 📜SalesDetailInfo.jsx
- ┃ ┃ ┣ 📜SalesDetailManagement.jsx
- ┃ ┃ ┣ 📜SalesManagement.jsx
- ┃ ┃ ┣ 📜StarRating.jsx
- ┃ ┃ ┗ 📜WishList.jsx
- ┃ ┣ 📂Navigation
- ┃ ┃ ┣ 📜Header.jsx
- ┃ ┃ ┣ 📜NavLinks.jsx
- ┃ ┃ ┣ 📜SideDrawer.jsx
- ┃ ┃ ┗ 📜SideMenu.jsx
- ┃ ┣ 📂Product
- ┃ ┃ ┣ 📂styles
- ┃ ┃ ┃ ┗ 📜Product.styles.jsx
- ┃ ┃ ┣ 📜DetailConfirm.jsx
- ┃ ┃ ┣ 📜DetailContent.jsx
- ┃ ┃ ┣ 📜DetailHeader.jsx
- ┃ ┃ ┣ 📜DetailImageGallery.jsx
- ┃ ┃ ┣ 📜DetailReview.jsx
- ┃ ┃ ┣ 📜DetailView.jsx
- ┃ ┃ ┣ 📜PaymentConfirm.jsx
- ┃ ┃ ┣ 📜PaymentInformation.jsx
- ┃ ┃ ┣ 📜PaymentPoint.jsx
- ┃ ┃ ┣ 📜ProductCategory.jsx
- ┃ ┃ ┗ 📜ProductListItem.jsx
- ┃ ┗ 📂UI
- ┃ ┃ ┣ 📜BackDrop.jsx
- ┃ ┃ ┣ 📜Button.jsx
- ┃ ┃ ┣ 📜Card.jsx
- ┃ ┃ ┣ 📜Carousel.jsx
- ┃ ┃ ┣ 📜DropDown.jsx
- ┃ ┃ ┣ 📜ImageUpload.jsx
- ┃ ┃ ┣ 📜Input.jsx
- ┃ ┃ ┣ 📜LoadingSpinner.jsx
- ┃ ┃ ┣ 📜Modal.jsx
- ┃ ┃ ┣ 📜Pagination.jsx
- ┃ ┃ ┣ 📜Profile.jsx
- ┃ ┃ ┣ 📜Radio.jsx
- ┃ ┃ ┣ 📜SmallListPagination.jsx
- ┃ ┃ ┗ 📜UpdateImageUpload.jsx
- ┣ 📂hooks
- ┃ ┣ 📜useAddressSplitter.js
- ┃ ┣ 📜useAuth.js
- ┃ ┣ 📜useCancelReservation.js
- ┃ ┣ 📜useCheckedInput.js
- ┃ ┣ 📜useCheckedNickname.js
- ┃ ┣ 📜useContentResize.js
- ┃ ┣ 📜useForm.js
- ┃ ┣ 📜useLoadingError.js
- ┃ ┣ 📜usePostalCode.js
- ┃ ┣ 📜useResize.js
- ┃ ┣ 📜useTimer.js
- ┃ ┣ 📜useToastAlert.js
- ┃ ┗ 📜useTokenRefresher.js
- ┣ 📂pages
- ┃ ┣ 📂Auth
- ┃ ┃ ┣ 📜EmailConfirm.jsx
- ┃ ┃ ┣ 📜EmailVerification.jsx
- ┃ ┃ ┣ 📜FindUser.jsx
- ┃ ┃ ┣ 📜KaKaoRedirect.jsx
- ┃ ┃ ┣ 📜SignIn.jsx
- ┃ ┃ ┗ 📜SignUp.jsx
- ┃ ┣ 📂Product
- ┃ ┃ ┣ 📜ProductDetail.jsx
- ┃ ┃ ┣ 📜ProductList.jsx
- ┃ ┃ ┣ 📜ProductPayment.jsx
- ┃ ┃ ┗ 📜UpdateProduct.jsx
- ┃ ┣ 📂styles
- ┃ ┃ ┗ 📜Pages.styles.jsx
- ┃ ┣ 📜Chat.jsx
- ┃ ┣ 📜Home.jsx
- ┃ ┣ 📜MyPage.jsx
- ┃ ┗ 📜NewProduct.jsx
- ┣ 📂store
- ┃ ┣ 📂reducer
- ┃ ┃ ┗ 📜inputReducer.js
- ┃ ┣ 📜auth.js
- ┃ ┣ 📜chat.js
- ┃ ┣ 📜currentPage.js
- ┃ ┣ 📜point.js
- ┃ ┣ 📜search.js
- ┃ ┣ 📜signup.js
- ┃ ┗ 📜store.js
- ┣ 📂styles
- ┃ ┣ 📜calendar.css
- ┃ ┣ 📜GlobalStyles.js
- ┃ ┣ 📜pagination.css
- ┃ ┗ 📜theme.js
- ┣ 📂util
- ┃ ┣ 📜BackLocation.js
- ┃ ┣ 📜ErrorModal.js
- ┃ ┣ 📜ScrollToTop.js
- ┃ ┗ 📜validators.js
- ┣ 📜App.js
- ┣ 📜data.js
- ┣ 📜index.css
- ┗ 📜index.js
-```
 
 
 # 참여
