@@ -31,7 +31,7 @@ const MyPageCoupon = React.lazy(() =>
   import('./components/MyPage/MyPageCoupon.jsx'),
 );
 const KakaoRedirect = React.lazy(() =>
-  import('./pages/Auth/KaKaoRedirect.jsx'),
+  import('./pages/Auth/KakaoRedirect.jsx'),
 );
 const UpdateProduct = React.lazy(() =>
   import('./pages/Product/UpdateProduct.jsx'),

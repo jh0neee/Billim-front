@@ -341,7 +341,7 @@ const EditMember = () => {
   const kakaoLogoutHandler = () => {
     onLoading(true);
     axios
-      .delete(`${url}/member`, {
+      .delete(`${url}/member/`, {
         headers: {
           Authorization: 'Bearer ' + auth.token,
         },
