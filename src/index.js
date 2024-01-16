@@ -10,12 +10,12 @@ import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <GlobalStyles />
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </ThemeProvider>
-  </React.StrictMode>,
+  // <React.StrictMode>
+  <ThemeProvider theme={theme}>
+    <GlobalStyles />
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </ThemeProvider>,
+  // </React.StrictMode>,
 );
