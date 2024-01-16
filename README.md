@@ -15,7 +15,7 @@
 <img width="1426" alt="스크린샷 2023-11-08 오전 10 30 34" src="https://github.com/HyunjeongJang/Billim-server/assets/113197284/2d740b7a-d049-4194-a26f-b4d080fe5bda">
 
 <details>
-  <summary>폴더구조</summary>
+  <summary><strong>폴더 구조</strong></summary>
 
   ```
  📦src
@@ -129,25 +129,33 @@
   - 예약완료된 상품에 한해 구매/판매자에 관계없이 예약취소를 할 수 있습니다.
   - 대여한/대여하는 상품은 채팅 버튼을 통해 구매/판매자와의 채팅을 할 수 있습니다.
 
+<br>
 
 # 문제해결과정
 <details>
-  <summary>토큰 갱신 처리</summary>
+  <summary><strong>토큰 갱신 처리</strong></summary>
  
-- 재발급 받을 때 무한 로딩 이슈
+<br>
+
+- **재발급 받을 때 무한 로딩 이슈**
   - 토큰 갱신 기능 및 에러 처리를 custom Hook으로 추출하였습니다.
   - 각 컴포넌트에서 axios 요청 실패 시 tokenErrorHandler를 호출하도록 하여 토큰 갱신 또는 로그아웃을 할 수 있게 처리하였습니다.
 
-- 에러 핸들링 무한 루프 이슈
+<br>
+
+- **에러 핸들링 무한 루프 이슈**
   - 업데이트 전 로직에서는 에러가 발생할 때마다 토큰 갱신을 시도하도록 했는데 여러 에러 상황에 대해 매번 토큰을 갱신하려고 동작하여 일관된 처리가 어렵다는 문제와 더불어 에러가 반복해서 발생하는 문제가 있었습니다.
   - 응답 interceptor에서 응답 에러 직전에 token 갱신 로직이 실행되게 설정을 해두었는데, 이쪽의 에러 핸들링 로직이 반복적으로 호출되었습니다.
   - 이를 방지하기 위해서 interceptor 로직을 분리하고 토큰 갱신 요청을 연속으로 호출하지 않기 위해서 debounce를 활용하였습니다.
- 
-- 업데이트된 토큰 갱신 및 에러 핸들링 로직
+
+<br>
+
+- **업데이트된 토큰 갱신 및 에러 핸들링 로직**
   - 현재는 refresh token 관련 로직을 custom hook 형태로 여러 컴포넌트에서 사용가능하도록 재사용성을 높이고, token error 처리 로직을 모듈화하여 가독성과 유지보수성을 높였으며, 토큰 갱신 요청이 발생할 때마다 자동으로 수행하도록 했습니다. 
   - interceptor를 사용하여 토큰 갱신에 대한 요청을 useTokenRefresher hook에서 일관적으로 관리되도록 설정하였습니다.
   - refresh 토큰 만료 중복 요청 이슈 발생하여 디바운싱을 활용해 중복 호출을 방지했습니다.
 
+<br>
 
   ```
   useTokenRefresher.js
@@ -165,7 +173,7 @@
         // refresh token 가져오기
         const { refresh } = JSON.parse(refreshTokenData);
   
-        if (isRefresh) { // 이미 갱신 중일 때
+        if (isRefresh) { 
           return;
         }
   
@@ -234,15 +242,173 @@
 
 </details>
 
+<br>
+
+<details>
+  <summary><strong>카테고리-검색어 분리</strong></summary>
+ 
+<br>
+
+- **카테고리와 검색어가 연결되어 검색되는 이슈**
+  - 서버에 쿼리스트링으로 카테고리, 검색 키워드, 페이지네이션을 연결하여 전달했습니다.
+  - 검색했을 때 카테고리와 키워드가 같이 넘어와 검색되어 카테고리 내에서만 특정 상품이 검색되는 문제가 발생하였습니다.
+
+<br>
+
+  ```
+  let requestUrl = `${url}/product/list/search?page=${currentPage}`;
+
+  if (searchValue) {
+    requestUrl += `&category&keyword=${searchValue}`;
+  } else {
+    requestUrl += `&category=${category}&keyword`;
+  }
+  ```
+- 카테고리와 키워드를 별개로 넘겨주도록 설정했습니다.
+- 전체 카테고리에서만 검색이 되도록 키워드만 보내고, 카테고리를 선택하면 선택한 카테고리만 보내도록 했습니다.
+</details>
+
+<br>
+
+<details>
+  <summary><strong>채팅 읽음 처리</strong></summary>
+
+채팅목록을 구독하는 방식이기 때문에 채팅방을 나가야 웹소켓 연결이 해제가 됩니다.
+
+
+- **채팅리스트 읽지 않은 메시지 뱃지가 갱신되지 않는 문제**
+  ```
+  // 기존
+  
+  setChatList(prevChatList => {
+    return prevChatList.map(chat => {
+      if (chat.chatRoomId === chatRoomId) {
+        let updatedUnreadCount = chat.unreadCount;
+  
+        if (senderId === chat.receiverId) {
+          updatedUnreadCount += 1;
+        }
+  
+     // ...
+  
+  ```    
+  - 읽음 처리가 기존의 unreadCount에서 1을 증가시키는 방식으로 업데이트됩니다.
+  - 해당 메시지가 이미 읽혀져 있는 상태에서 새로운 메시지가 도착하면 읽음 상태가 초기화되는 문제가 발생합니다.
+
+    <br>
+    
+  ```
+  // 업데이트
+  
+  setChatList(prevChatList => {
+    return prevChatList.map(chat => {
+      if (chat.chatRoomId === chatRoomId) {
+        let updatedUnreadCount = chat.updatedUnreadCount;
+  
+        if (senderId === chat.receiverId) {
+          if (updatedUnreadCount === undefined) {
+              updatedUnreadCount = chat.unreadCount + 1;
+            } else if (updatedUnreadCount !== undefined && !read) {
+              updatedUnreadCount += 1;
+            } else {
+              updatedUnreadCount = 0;
+            }
+          }
+  
+     // ...
+  
+  ```
+  - 업데이트 후의 로직은 read의 값에 따라 updatedUnreadCount를 다르게 처리하도록 했습니다.
+  - 메시지를 읽지 않은 경우에는 기존 unreadCount에 + 1을,
+  - 한번 업데이트 이후 read가 false일 때 updatedUnreadCount에 + 1을,
+  - 메시지를 다 읽은 상태에는 메시지 count를 0으로 초기화하도록 구성하였습니다.
 
 
 <br>
+
+- **채팅방 읽음 처리 이슈**
+  - 유저 중 한 명이 뒤늦게 들어오거나 유저(본인)와 상대유저가 채팅방에 전부 들어와있을 때의 읽음처리가 매끄럽지 않은 문제가 발생하였습니다.
+  - 유저와 상대 유저를 나누어 읽음 처리가 동작되도록 설정하였습니다.
+  ```
+  const renderMessages = () => {
+      return messages.map((msg, index) => {
+        let read;
+  
+        // 본인이 메시지를 보낸 경우
+        if (msg.newMessage && !correctSender) {
+          const unreadMessagesByRecipient = unreadMessages.filter(
+            unread => unread.messageId === msg.messageId,
+          );
+  
+          read = true;
+  
+          unreadMessagesByRecipient.forEach(() => {
+            read = readStatus;
+          });
+  
+        // 상대가 메시지를 보낸 경우
+        } else if (msg.newMessage && correctSender) {
+          read = readMessage(msg);
+        }
+  
+        // ...
+  
+      });
+    };
+  ```
+  - 유저(본인)가 메시지를 보낸 경우, 자신의 채팅방에서 모두 읽음 처리되게 합니다.
+  - 상대 유저가 메시지를 보낸 경우, readMessage()함수를 호출하여 메시지 읽음 처리합니다.
+
+
+<br>
+
+- **읽음 처리 무한 요청 이슈**
+  - 유저와 상대유저가 모두 채팅방에 들어와있을 때 읽음 처리에 대해 무한 요청이 들어오는 문제가 발생하였습니다. 
+  - for ... in을 사용하다보니 계속해서 요청이 들어오는 상황이었고, break를 걸어 read 상태가 true일 때 루프를 빠져나가도록 설정하였습니다.
+  ```
+  const readMessage = msg => {
+      // ...
+  
+     for (const key in inChatRoom) {
+        if (inChatRoom[key] && Number(key) === msg.chatRoomId) {
+          // 추가) read 상태가 true면 루프 종료
+          if (readStatus) {
+            read = true;
+            break;
+          }
+  
+          axios.post(
+            `${url}/api/chat/message/read`,
+            {
+              chatRoomId: msg.chatRoomId,
+              messageId: msg.messageId,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${auth.token}`,
+              },
+            },
+          );
+  
+          // read를 true로 설정 후 루프 종료
+          // return (read = true);
+          read = true;
+          break;
+        } else {
+          read = false;
+        }
+      }
+  
+    // ...
+  
+  ```
+</details>
+
 <br>
 
 <!-- # Jenkins CI/CD 파이프라인 구축
 <img width="1728" alt="젠킨스" src="https://github.com/HyunjeongJang/Billim-server/assets/113197284/55d05056-284f-4350-bf14-54ba0d18a7ad"> -->
-
-<br>
 
 # Swagger API 명세서
 <img width="1292" alt="스크린샷 스웨거" src="https://github.com/HyunjeongJang/Billim-server/assets/113197284/62344be5-f669-4563-b1ca-957306ab2379">
