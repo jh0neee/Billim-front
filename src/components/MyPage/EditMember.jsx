@@ -280,8 +280,6 @@ const EditMember = () => {
     return false;
   };
 
-  console.log(loadedMember);
-
   const EditSubmitHandler = e => {
     e.preventDefault();
 
@@ -341,7 +339,7 @@ const EditMember = () => {
   const kakaoLogoutHandler = () => {
     onLoading(true);
     axios
-      .delete(`${url}/member`, {
+      .delete(`${url}/member/`, {
         headers: {
           Authorization: 'Bearer ' + auth.token,
         },
@@ -351,6 +349,7 @@ const EditMember = () => {
         localStorage.removeItem('userData');
         navigate('/');
         onLoading(false);
+        console.log(localStorage.getItem('userData'));
       })
       .catch(err => {
         console.error(err);
