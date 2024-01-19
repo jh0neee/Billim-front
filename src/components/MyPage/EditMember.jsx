@@ -345,11 +345,10 @@ const EditMember = () => {
         },
       })
       .then(() => {
-        console.log(localStorage.getItem('userData'));
+        auth.logout(true);
         localStorage.removeItem('userData');
         navigate('/');
         onLoading(false);
-        console.log(localStorage.getItem('userData'));
       })
       .catch(err => {
         console.error(err);
