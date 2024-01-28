@@ -17,6 +17,7 @@ export const Domain = [
   { id: 3, name: 'daum.net' },
   { id: 4, name: 'nate.com' },
   { id: 5, name: 'hanmail.net' },
+  { id: 6, name: '직접입력' },
 ];
 
 export const altText = [

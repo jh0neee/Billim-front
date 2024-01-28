@@ -5,7 +5,7 @@ import { FaCaretDown } from 'react-icons/fa';
 
 const DropDownBox = styled.div`
   position: relative;
-  left: -1rem;
+  left: ${props => (props.selectedOpt === '직접입력' ? 0 : '-1rem')};
   width: 150px;
   user-select: none;
 `;
@@ -54,13 +54,13 @@ const Dropdown = ({ className, options, selectedOpt, setSelectedOpt }) => {
   };
 
   return (
-    <DropDownBox className={className}>
-      <SelectButtonBox onClick={handleDropDown}>
+    <DropDownBox className={className} selectedOpt={selectedOpt}>
+      <SelectButtonBox onClick={handleDropDown} className="directInput">
         {selectedOpt === '' ? '선택하세요' : selectedOpt}
         <FaCaretDown />
       </SelectButtonBox>
       {isActive && (
-        <DropDown>
+        <DropDown className="directInputDrop">
           {options.map((option, index) => (
             <DropDownOption
               key={index}

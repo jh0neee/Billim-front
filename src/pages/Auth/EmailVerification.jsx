@@ -52,11 +52,10 @@ const EmailBox = styled.div`
   justify-content: center;
 
   > * {
+    margin-left: 1rem;
+
     &:nth-child(2) {
       margin: 0 1rem;
-    }
-    &:nth-child(odd) {
-      margin-left: 1rem;
     }
   }
 
@@ -82,6 +81,37 @@ const EmailDropBox = styled(Dropdown)`
   }
   @media ${theme.desktop} {
     width: 200px;
+  }
+`;
+
+const DirectInputBox = styled.div`
+  height: 3.7rem;
+`;
+
+const DirectInput = styled(EmailInput)`
+  z-index: 1;
+`;
+
+const DirectInputDropBox = styled(EmailDropBox)`
+  bottom: 52px;
+  left: 40px;
+
+  .directInput {
+    border: none;
+    background: transparent;
+    justify-content: space-between;
+    height: 43px;
+  }
+
+  .directInputDrop {
+    left: -20%;
+
+    @media (max-width: 768px) {
+      left: -30%;
+    }
+    @media (min-width: 769px) and (max-width: 1439px) {
+      left: -27%;
+    }
   }
 `;
 
@@ -120,7 +150,13 @@ const EmailVerification = () => {
     }
 
     onLoading(true);
-    const userEmail = `${email.email}@${email.domain}`;
+
+    let userEmail;
+    if (email.domain === '직접입력') {
+      userEmail = `${email.email}@${formState.inputs.domain?.value}`;
+    } else {
+      userEmail = `${email.email}@${email.domain}`;
+    }
 
     axios
       .post(
@@ -160,11 +196,31 @@ const EmailVerification = () => {
             onInput={inputHandler}
           />
           <AtSignParagraph>@</AtSignParagraph>
-          <EmailDropBox
-            options={Domain}
-            selectedOpt={selectedOpt}
-            setSelectedOpt={setSelectedOpt}
-          />
+          {email.domain === '직접입력' && (
+            <DirectInputBox>
+              <DirectInput
+                element="input"
+                id="domain"
+                type="text"
+                placeholder="직접입력"
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText={null}
+                onInput={inputHandler}
+              />
+              <DirectInputDropBox
+                options={Domain}
+                selectedOpt={selectedOpt}
+                setSelectedOpt={setSelectedOpt}
+              />
+            </DirectInputBox>
+          )}
+          {email.domain !== '직접입력' && (
+            <EmailDropBox
+              options={Domain}
+              selectedOpt={selectedOpt}
+              setSelectedOpt={setSelectedOpt}
+            />
+          )}
         </EmailBox>
         <Button small width="120px" type="submit">
           인증하기
