@@ -62,9 +62,16 @@ export const DetailBox = styled.div`
 `;
 
 export const NameBox = styled.div`
+  width: 90px;
   margin-left: 0.1rem;
   font-size: 0.9rem;
   font-weight: 600;
+
+  > p {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 `;
 
 export const Unread = styled.div`
