@@ -55,8 +55,6 @@ const SectionBox = styled(Section)`
 const SectionImage = styled.img`
   max-width: 100%;
   max-height: 99%;
-  width: 100%;
-  height: auto;
   object-fit: contain;
 `;
 
@@ -118,7 +116,8 @@ const Home = () => {
                 <SectionImage
                   src={path}
                   alt={`[메인${index}] ${altText[index]}`}
-                  width="100%"
+                  width="1440px"
+                  height="876px"
                   loading="lazy"
                 />
               </SectionBox>
