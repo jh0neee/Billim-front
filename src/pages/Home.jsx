@@ -47,6 +47,7 @@ const CarouselText = styled.p`
 `;
 
 const SectionBox = styled(Section)`
+  width: 100%;
   display: flex !important;
   align-items: center;
 `;
@@ -54,6 +55,8 @@ const SectionBox = styled(Section)`
 const SectionImage = styled.img`
   max-width: 100%;
   max-height: 99%;
+  width: 100%;
+  height: auto;
   object-fit: contain;
 `;
 
@@ -116,6 +119,7 @@ const Home = () => {
                   src={path}
                   alt={`[메인${index}] ${altText[index]}`}
                   width="100%"
+                  loading="lazy"
                 />
               </SectionBox>
             );
