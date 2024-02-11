@@ -84,24 +84,24 @@ const Home = () => {
   let imagePath = [];
   if (widthByMobile) {
     imagePath = [
-      `${mainUrl}/MoTa1.png`,
-      `${mainUrl}/MoTa2.png`,
-      `${mainUrl}/MoTa3.png`,
-      `${mainUrl}/MoTa4.png`,
+      `${mainUrl}/MoTa1.webp`,
+      `${mainUrl}/MoTa2.webp`,
+      `${mainUrl}/MoTa3.webp`,
+      `${mainUrl}/MoTa4.webp`,
     ];
   } else if (widthByLaptop) {
     imagePath = [
-      `${mainUrl}/Laptop1.png`,
-      `${mainUrl}/Laptop2.png`,
-      `${mainUrl}/Laptop3.png`,
-      `${mainUrl}/Laptop4.png`,
+      `${mainUrl}/Laptop1.webp`,
+      `${mainUrl}/Laptop2.webp`,
+      `${mainUrl}/Laptop3.webp`,
+      `${mainUrl}/Laptop4.webp`,
     ];
   } else if (widthByDesktop) {
     imagePath = [
-      `${mainUrl}/Desktop1.png`,
-      `${mainUrl}/Desktop2.png`,
-      `${mainUrl}/Desktop3.png`,
-      `${mainUrl}/Desktop4.png`,
+      `${mainUrl}/Desktop1.webp`,
+      `${mainUrl}/Desktop2.webp`,
+      `${mainUrl}/Desktop3.webp`,
+      `${mainUrl}/Desktop4.webp`,
     ];
   }
 
@@ -118,7 +118,7 @@ const Home = () => {
                   alt={`[메인${index}] ${altText[index]}`}
                   width="1440px"
                   height="876px"
-                  loading="lazy"
+                  loading={index >= 1 ? 'lazy' : 'auto'}
                 />
               </SectionBox>
             );
