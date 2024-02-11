@@ -118,7 +118,7 @@ const Home = () => {
                   alt={`[메인${index}] ${altText[index]}`}
                   width="1440px"
                   height="876px"
-                  loading={index >= 1 ? 'lazy' : 'auto'}
+                  loading="lazy"
                 />
               </SectionBox>
             );

@@ -7,7 +7,7 @@ import NavLinks from './NavLinks';
 import SideDrawer from './SideDrawer';
 import SideMenu from './SideMenu';
 import BackDrop from '../UI/BackDrop';
-import logoImg from '../../asset/image/logoImage.png';
+import logoImg from '../../asset/image/logoImage.webp';
 import theme from '../../styles/theme';
 
 export const HeaderBox = styled.div`

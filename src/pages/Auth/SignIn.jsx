@@ -7,7 +7,7 @@ import theme from '../../styles/theme';
 import Input from '../../components/UI/Input';
 import Button from '../../components/UI/Button';
 import ErrorModal from '../../util/ErrorModal';
-import kakaoMedium from '../../asset/image/kakao_login_medium_wide.png';
+import kakaoMedium from '../../asset/image/kakao_login_medium_wide.webp';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../hooks/useAuth';
