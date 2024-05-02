@@ -1,9 +1,6 @@
 # Billim
 <img width="600" src="https://github.com/HyunjeongJang/Billim-server/assets/113197284/fd2d90ed-c350-4317-8915-31fe33ae8f61">
 
-- URL : https://billim.store
-- Test ID : test@gmail.com
-- Test PW : test123!!
 
 # 기획
 1:1 물건 대여 및 결제 시스템을 제공하는 웹 사이트
