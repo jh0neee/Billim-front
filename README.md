@@ -417,6 +417,6 @@
 |Back-End|Back-End|Front-End|
 |:---:|:---:|:---:|
 |장현정 | 염서학 | 심지현 |
-| <a href="https://github.com/HyunjeongJang">@HyunjeongJang</a> | <a href="https://github.com/YEOMCODING">@YEOMCODING</a> | <a href="https://github.com/jh0neee"> @jh0neee</a> |
+| <a href="https://github.com/abcodev">@abcodev</a> | <a href="https://github.com/YEOMCODING">@YEOMCODING</a> | <a href="https://github.com/jh0neee"> @jh0neee</a> |
 
 <br>
